@@ -110,39 +110,173 @@ These features are essential to replace the current system:
 
 ---
 
-## 4. Phased Development Timeline
+## 4. Milestones & Stakeholder Check-ins
 
-### Phase 1: Foundation (Hours 1-3)
-- [ ] Project scaffolding and workspace setup
-- [ ] Firebase project configuration
-- [ ] Authentication system (magic link)
-- [ ] Role-based access control implementation
-- [ ] Basic navigation and layouts
+### Development Timeline Overview
 
-### Phase 2: Taylor's Core Workflow (Hours 4-7)
-- [ ] **Order Visibility Dashboard** - Real-time order list with filters
-- [ ] Invoice generation interface with send functionality
-- [ ] Payment chat / order-specific comment threads
-- [ ] Customer messaging (replace Discord with real names)
-
-### Phase 3: Customer Order Flow (Hours 8-10)
-- [ ] Product data model and Excel ingestion structure
-- [ ] Order placement UI (language selection → product list → checkout)
-- [ ] Order submission and storage
-- [ ] Order history for wholesalers
-- [ ] Basic responsive layout (NavigationRail/BottomNav)
-
-### Phase 4: Stretch Goals (Hours 11-13, if selected)
-- [ ] Proof of payment file upload
-- [ ] Email notification system
-- [ ] Order export to CSV/Excel
-- [ ] Complex pricing calculations
+```
+Week 1                          Week 2                          Week 3
+│                               │                               │
+├─ M1: Login Demo ──────────────├─ M2: Taylor Workflow ─────────├─ M3: MVP Complete
+│  (Hour 3)                     │  (Hour 7)                     │  (Hour 10)
+│                               │                               │
+│  CHECKPOINT 1                 │  CHECKPOINT 2                 │  CHECKPOINT 3
+│  Discord call w/ Taylor       │  Discord call w/ Taylor       │  Final review w/ Jared
+│  "Can you log in?"            │  "Does this work for you?"    │  "Ready for customers?"
+```
 
 ---
 
-## 5. Data Models (Shared Package)
+### Milestone 1: Authentication & Navigation (Hours 1-3)
+**Target:** End of Week 1 | **Demo Length:** 15 min
 
-### 4.1 Core Entities
+| Task | Hours | Deliverable |
+|------|-------|-------------|
+| Project scaffolding | 0.5 | Running app skeleton |
+| Firebase setup | 0.5 | Auth + Firestore configured |
+| Magic link auth | 1.0 | Login via email link |
+| Role-based routing | 0.5 | Different views per role |
+| Basic navigation shell | 0.5 | NavigationRail/BottomNav |
+
+**Demo to Stakeholders:**
+- [ ] Taylor receives magic link email
+- [ ] Taylor logs in and sees her dashboard (empty state)
+- [ ] Show role separation (Supplier vs Super User view)
+
+**Checkpoint 1 Questions:**
+1. "Does the login flow make sense?"
+2. "Is the navigation layout intuitive?"
+3. "Any changes before we build the order dashboard?"
+
+**Go/No-Go:** Get approval before proceeding to Milestone 2
+
+---
+
+### Milestone 2: Taylor's Core Workflow (Hours 4-7)
+**Target:** Mid Week 2 | **Demo Length:** 30 min
+
+| Task | Hours | Deliverable |
+|------|-------|-------------|
+| Order Dashboard | 1.5 | Real-time order list with filters |
+| Invoice Builder | 1.0 | Generate invoice from order |
+| Invoice Send | 0.5 | Email invoice to customer |
+| Order Comments | 1.0 | Payment discussion thread |
+
+**Demo to Stakeholders:**
+- [ ] Taylor sees test orders in dashboard
+- [ ] Taylor filters by status/language/date
+- [ ] Taylor generates invoice for an order
+- [ ] Taylor sends invoice (receives email)
+- [ ] Taylor comments on order, customer sees it
+
+**Checkpoint 2 Questions:**
+1. "Can you see everything you need about orders?"
+2. "Is the invoice format correct?"
+3. "Does the comment flow work for payment discussions?"
+4. "What's missing before customers can use this?"
+
+**Go/No-Go:** Taylor confirms workflow works before building customer side
+
+---
+
+### Milestone 3: Customer Order Flow - MVP Complete (Hours 8-10)
+**Target:** End of Week 2 | **Demo Length:** 30 min
+
+| Task | Hours | Deliverable |
+|------|-------|-------------|
+| Product data model | 0.5 | Products from Excel structure |
+| Order placement UI | 1.5 | Language → Products → Checkout |
+| Order submission | 0.5 | Save to Firestore |
+| Customer order history | 0.5 | View past orders + status |
+
+**Demo to Stakeholders:**
+- [ ] Test customer logs in
+- [ ] Customer places order (Japanese products)
+- [ ] Order appears in Taylor's dashboard immediately
+- [ ] Full cycle: Order → Invoice → Payment chat → Complete
+
+**Checkpoint 3 - Final Review Questions:**
+1. "Is this ready for real customers?"
+2. "What's blocking launch?"
+3. "Which stretch goals should we add?" (if budget remains)
+
+**Go/No-Go:** Jared approves for production deployment
+
+---
+
+### Milestone 4: Stretch Goals (Hours 11-13, Optional)
+**Target:** Week 3 (if approved) | **Demo:** As completed
+
+| Task | Hours | Priority |
+|------|-------|----------|
+| Proof of payment upload | 0.75 | High (Taylor requested) |
+| Email notifications | 0.75 | Medium |
+| Order export CSV | 0.5 | Low |
+| Complex pricing | 1.0 | Defer to Jules |
+
+---
+
+## 5. Stakeholder Communication Schedule
+
+| Checkpoint | When | Who | Format | Duration | Purpose |
+|------------|------|-----|--------|----------|---------|
+| **CP1** | After Hour 3 | Taylor | Discord call | 15 min | Validate auth & navigation |
+| **CP2** | After Hour 7 | Taylor | Discord call | 30 min | Validate internal workflow |
+| **CP3** | After Hour 10 | Taylor + Jared | Discord call | 30 min | MVP sign-off |
+| **CP4** | After Hour 13 | Jared | Discord DM | Async | Stretch goals complete |
+
+### Communication Protocol
+
+```
+Before each checkpoint:
+1. Deploy latest build to staging URL
+2. Send Discord DM: "Ready for review - [staging link]"
+3. List 2-3 things to test
+4. Schedule 15-30 min call
+
+During checkpoint:
+1. Screen share the app
+2. Let stakeholder drive (they click, you watch)
+3. Take notes on feedback
+4. Agree on changes before continuing
+
+After checkpoint:
+1. Summarize decisions in Discord
+2. Update PROJECT_PLAN.md if scope changes
+3. Commit and push changes
+```
+
+---
+
+## 6. Risk Checkpoints
+
+| Risk | Detection Point | Mitigation |
+|------|-----------------|------------|
+| Auth takes too long | Hour 2 | Use Firebase UI drop-in |
+| Dashboard UX wrong | Checkpoint 2 | Iterate before customer flow |
+| Invoice format wrong | Checkpoint 2 | Get sample invoice from Taylor |
+| Scope creep | Any checkpoint | Defer to stretch/post-MVP |
+| Over budget | Hour 8 | Cut to core features only |
+
+---
+
+## 7. Quick Reference: When to Check In
+
+| Situation | Action |
+|-----------|--------|
+| Finished a milestone | Schedule checkpoint call |
+| Stuck for > 30 min | DM Jared/Taylor for clarification |
+| Scope question | Ask before building |
+| UX decision | Screenshot + "Option A or B?" in Discord |
+| Budget concern | Flag immediately |
+
+**Rule of Thumb:** Never go more than 3 hours without stakeholder visibility.
+
+---
+
+## 8. Data Models (Shared Package)
+
+### 8.1 Core Entities
 
 ```dart
 // User/Member
@@ -204,7 +338,7 @@ class OrderComment {
 
 ---
 
-## 6. API Endpoints (Backend Handlers)
+## 9. API Endpoints (Backend Handlers)
 
 | Method | Endpoint | Handler | Description |
 |--------|----------|---------|-------------|
@@ -221,7 +355,7 @@ class OrderComment {
 
 ---
 
-## 7. UI/UX Guidelines
+## 10. UI/UX Guidelines
 
 ### 6.1 Design System
 - **Framework:** Material 3 Expressive
@@ -242,7 +376,7 @@ class OrderComment {
 
 ---
 
-## 8. Handoff to Jules (AI Agent)
+## 11. Handoff to Jules (AI Agent)
 
 The following items are designated for implementation by the downstream AI agent (Jules):
 
@@ -263,7 +397,7 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-## 9. Deployment Architecture
+## 12. Deployment Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -288,7 +422,7 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-## 10. Communication Protocol
+## 13. Communication Protocol
 
 - **Primary Channel:** Discord DMs
 - **Participants:** Taylor (end-user), Jared Hasson (decision-maker)
@@ -297,7 +431,7 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-## 11. Acceptance Criteria
+## 14. Acceptance Criteria
 
 ### MVP Completion Checklist
 - [ ] Wholesalers can sign in via magic link
@@ -313,7 +447,7 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-## 12. Risk Mitigation
+## 15. Risk Mitigation
 
 | Risk | Mitigation |
 |------|------------|

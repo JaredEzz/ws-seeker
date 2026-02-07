@@ -1,0 +1,10 @@
+name: chroma_wholesale_workspace
+description: Chroma Wholesale Ordering Application - Full-Stack Dart Workspace
+
+environment:
+  sdk: ^3.6.0
+
+workspace:
+  - frontend
+  - backend
+  - shared

@@ -1,0 +1,50 @@
+name: chroma_frontend
+description: Chroma Wholesale - Flutter Web Frontend (WASM Target)
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.6.0
+  flutter: ^3.27.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Shared package
+  chroma_shared:
+    path: ../shared
+  
+  # State Management
+  flutter_bloc: ^8.1.6
+  
+  # Navigation
+  go_router: ^14.6.0
+  
+  # Firebase
+  firebase_core: ^3.8.0
+  firebase_auth: ^5.3.3
+  cloud_firestore: ^5.5.0
+  firebase_storage: ^12.3.6
+  
+  # UI
+  google_fonts: ^6.2.1
+  
+  # Utilities
+  intl: ^0.19.0
+  
+  # WASM-safe web interop
+  web: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.3
+  build_runner: ^2.4.9
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+
+flutter:
+  uses-material-design: true

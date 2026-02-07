@@ -1,0 +1,30 @@
+name: chroma_backend
+description: Chroma Wholesale - Dart Cloud Run Backend (package:shelf)
+version: 1.0.0
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  chroma_shared:
+    path: ../shared
+  
+  # HTTP Server
+  shelf: ^1.4.1
+  shelf_router: ^1.1.4
+  shelf_cors_headers: ^0.1.5
+  
+  # Firebase Admin
+  dart_firebase_admin: ^0.4.0
+  
+  # Utilities
+  dotenv: ^4.2.0
+  uuid: ^4.4.2
+  
+  # Email
+  mailer: ^6.1.2
+
+dev_dependencies:
+  test: ^1.25.7
+  mocktail: ^1.0.3
+  build_runner: ^2.4.9

@@ -1,0 +1,38 @@
+# Chroma Wholesale Workspace
+
+# Ignore generated files
+*.freezed.dart
+*.g.dart
+
+# Dart/Flutter
+.dart_tool/
+.packages
+build/
+pubspec.lock
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# macOS
+.DS_Store
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Firebase
+firebase-debug.log
+.firebase/
+
+# Cloud Run
+.cloudbuild/
+
+# Test coverage
+coverage/
+
+# Flutter Web
+frontend/build/
+frontend/web/.last_build_id

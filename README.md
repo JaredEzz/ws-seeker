@@ -1,6 +1,8 @@
-# Croma Wholesale Ordering Application
+# WS-Seeker 🎯
 
-A full-stack Dart application for wholesale ordering, built with Flutter Web (WASM) and Dart Cloud Run.
+**Wholesale Seeker** - A play on the VS Seeker from Pokémon Gen 3
+
+A full-stack Dart application for Croma's wholesale ordering, built with Flutter Web (WASM) and Dart Cloud Run.
 
 ## Project Overview
 
@@ -18,7 +20,7 @@ This application replaces Croma's existing system of Google Forms, Excel sheets,
 This is a Dart 3.6+ Workspace monorepo with three packages:
 
 ```
-croma_wholesale/
+ws-seeker/
 ├── frontend/     # Flutter Web (WASM target)
 ├── backend/      # Dart Cloud Run (package:shelf)
 ├── shared/       # Shared DTOs and business logic
@@ -49,8 +51,8 @@ croma_wholesale/
 
 ```bash
 # Clone the repository
-git clone https://github.com/JaredEzz/croma-wholesale.git
-cd croma-wholesale
+git clone https://github.com/JaredEzz/ws-seeker.git
+cd ws-seeker
 
 # Get dependencies
 dart pub get
@@ -115,4 +117,6 @@ Proprietary - Croma
 
 ---
 
-*Built with Flutter & Dart*
+**WS-Seeker** - Like the VS Seeker, but for finding wholesale deals! 🎴
+
+*Built with Flutter & Dart for Croma Pokémon Card Shop*

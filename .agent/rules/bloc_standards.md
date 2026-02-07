@@ -1,4 +1,4 @@
-# BLoC Standards for Croma Wholesale
+# BLoC Standards for WS-Seeker
 
 **Version:** 1.0  
 **Applies To:** `/frontend` Flutter Web Application  
@@ -463,4 +463,4 @@ dart run build_runner build --delete-conflicting-outputs
 
 ---
 
-*This document serves as the authoritative guide for BLoC implementation in the Croma Wholesale project. All contributions must adhere to these standards.*
+*This document serves as the authoritative guide for BLoC implementation in the WS-Seeker project. All contributions must adhere to these standards.*

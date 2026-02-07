@@ -1,5 +1,5 @@
-name: croma_shared
-description: Shared DTOs, models, and business logic for Croma Wholesale
+name: ws_seeker_shared
+description: WS-Seeker - Shared DTOs, models, and business logic
 
 environment:
   sdk: ^3.6.0

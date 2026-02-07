@@ -1,5 +1,5 @@
-name: croma_frontend
-description: Croma Wholesale - Flutter Web Frontend (WASM Target)
+name: ws_seeker_frontend
+description: WS-Seeker - Flutter Web Frontend (WASM Target)
 version: 1.0.0
 publish_to: none
 
@@ -12,7 +12,7 @@ dependencies:
     sdk: flutter
   
   # Shared package
-  croma_shared:
+  ws_seeker_shared:
     path: ../shared
   
   # State Management

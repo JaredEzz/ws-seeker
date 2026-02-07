@@ -1,12 +1,12 @@
-name: croma_backend
-description: Croma Wholesale - Dart Cloud Run Backend (package:shelf)
+name: ws_seeker_backend
+description: WS-Seeker - Dart Cloud Run Backend (package:shelf)
 version: 1.0.0
 
 environment:
   sdk: ^3.6.0
 
 dependencies:
-  croma_shared:
+  ws_seeker_shared:
     path: ../shared
   
   # HTTP Server

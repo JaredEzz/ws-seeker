@@ -1,8 +1,8 @@
-/// Croma Shared Package
+/// WS-Seeker Shared Package
 /// 
 /// Contains shared DTOs, models, pricing logic, and validators
 /// used by both frontend and backend packages.
-library croma_shared;
+library ws_seeker_shared;
 
 // Models
 export 'src/models/user.dart';

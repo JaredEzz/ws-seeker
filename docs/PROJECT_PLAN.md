@@ -1,4 +1,4 @@
-# Croma Wholesale Ordering Application - Project Plan
+# WS-Seeker - Project Plan
 
 **Version:** 1.0  
 **Date:** 07 February 2026  
@@ -18,7 +18,7 @@ This document outlines the development plan for a bespoke web-based wholesale or
 ### 1.1 Monorepo Structure (Dart 3.6+ Workspace)
 
 ```
-croma_wholesale/
+ws-seeker/
 ├── frontend/          # Flutter Web (WASM target)
 │   ├── lib/
 │   │   ├── blocs/     # BLoC state management

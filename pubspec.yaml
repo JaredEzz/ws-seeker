@@ -1,5 +1,5 @@
-name: croma_wholesale_workspace
-description: Croma Wholesale Ordering Application - Full-Stack Dart Workspace
+name: ws_seeker_workspace
+description: WS-Seeker - Croma Wholesale Ordering Application (Full-Stack Dart)
 
 environment:
   sdk: ^3.6.0

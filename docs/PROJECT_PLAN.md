@@ -58,36 +58,49 @@ chroma_wholesale/
 
 ---
 
-## 2. Feature Prioritization (Budget-Constrained)
+## 2. Taylor's Core Workflow (Priority Order)
+
+Based on Taylor's feedback, the internal user workflow priorities are:
+
+| Priority | Need | Solution |
+|----------|------|----------|
+| **1** | See when and what customers order | Order Dashboard with real-time visibility + optional export |
+| **2** | Generate and send invoices in-app | Invoice builder with one-click send to customer |
+| **3** | Chat for proof of payment | Order-specific comment thread for payment confirmation |
+| **4** | Message customers (Discord names confusing) | In-app messaging tied to real customer names/emails |
+
+---
+
+## 3. Feature Prioritization (Budget-Constrained)
 
 Given the 10-13 hour budget constraint, features are categorized into **Core (MVP)** and **Stretch Goals**.
 
-### 2.1 Core Features (MVP) - ~10 Hours
+### 3.1 Core Features (MVP) - ~10 Hours
 
 These features are essential to replace the current system:
 
-| # | Feature | Hours | Description |
-|---|---------|-------|-------------|
-| 1 | User Authentication | 1.5 | Magic link auth with email verification |
-| 2 | Role-Based Access Control | 1.0 | 3-tier permission system (Wholesaler/Supplier/Super User) |
-| 3 | Order Placement Flow | 2.5 | Language selection, product list, quantity input, checkout |
-| 4 | Order History Dashboard | 1.5 | View orders (12-month default), filter by date |
-| 5 | Basic Invoicing | 1.5 | Generate/send invoice, mark payment received |
-| 6 | Order Status Tracking | 1.0 | Input tracking info, display to member |
-| 7 | In-App Comments | 1.0 | Order-specific comment thread |
-| **Total** | | **10.0** | |
+| # | Feature | Hours | Description | Taylor Priority |
+|---|---------|-------|-------------|-----------------|
+| 1 | User Authentication | 1.5 | Magic link auth with email verification | Foundation |
+| 2 | Role-Based Access Control | 1.0 | 3-tier permission system (Wholesaler/Supplier/Super User) | Foundation |
+| 3 | **Order Visibility Dashboard** | 2.0 | See all orders in real-time, filter by status/date/language | **#1** |
+| 4 | Order Placement Flow | 2.0 | Language selection, product list, quantity input, checkout | Customer-facing |
+| 5 | **Invoice Generation & Sending** | 1.5 | Build invoice in-app, one-click send to customer email | **#2** |
+| 6 | **Payment Chat / Comments** | 1.0 | Order-specific thread for proof of payment discussion | **#3** |
+| 7 | **Customer Messaging** | 1.0 | In-app messaging with real names (replaces Discord confusion) | **#4** |
+| **Total** | | **10.0** | | |
 
-### 2.2 Stretch Goals - Additional ~3 Hours
+### 3.2 Stretch Goals - Additional ~3 Hours
 
 | # | Feature | Hours | Description |
 |---|---------|-------|-------------|
 | 8 | Proof of Payment Upload | 0.75 | File upload for payment confirmation |
 | 9 | Email Notifications | 0.75 | Invoice ready, tracking available alerts |
 | 10 | Complex Pricing Logic | 1.0 | 13% markup, Yen→USD conversion, tariffs |
-| 11 | Address Validation | 0.5 | Shipping address verification |
+| 11 | Order Export | 0.5 | Export order data to CSV/Excel |
 | **Total** | | **3.0** | |
 
-### 2.3 Post-MVP / Future Phase
+### 3.3 Post-MVP / Future Phase
 
 - Shopify OAuth integration
 - Advanced reporting/analytics
@@ -97,7 +110,7 @@ These features are essential to replace the current system:
 
 ---
 
-## 3. Phased Development Timeline
+## 4. Phased Development Timeline
 
 ### Phase 1: Foundation (Hours 1-3)
 - [ ] Project scaffolding and workspace setup
@@ -106,29 +119,28 @@ These features are essential to replace the current system:
 - [ ] Role-based access control implementation
 - [ ] Basic navigation and layouts
 
-### Phase 2: Core Order Flow (Hours 4-7)
+### Phase 2: Taylor's Core Workflow (Hours 4-7)
+- [ ] **Order Visibility Dashboard** - Real-time order list with filters
+- [ ] Invoice generation interface with send functionality
+- [ ] Payment chat / order-specific comment threads
+- [ ] Customer messaging (replace Discord with real names)
+
+### Phase 3: Customer Order Flow (Hours 8-10)
 - [ ] Product data model and Excel ingestion structure
 - [ ] Order placement UI (language selection → product list → checkout)
 - [ ] Order submission and storage
-- [ ] Order history dashboard with filtering
+- [ ] Order history for wholesalers
 - [ ] Basic responsive layout (NavigationRail/BottomNav)
-
-### Phase 3: Internal Workflow (Hours 8-10)
-- [ ] Supplier/Super User order management views
-- [ ] Invoice generation interface
-- [ ] Payment status management
-- [ ] Tracking information input
-- [ ] In-app comment system
 
 ### Phase 4: Stretch Goals (Hours 11-13, if selected)
 - [ ] Proof of payment file upload
 - [ ] Email notification system
+- [ ] Order export to CSV/Excel
 - [ ] Complex pricing calculations
-- [ ] Address validation integration
 
 ---
 
-## 4. Data Models (Shared Package)
+## 5. Data Models (Shared Package)
 
 ### 4.1 Core Entities
 
@@ -192,7 +204,7 @@ class OrderComment {
 
 ---
 
-## 5. API Endpoints (Backend Handlers)
+## 6. API Endpoints (Backend Handlers)
 
 | Method | Endpoint | Handler | Description |
 |--------|----------|---------|-------------|
@@ -209,7 +221,7 @@ class OrderComment {
 
 ---
 
-## 6. UI/UX Guidelines
+## 7. UI/UX Guidelines
 
 ### 6.1 Design System
 - **Framework:** Material 3 Expressive
@@ -230,7 +242,7 @@ class OrderComment {
 
 ---
 
-## 7. Handoff to Jules (AI Agent)
+## 8. Handoff to Jules (AI Agent)
 
 The following items are designated for implementation by the downstream AI agent (Jules):
 
@@ -251,7 +263,7 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-## 8. Deployment Architecture
+## 9. Deployment Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
@@ -276,7 +288,7 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-## 9. Communication Protocol
+## 10. Communication Protocol
 
 - **Primary Channel:** Discord DMs
 - **Participants:** Taylor (end-user), Jared Hasson (decision-maker)
@@ -285,23 +297,23 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-## 10. Acceptance Criteria
+## 11. Acceptance Criteria
 
 ### MVP Completion Checklist
 - [ ] Wholesalers can sign in via magic link
 - [ ] Wholesalers can place orders for Japanese/Chinese/Korean products
 - [ ] Wholesalers can view order history (12-month default)
+- [ ] **Taylor can see all orders in real-time dashboard** (Priority #1)
+- [ ] **Taylor can generate and send invoices in-app** (Priority #2)
+- [ ] **Taylor can chat with customers about payment proof** (Priority #3)
+- [ ] **Taylor can message customers with real names** (Priority #4)
 - [ ] Supplier can view/manage Japanese orders only
 - [ ] Super Users can view/manage all orders
-- [ ] Internal users can generate and send invoices
-- [ ] Internal users can mark payments received
-- [ ] Internal users can input tracking information
-- [ ] Comment system functional for all order communications
 - [ ] Application deployed and accessible via web URL
 
 ---
 
-## 11. Risk Mitigation
+## 12. Risk Mitigation
 
 | Risk | Mitigation |
 |------|------------|

@@ -1,12 +1,12 @@
-name: chroma_backend
-description: Chroma Wholesale - Dart Cloud Run Backend (package:shelf)
+name: croma_backend
+description: Croma Wholesale - Dart Cloud Run Backend (package:shelf)
 version: 1.0.0
 
 environment:
   sdk: ^3.6.0
 
 dependencies:
-  chroma_shared:
+  croma_shared:
     path: ../shared
   
   # HTTP Server

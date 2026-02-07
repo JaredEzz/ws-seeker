@@ -1,15 +1,15 @@
-# Chroma Wholesale Ordering Application - Project Plan
+# Croma Wholesale Ordering Application - Project Plan
 
 **Version:** 1.0  
 **Date:** 07 February 2026  
-**Client:** Chroma (Jared Hasson, Taylor)  
+**Client:** Croma (Jared Hasson, Taylor)  
 **Budget:** $1,000 (~10-13 development hours)
 
 ---
 
 ## Executive Summary
 
-This document outlines the development plan for a bespoke web-based wholesale ordering application to replace Chroma's current system of Google Forms, Excel sheets, and fragmented communication channels. The application will be built using a Full-Stack Dart architecture with Flutter Web (WASM) frontend and Dart Cloud Run backend.
+This document outlines the development plan for a bespoke web-based wholesale ordering application to replace Croma's current system of Google Forms, Excel sheets, and fragmented communication channels. The application will be built using a Full-Stack Dart architecture with Flutter Web (WASM) frontend and Dart Cloud Run backend.
 
 ---
 
@@ -18,7 +18,7 @@ This document outlines the development plan for a bespoke web-based wholesale or
 ### 1.1 Monorepo Structure (Dart 3.6+ Workspace)
 
 ```
-chroma_wholesale/
+croma_wholesale/
 ├── frontend/          # Flutter Web (WASM target)
 │   ├── lib/
 │   │   ├── blocs/     # BLoC state management
@@ -466,4 +466,4 @@ The following items are designated for implementation by the downstream AI agent
 
 ---
 
-*Document prepared for Chroma Wholesale project planning. All hours are estimates and may vary based on requirements clarification.*
+*Document prepared for Croma Wholesale project planning. All hours are estimates and may vary based on requirements clarification.*

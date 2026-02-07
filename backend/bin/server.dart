@@ -1,4 +1,4 @@
-/// Chroma Wholesale Backend Server
+/// Croma Wholesale Backend Server
 /// 
 /// Entry point for Cloud Run deployment
 library;

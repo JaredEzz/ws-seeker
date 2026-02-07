@@ -1,10 +1,10 @@
-# Chroma Wholesale Ordering Application
+# Croma Wholesale Ordering Application
 
 A full-stack Dart application for wholesale ordering, built with Flutter Web (WASM) and Dart Cloud Run.
 
 ## Project Overview
 
-This application replaces Chroma's existing system of Google Forms, Excel sheets, and fragmented communication channels (Discord/WhatsApp) with a unified, web-based wholesale ordering platform.
+This application replaces Croma's existing system of Google Forms, Excel sheets, and fragmented communication channels (Discord/WhatsApp) with a unified, web-based wholesale ordering platform.
 
 ### Key Features
 
@@ -18,7 +18,7 @@ This application replaces Chroma's existing system of Google Forms, Excel sheets
 This is a Dart 3.6+ Workspace monorepo with three packages:
 
 ```
-chroma_wholesale/
+croma_wholesale/
 ├── frontend/     # Flutter Web (WASM target)
 ├── backend/      # Dart Cloud Run (package:shelf)
 ├── shared/       # Shared DTOs and business logic
@@ -49,8 +49,8 @@ chroma_wholesale/
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_ORG/chroma-wholesale.git
-cd chroma-wholesale
+git clone https://github.com/JaredEzz/croma-wholesale.git
+cd croma-wholesale
 
 # Get dependencies
 dart pub get
@@ -111,7 +111,7 @@ The following items are designated for implementation by Jules:
 
 ## License
 
-Proprietary - Chroma
+Proprietary - Croma
 
 ---
 

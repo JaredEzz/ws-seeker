@@ -1,5 +1,5 @@
-name: chroma_shared
-description: Shared DTOs, models, and business logic for Chroma Wholesale
+name: croma_shared
+description: Shared DTOs, models, and business logic for Croma Wholesale
 
 environment:
   sdk: ^3.6.0

@@ -1,8 +1,8 @@
-/// Chroma Shared Package
+/// Croma Shared Package
 /// 
 /// Contains shared DTOs, models, pricing logic, and validators
 /// used by both frontend and backend packages.
-library chroma_shared;
+library croma_shared;
 
 // Models
 export 'src/models/user.dart';

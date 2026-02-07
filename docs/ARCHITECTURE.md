@@ -1,4 +1,4 @@
-# Chroma Wholesale - Technical Architecture
+# Croma Wholesale - Technical Architecture
 
 **Version:** 1.0  
 **Date:** 07 February 2026  
@@ -63,7 +63,7 @@
 
 ```yaml
 # /pubspec.yaml (Workspace Root)
-name: chroma_wholesale_workspace
+name: croma_wholesale_workspace
 environment:
   sdk: ^3.6.0
 
@@ -160,7 +160,7 @@ frontend/
 ```yaml
 # frontend/pubspec.yaml
 name: chroma_frontend
-description: Chroma Wholesale - Flutter Web Frontend
+description: Croma Wholesale - Flutter Web Frontend
 
 environment:
   sdk: ^3.6.0
@@ -305,7 +305,7 @@ backend/
 ```yaml
 # backend/pubspec.yaml
 name: chroma_backend
-description: Chroma Wholesale - Dart Cloud Run Backend
+description: Croma Wholesale - Dart Cloud Run Backend
 
 environment:
   sdk: ^3.6.0
@@ -499,7 +499,7 @@ shared/
 ```yaml
 # shared/pubspec.yaml
 name: chroma_shared
-description: Shared DTOs and business logic for Chroma Wholesale
+description: Shared DTOs and business logic for Croma Wholesale
 
 environment:
   sdk: ^3.6.0
@@ -966,7 +966,7 @@ steps:
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module filepath="$PROJECT_DIR$/chroma_wholesale.iml" />
+      <module filepath="$PROJECT_DIR$/croma_wholesale.iml" />
       <module filepath="$PROJECT_DIR$/frontend/frontend.iml" />
       <module filepath="$PROJECT_DIR$/backend/backend.iml" />
       <module filepath="$PROJECT_DIR$/shared/shared.iml" />
@@ -1002,4 +1002,4 @@ cd ../frontend && dart run build_runner build --delete-conflicting-outputs
 
 ---
 
-*This architecture document serves as the technical blueprint for the Chroma Wholesale project. All implementation must adhere to these specifications.*
+*This architecture document serves as the technical blueprint for the Croma Wholesale project. All implementation must adhere to these specifications.*

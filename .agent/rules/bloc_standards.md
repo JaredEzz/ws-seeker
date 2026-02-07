@@ -1,4 +1,4 @@
-# BLoC Standards for Chroma Wholesale
+# BLoC Standards for Croma Wholesale
 
 **Version:** 1.0  
 **Applies To:** `/frontend` Flutter Web Application  
@@ -294,7 +294,7 @@ MultiBlocProvider(
     BlocProvider(create: (_) => AuthBloc(authRepository: authRepo)),
     BlocProvider(create: (_) => ThemeBloc()),
   ],
-  child: const ChromaApp(),
+  child: const CromaApp(),
 );
 ```
 
@@ -463,4 +463,4 @@ dart run build_runner build --delete-conflicting-outputs
 
 ---
 
-*This document serves as the authoritative guide for BLoC implementation in the Chroma Wholesale project. All contributions must adhere to these standards.*
+*This document serves as the authoritative guide for BLoC implementation in the Croma Wholesale project. All contributions must adhere to these standards.*

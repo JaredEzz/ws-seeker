@@ -6,7 +6,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'user.freezed.dart';
 part 'user.g.dart';
 
-/// User roles in the Chroma Wholesale system
+/// User roles in the Croma Wholesale system
 enum UserRole {
   /// Wholesaler member - can place orders and view own history
   @JsonValue('wholesaler')

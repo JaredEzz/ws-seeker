@@ -159,7 +159,7 @@ frontend/
 
 ```yaml
 # frontend/pubspec.yaml
-name: chroma_frontend
+name: ws_seeker_frontend
 description: WS-Seeker - Flutter Web Frontend
 
 environment:
@@ -171,7 +171,7 @@ dependencies:
     sdk: flutter
   
   # Shared package
-  chroma_shared:
+  ws_seeker_shared:
     path: ../shared
   
   # State Management
@@ -304,7 +304,7 @@ backend/
 
 ```yaml
 # backend/pubspec.yaml
-name: chroma_backend
+name: ws_seeker_backend
 description: WS-Seeker - Dart Cloud Run Backend
 
 environment:
@@ -312,7 +312,7 @@ environment:
 
 dependencies:
   # Shared package
-  chroma_shared:
+  ws_seeker_shared:
     path: ../shared
   
   # HTTP Server
@@ -342,7 +342,7 @@ dev_dependencies:
 
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
-import 'package:chroma_shared/chroma_shared.dart';
+import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 class OrdersHandler {
   OrdersHandler({
@@ -489,7 +489,7 @@ shared/
 │   │   │   └── order_validator.dart
 │   │   └── constants/
 │   │       └── app_constants.dart
-│   └── chroma_shared.dart       # Barrel export
+│   └── ws_seeker_shared.dart       # Barrel export
 ├── test/
 └── pubspec.yaml
 ```
@@ -498,7 +498,7 @@ shared/
 
 ```yaml
 # shared/pubspec.yaml
-name: chroma_shared
+name: ws_seeker_shared
 description: Shared DTOs and business logic for WS-Seeker
 
 environment:
@@ -599,7 +599,7 @@ class ShippingAddress with _$ShippingAddress {
 ```dart
 // lib/src/pricing/price_calculator.dart
 
-import 'package:chroma_shared/chroma_shared.dart';
+import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 /// Price calculation service
 /// 
@@ -915,19 +915,19 @@ CMD ["/app/bin/server"]
 steps:
   # Build backend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/chroma-backend', '-f', 'backend/Dockerfile', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/ws-seeker-backend', '-f', 'backend/Dockerfile', '.']
   
   # Push backend
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/chroma-backend']
+    args: ['push', 'gcr.io/$PROJECT_ID/ws-seeker-backend']
   
   # Deploy backend
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     args:
       - 'run'
       - 'deploy'
-      - 'chroma-backend'
-      - '--image=gcr.io/$PROJECT_ID/chroma-backend'
+      - 'ws-seeker-backend'
+      - '--image=gcr.io/$PROJECT_ID/ws-seeker-backend'
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'

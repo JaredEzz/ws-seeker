@@ -10,7 +10,7 @@ import 'repositories/order_repository.dart';
 import 'repositories/product_repository.dart';
 
 void main() {
-  // Use hash strategy for GitHub Pages compatibility (avoids 404 on refresh)
+  // Use path strategy (remove # from URLs)
   usePathUrlStrategy();
 
   final authRepository = MockAuthRepository();

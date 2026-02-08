@@ -1,13 +1,10 @@
-name: Deploy to GitHub Pages
+name: Deploy to Firebase Hosting
 
 on:
   push:
     branches:
       - main
   workflow_dispatch:
-
-permissions:
-  contents: write
 
 jobs:
   build-and-deploy:
@@ -21,6 +18,17 @@ jobs:
         with:
           channel: 'stable'
           flutter-version: '3.27.0'
+          cache: true # Built-in caching for Flutter SDK
+
+      - name: Cache Dart dependencies 📦
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            **/tool/pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
 
       - name: Install dependencies (Shared) 📦
         run: |
@@ -42,15 +50,15 @@ jobs:
           cd frontend
           dart run build_runner build --delete-conflicting-outputs
 
-      - name: Build Web 🏗️
+      - name: Build Web (WASM) 🏗️
         run: |
           cd frontend
-          # Using standard web build for GitHub Pages compatibility
-          # WASM requires specific COOP/COEP headers not supported by GH Pages by default
-          flutter build web --base-href "/ws-seeker/"
+          flutter build web --wasm
 
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Deploy to Firebase Hosting 🚀
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          folder: frontend/build/web
-          branch: gh-pages
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_WS_SEEKER }}'
+          channelId: live
+          projectId: ws-seeker

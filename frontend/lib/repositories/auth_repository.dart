@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 abstract interface class AuthRepository {
@@ -50,5 +51,3 @@ class MockAuthRepository implements AuthRepository {
   @override
   Stream<AppUser?> get userChanges => _userController.stream;
 }
-
-import 'dart:async';

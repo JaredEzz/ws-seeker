@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
@@ -10,6 +9,9 @@ import 'repositories/order_repository.dart';
 import 'repositories/product_repository.dart';
 
 void main() {
+  // Hash strategy is used by default in Flutter Web, 
+  // which is required for GitHub Pages to avoid 404s on refresh.
+  
   final authRepository = MockAuthRepository();
   final orderRepository = MockOrderRepository();
   final productRepository = MockProductRepository();

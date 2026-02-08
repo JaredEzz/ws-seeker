@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_state.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/orders/order_form_screen.dart';
+import 'go_router_refresh_stream.dart';
 
 class AppRouter {
-  static final router = GoRouter(
+  final AuthBloc authBloc;
+
+  AppRouter({required this.authBloc});
+
+  late final router = GoRouter(
     initialLocation: '/login',
+    refreshListenable: GoRouterRefreshStream(authBloc.stream),
     redirect: (context, state) {
-      final authState = context.read<AuthBloc>().state;
+      final authState = authBloc.state;
       final loggingIn = state.matchedLocation == '/login';
 
+      // Initial or Loading -> Stay put (or splash)
       if (authState is AuthInitial || authState is AuthLoading) return null;
 
+      // Unauthenticated -> Force Login
       if (authState is! AuthAuthenticated) {
         return loggingIn ? null : '/login';
       }
 
+      // Authenticated -> Go to Dashboard if on Login
       if (loggingIn) {
         return '/dashboard';
       }

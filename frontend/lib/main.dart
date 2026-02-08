@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
@@ -9,43 +10,58 @@ import 'repositories/order_repository.dart';
 import 'repositories/product_repository.dart';
 
 void main() {
-  // Hash strategy is used by default in Flutter Web, 
-  // which is required for GitHub Pages to avoid 404s on refresh.
-  
+  // Use hash strategy for GitHub Pages compatibility (avoids 404 on refresh)
+  usePathUrlStrategy();
+
   final authRepository = MockAuthRepository();
   final orderRepository = MockOrderRepository();
   final productRepository = MockProductRepository();
 
+  // Create AuthBloc immediately so we can pass it to the Router
+  final authBloc = AuthBloc(authRepository: authRepository)
+    ..add(const AuthSessionChecked());
+
   runApp(
     MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<AuthRepository>(create: (_) => authRepository),
-        RepositoryProvider<OrderRepository>(create: (_) => orderRepository),
-        RepositoryProvider<ProductRepository>(create: (_) => productRepository),
+        RepositoryProvider<AuthRepository>.value(value: authRepository),
+        RepositoryProvider<OrderRepository>.value(value: orderRepository),
+        RepositoryProvider<ProductRepository>.value(value: productRepository),
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider(
-            create: (context) => AuthBloc(
-              authRepository: context.read<AuthRepository>(),
-            )..add(const AuthSessionChecked()),
-          ),
+          BlocProvider<AuthBloc>.value(value: authBloc),
         ],
-        child: const WSSeekerApp(),
+        child: WSSeekerApp(authBloc: authBloc),
       ),
     ),
   );
 }
 
-class WSSeekerApp extends StatelessWidget {
-  const WSSeekerApp({super.key});
+class WSSeekerApp extends StatefulWidget {
+  final AuthBloc authBloc;
+
+  const WSSeekerApp({super.key, required this.authBloc});
+
+  @override
+  State<WSSeekerApp> createState() => _WSSeekerAppState();
+}
+
+class _WSSeekerAppState extends State<WSSeekerApp> {
+  late final AppRouter _appRouter;
+
+  @override
+  void initState() {
+    super.initState();
+    _appRouter = AppRouter(authBloc: widget.authBloc);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'WS-Seeker',
       theme: AppTheme.lightTheme,
-      routerConfig: AppRouter.router,
+      routerConfig: _appRouter.router,
       debugShowCheckedModeBanner: false,
     );
   }

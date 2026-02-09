@@ -24,6 +24,7 @@ COPY backend/ /app/backend/
 # Generate code for shared package
 WORKDIR /app/shared
 RUN dart run build_runner build --delete-conflicting-outputs
+RUN ls -la /app/shared/lib/src/models/
 
 # Build the backend server
 WORKDIR /app/backend

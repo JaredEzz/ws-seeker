@@ -5,6 +5,7 @@ import '../blocs/auth/auth_state.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/orders/order_form_screen.dart';
+import '../screens/admin/product_management_screen.dart';
 import 'go_router_refresh_stream.dart';
 
 class AppRouter {
@@ -27,6 +28,12 @@ class AppRouter {
         return loggingIn ? null : '/login';
       }
 
+      // Check for Admin access to admin routes
+      if (state.matchedLocation.startsWith('/admin') && 
+          authState.user.role != UserRole.superUser) {
+        return '/dashboard';
+      }
+
       // Authenticated -> Go to Dashboard if on Login
       if (loggingIn) {
         return '/dashboard';
@@ -46,6 +53,10 @@ class AppRouter {
       GoRoute(
         path: '/place-order',
         builder: (context, state) => const OrderFormScreen(),
+      ),
+      GoRoute(
+        path: '/admin/products',
+        builder: (context, state) => const ProductManagementScreen(),
       ),
     ],
   );

@@ -42,9 +42,9 @@ abstract final class AppConstants {
 
 /// API route constants
 abstract final class ApiRoutes {
-  static const String auth = '/auth';
-  static const String magicLink = '/auth/magic-link';
-  static const String verify = '/auth/verify';
+  static const String auth = '/api/auth';
+  static const String magicLink = '/api/auth/magic-link';
+  static const String verifyMagicLink = '/api/auth/verify-magic-link';
   static const String orders = '/api/orders';
   static const String products = '/api/products';
   static const String invoices = '/api/invoices';

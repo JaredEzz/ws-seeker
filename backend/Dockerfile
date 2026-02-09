@@ -21,6 +21,10 @@ RUN dart pub get
 COPY shared/ /app/shared/
 COPY backend/ /app/backend/
 
+# Generate code for shared package
+WORKDIR /app/shared
+RUN dart run build_runner build --delete-conflicting-outputs
+
 # Build the backend server
 WORKDIR /app/backend
 RUN dart compile exe bin/server.dart -o bin/server

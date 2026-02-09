@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_state.dart';
 import '../screens/auth/login_screen.dart';
+import '../screens/auth/auth_callback_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/orders/order_form_screen.dart';
 import '../screens/admin/product_management_screen.dart';
@@ -45,6 +46,10 @@ class AppRouter {
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginScreen(),
+      ),
+      GoRoute(
+        path: '/auth/callback',
+        builder: (context, state) => AuthCallbackScreen(uri: state.uri),
       ),
       GoRoute(
         path: '/dashboard',

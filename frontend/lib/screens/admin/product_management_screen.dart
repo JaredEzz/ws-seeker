@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repositories/product_repository.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
+import 'product_import_dialog.dart';
 
 class ProductManagementScreen extends StatefulWidget {
   const ProductManagementScreen({super.key});
@@ -14,6 +15,9 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
   ProductLanguage _selectedLanguage = ProductLanguage.japanese;
   List<Product> _products = [];
   bool _isLoading = false;
+
+  // TODO: Get backend URL from environment/config
+  static const _backendUrl = 'https://backend-123456789-uc.a.run.app';
 
   @override
   void initState() {
@@ -40,12 +44,27 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
     }
   }
 
+  void _showImportDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => ProductImportDialog(backendUrl: _backendUrl),
+    ).then((_) {
+      // Reload products after import
+      _loadProducts();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Management'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.upload_file),
+            tooltip: 'Import CSV',
+            onPressed: _showImportDialog,
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadProducts,
@@ -55,6 +74,9 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           // TODO: Implementation for manual product creation
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Manual add coming soon. Use CSV import for now.')),
+          );
         },
         label: const Text('Add Product'),
         icon: const Icon(Icons.add),
@@ -94,11 +116,29 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
 
   Widget _buildProductList() {
     if (_products.isEmpty) {
-      return const Center(child: Text('No products found in this catalog.'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey),
+            const SizedBox(height: 16),
+            const Text(
+              'No products found in this catalog.',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton.icon(
+              onPressed: _showImportDialog,
+              icon: const Icon(Icons.upload_file),
+              label: const Text('Import Products'),
+            ),
+          ],
+        ),
+      );
     }
 
     return ListView.builder(
-      itemCount: _products.count,
+      itemCount: _products.length,
       itemBuilder: (context, index) {
         final product = _products[index];
         return ListTile(
@@ -108,6 +148,9 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
             icon: const Icon(Icons.edit),
             onPressed: () {
               // TODO: Implementation for manual edit
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Edit coming soon')),
+              );
             },
           ),
         );

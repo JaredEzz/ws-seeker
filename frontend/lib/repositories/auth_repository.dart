@@ -1,12 +1,13 @@
-import 'dart:async';
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 abstract interface class AuthRepository {
   Future<AppUser?> getCurrentUser();
   Future<void> loginWithMagicLink(String email);
-  Future<AppUser> verifyMagicLink(String email, String emailLink);
+  Future<AppUser> verifyMagicLink(String email, String token);
   Future<String?> retrievePendingEmail();
   bool isSignInWithEmailLink(String link);
   Future<void> loginWithGoogle();
@@ -27,16 +28,16 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> loginWithMagicLink(String email) async {
-    final actionCodeSettings = ActionCodeSettings(
-      url: 'https://ws-seeker.web.app/login', // Update with your domain
-      handleCodeInApp: true,
-    );
-
     try {
-      await _firebaseAuth.sendSignInLinkToEmail(
-        email: email,
-        actionCodeSettings: actionCodeSettings,
+      final response = await http.post(
+        Uri.parse('${AppConstants.apiBaseUrl}${ApiRoutes.magicLink}'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
       );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to send magic link: ${response.body}');
+      }
       
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_emailKey, email);
@@ -54,16 +55,40 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   bool isSignInWithEmailLink(String link) {
-    return _firebaseAuth.isSignInWithEmailLink(link);
+    // We now use our custom token system, but we might still receive
+    // callback links in the format /#/auth/callback?token=...
+    final uri = Uri.parse(link);
+    return uri.queryParameters.containsKey('token');
   }
 
   @override
-  Future<AppUser> verifyMagicLink(String email, String emailLink) async {
-    if (_firebaseAuth.isSignInWithEmailLink(emailLink)) {
-      final userCredential = await _firebaseAuth.signInWithEmailLink(
-        email: email,
-        emailLink: emailLink,
+  Future<AppUser> verifyMagicLink(String email, String tokenOrLink) async {
+    try {
+      String token = tokenOrLink;
+      if (tokenOrLink.contains('token=')) {
+        final uri = Uri.parse(tokenOrLink);
+        token = uri.queryParameters['token'] ?? tokenOrLink;
+      }
+
+      // 1. Verify token with our backend and get Firebase Custom Token
+      final response = await http.post(
+        Uri.parse('${AppConstants.apiBaseUrl}${ApiRoutes.verifyMagicLink}'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email,
+          'token': token,
+        }),
       );
+
+      if (response.statusCode != 200) {
+        throw Exception('Failed to verify magic link: ${response.body}');
+      }
+
+      final data = jsonDecode(response.body);
+      final customToken = data['token'] as String;
+
+      // 2. Sign in with Firebase Custom Token
+      final userCredential = await _firebaseAuth.signInWithCustomToken(customToken);
       
       final user = userCredential.user;
       if (user == null) throw Exception('Sign in failed');
@@ -72,8 +97,9 @@ class FirebaseAuthRepository implements AuthRepository {
       await prefs.remove(_emailKey);
 
       return _mapFirebaseUser(user);
-    } else {
-      throw Exception('Invalid magic link');
+    } catch (e) {
+      print('Verification failed: $e');
+      rethrow;
     }
   }
 

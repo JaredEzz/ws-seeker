@@ -40,7 +40,14 @@ abstract final class AppConstants {
   };
 }
 
-/// API route constants
+  /// API Base URL
+  static const String apiBaseUrl = String.fromEnvironment(
+    'BACKEND_URL',
+    defaultValue: 'http://localhost:8080',
+  );
+
+  /// API route constants
+
 abstract final class ApiRoutes {
   static const String auth = '/api/auth';
   static const String magicLink = '/api/auth/magic-link';

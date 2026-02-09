@@ -14,6 +14,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthDeepLinkChecked>(_onDeepLinkChecked);
     on<AuthMagicLinkRequested>(_onMagicLinkRequested);
     on<AuthMagicLinkVerified>(_onMagicLinkVerified);
+    on<AuthGoogleLoginRequested>(_onGoogleLoginRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
   }
 
@@ -74,6 +75,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authRepository.verifyMagicLink(event.email, event.link);
       emit(AuthAuthenticated(user: user));
+    } catch (e) {
+      emit(AuthFailure(message: e.toString()));
+    }
+  }
+
+  Future<void> _onGoogleLoginRequested(
+    AuthGoogleLoginRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    try {
+      await _authRepository.loginWithGoogle();
+      // AuthStateChanges listener will handle the success state
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }

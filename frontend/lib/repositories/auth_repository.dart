@@ -9,6 +9,7 @@ abstract interface class AuthRepository {
   Future<AppUser> verifyMagicLink(String email, String emailLink);
   Future<String?> retrievePendingEmail();
   bool isSignInWithEmailLink(String link);
+  Future<void> loginWithGoogle();
   Future<void> logout();
   Stream<AppUser?> get userChanges;
 }
@@ -18,66 +19,14 @@ class FirebaseAuthRepository implements AuthRepository {
   static const _emailKey = 'pending_magic_link_email';
 
   @override
-  Future<AppUser?> getCurrentUser() async {
-    final user = _firebaseAuth.currentUser;
-    if (user == null) return null;
-    return _mapFirebaseUser(user);
-  }
-
-  @override
-  Future<void> loginWithMagicLink(String email) async {
-    final actionCodeSettings = ActionCodeSettings(
-      url: 'https://ws-seeker.web.app/login', // Update with your domain
-      handleCodeInApp: true,
-    );
-
-    try {
-      await _firebaseAuth.sendSignInLinkToEmail(
-        email: email,
-        actionCodeSettings: actionCodeSettings,
-      );
-      
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_emailKey, email);
-    } catch (e) {
-      print('Failed to send magic link: $e'); // Debug logging
-      rethrow;
-    }
-  }
-
-  @override
-  Future<String?> retrievePendingEmail() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_emailKey);
-  }
-
-  @override
-  bool isSignInWithEmailLink(String link) {
-    return _firebaseAuth.isSignInWithEmailLink(link);
-  }
-
-  @override
-  Future<AppUser> verifyMagicLink(String email, String emailLink) async {
-    if (_firebaseAuth.isSignInWithEmailLink(emailLink)) {
-      final userCredential = await _firebaseAuth.signInWithEmailLink(
-        email: email,
-        emailLink: emailLink,
-      );
-      
-      final user = userCredential.user;
-      if (user == null) throw Exception('Sign in failed');
-      
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_emailKey);
-
-      return _mapFirebaseUser(user);
-    } else {
-      throw Exception('Invalid magic link');
-    }
+  Future<void> loginWithGoogle() async {
+    // Web-specific Google Sign-In
+    await _firebaseAuth.signInWithPopup(GoogleAuthProvider());
   }
 
   @override
   Future<void> logout() async {
+
     await _firebaseAuth.signOut();
   }
 
@@ -125,6 +74,18 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   bool isSignInWithEmailLink(String link) => link == 'mock-token';
+
+  @override
+  Future<void> loginWithGoogle() async {
+    await Future.delayed(const Duration(seconds: 1));
+    _currentUser = AppUser(
+      id: 'mock-google-user',
+      email: 'user@gmail.com',
+      role: UserRole.wholesaler,
+      createdAt: DateTime.now(),
+    );
+    _userController.add(_currentUser);
+  }
 
   @override
   Future<AppUser> verifyMagicLink(String email, String token) async {

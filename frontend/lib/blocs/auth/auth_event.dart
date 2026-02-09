@@ -24,6 +24,10 @@ final class AuthMagicLinkVerified extends AuthEvent {
   const AuthMagicLinkVerified({required this.email, required this.link});
 }
 
+final class AuthGoogleLoginRequested extends AuthEvent {
+  const AuthGoogleLoginRequested();
+}
+
 final class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();
 }

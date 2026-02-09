@@ -20,14 +20,14 @@ class UserService {
     try {
       await userRef.update({
         'role': role.name,
-        // 'savedAddress': address.toJson(), // Temporarily disabled due to build error
+        'savedAddress': address.toJson(),
         'shopifySyncAt': FieldValue.serverTimestamp,
       });
     } catch (e) {
       // If update fails (doc doesn't exist), create it
       await userRef.set({
         'role': role.name,
-        // 'savedAddress': address.toJson(),
+        'savedAddress': address.toJson(),
         'shopifySyncAt': FieldValue.serverTimestamp,
         'createdAt': FieldValue.serverTimestamp,
       });

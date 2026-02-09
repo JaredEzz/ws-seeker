@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'frontend/**'
+      - 'shared/**'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
 jobs:

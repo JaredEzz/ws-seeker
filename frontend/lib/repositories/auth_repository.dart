@@ -29,19 +29,20 @@ class FirebaseAuthRepository implements AuthRepository {
     final actionCodeSettings = ActionCodeSettings(
       url: 'https://ws-seeker.web.app/login', // Update with your domain
       handleCodeInApp: true,
-      androidPackageName: 'com.croma.ws_seeker',
-      androidInstallApp: true,
-      androidMinimumVersion: '12',
-      iOSBundleId: 'com.croma.wsSeeker',
     );
 
-    await _firebaseAuth.sendSignInLinkToEmail(
-      email: email,
-      actionCodeSettings: actionCodeSettings,
-    );
-    
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_emailKey, email);
+    try {
+      await _firebaseAuth.sendSignInLinkToEmail(
+        email: email,
+        actionCodeSettings: actionCodeSettings,
+      );
+      
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_emailKey, email);
+    } catch (e) {
+      print('Failed to send magic link: $e'); // Debug logging
+      rethrow;
+    }
   }
 
   @override

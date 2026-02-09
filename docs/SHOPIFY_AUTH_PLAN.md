@@ -69,6 +69,34 @@ sequenceDiagram
 
 ---
 
+## 5. Alternative: Email-Based Account Linking (Magic Link Sync)
+
+If the user signs in via **Email Magic Link**, we can automatically sync their Shopify data without requiring a separate "Sign in with Shopify" flow.
+
+### Workflow
+1.  User signs in via Magic Link (email is verified).
+2.  Backend (Cloud Function / Cloud Run) is triggered (e.g., `onUserCreated` or explicit sync endpoint).
+3.  Backend queries Shopify Admin API: `GET /admin/api/2024-01/customers/search.json?query=email:{email}`.
+4.  **If Match Found:**
+    - Retrieve Shopify Customer ID, Tags, Default Address.
+    - Update Firestore User Document:
+      ```json
+      {
+        "shopifyId": "gid://shopify/Customer/123456789",
+        "role": "wholesaler", // If tag 'Wholesale' exists
+        "savedAddress": { ... } // From Shopify default address
+      }
+      ```
+5.  **If No Match:** User remains a basic user (or we prompt them to contact support).
+
+### Required Credentials
+To implement this, we need a **Shopify Admin API Access Token** (not just OAuth client secret).
+
+- **Scope:** `read_customers`
+- **Type:** Admin API Access Token (begins with `shpat_...`)
+
+---
+
 ## Implementation Steps
 
 ### Phase 1: Shopify App Setup (Manual)

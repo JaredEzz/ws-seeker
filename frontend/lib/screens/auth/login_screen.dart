@@ -91,21 +91,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                         : const Text('Send Magic Link'),
                   ),
-                  const SizedBox(height: 16),
-                  OutlinedButton.icon(
-                    onPressed: state is AuthLoading
-                        ? null
-                        : () {
-                            context.read<AuthBloc>().add(
-                                  const AuthGoogleLoginRequested(),
-                                );
-                          },
-                    icon: const Icon(Icons.g_mobiledata, size: 28), // Or a better Google icon asset if available
-                    label: const Text('Sign in with Google'),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.all(16),
-                    ),
-                  ),
                   const SizedBox(height: 24),
                   const Divider(),
                   const SizedBox(height: 16),

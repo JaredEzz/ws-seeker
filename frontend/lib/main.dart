@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
@@ -5,15 +6,24 @@ import 'app/router.dart';
 import 'app/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_event.dart';
+import 'firebase_options.dart';
 import 'repositories/auth_repository.dart';
 import 'repositories/order_repository.dart';
 import 'repositories/product_repository.dart';
 
-void main() {
+void main() async {
+  // Ensure Flutter bindings are initialized
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   // Use path strategy (remove # from URLs)
   usePathUrlStrategy();
 
-  final authRepository = MockAuthRepository();
+  final authRepository = FirebaseAuthRepository();
   final orderRepository = MockOrderRepository();
   final productRepository = MockProductRepository();
 

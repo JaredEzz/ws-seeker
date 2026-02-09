@@ -79,8 +79,8 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Future<void> loginWithGoogle() async {
-    // Web-specific Google Sign-In
-    await _firebaseAuth.signInWithPopup(GoogleAuthProvider());
+    // Use redirect instead of popup due to COOP headers required for WASM
+    await _firebaseAuth.signInWithRedirect(GoogleAuthProvider());
   }
 
   @override

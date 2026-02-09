@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../repositories/auth_repository.dart';
@@ -6,6 +7,7 @@ import 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
+  StreamSubscription<AppUser?>? _userSubscription;
 
   AuthBloc({required AuthRepository authRepository})
       : _authRepository = authRepository,
@@ -16,6 +18,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthMagicLinkVerified>(_onMagicLinkVerified);
     on<AuthGoogleLoginRequested>(_onGoogleLoginRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
+    on<_AuthUserChanged>(_onUserChanged);
+
+    // Listen to auth state changes (handles redirect result automatically)
+    _userSubscription = _authRepository.userChanges.listen((user) {
+      add(_AuthUserChanged(user));
+    });
+  }
+
+  Future<void> _onUserChanged(
+    _AuthUserChanged event,
+    Emitter<AuthState> emit,
+  ) async {
+    if (event.user != null) {
+      emit(AuthAuthenticated(user: event.user!));
+    } else {
+      emit(const AuthUnauthenticated());
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _userSubscription?.cancel();
+    return super.close();
   }
 
   Future<void> _onSessionChecked(

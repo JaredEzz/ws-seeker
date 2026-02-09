@@ -31,3 +31,9 @@ final class AuthGoogleLoginRequested extends AuthEvent {
 final class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();
 }
+
+// Internal event for auth state stream changes
+final class _AuthUserChanged extends AuthEvent {
+  final AppUser? user;
+  const _AuthUserChanged(this.user);
+}

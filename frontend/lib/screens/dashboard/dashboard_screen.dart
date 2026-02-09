@@ -85,11 +85,6 @@ class DashboardScreen extends StatelessWidget {
               ],
             ),
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () => context.push('/place-order'),
-            icon: const Icon(Icons.add),
-            label: const Text('Place New Order'),
-          ),
         ),
       ),
     );

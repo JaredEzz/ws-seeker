@@ -47,7 +47,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      final user = await _authRepository.verifyMagicLink(event.token);
+      final user = await _authRepository.verifyMagicLink(event.email, event.link);
       emit(AuthAuthenticated(user: user));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));

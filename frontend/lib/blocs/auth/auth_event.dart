@@ -14,8 +14,9 @@ final class AuthMagicLinkRequested extends AuthEvent {
 }
 
 final class AuthMagicLinkVerified extends AuthEvent {
-  final String token;
-  const AuthMagicLinkVerified({required this.token});
+  final String email;
+  final String link;
+  const AuthMagicLinkVerified({required this.email, required this.link});
 }
 
 final class AuthLogoutRequested extends AuthEvent {

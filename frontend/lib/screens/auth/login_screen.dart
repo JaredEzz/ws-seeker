@@ -98,10 +98,13 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       // Mock verification for local testing
                       context.read<AuthBloc>().add(
-                            const AuthMagicLinkVerified(token: 'mock-token'),
+                            const AuthMagicLinkVerified(
+                              email: 'kenny@croma.com',
+                              link: 'mock-token',
+                            ),
                           );
                     },
-                    child: const Text('Dev Bypass: Login as Taylor'),
+                    child: const Text('Dev Bypass: Login as Kenny'),
                   ),
                 ],
               );

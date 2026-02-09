@@ -2,7 +2,7 @@
 
 **Version:** 1.0  
 **Date:** 07 February 2026  
-**Client:** Croma (Jared Hasson, Taylor)  
+**Client:** Croma (Jared Hasson, Kenny)  
 **Budget:** $1,000 (~10-13 development hours)
 
 ---
@@ -58,9 +58,9 @@ ws-seeker/
 
 ---
 
-## 2. Taylor's Core Workflow (Priority Order)
+## 2. Kenny's Core Workflow (Priority Order)
 
-Based on Taylor's feedback, the internal user workflow priorities are:
+Based on Kenny's feedback, the internal user workflow priorities are:
 
 | Priority | Need | Solution |
 |----------|------|----------|
@@ -79,7 +79,7 @@ Given the 10-13 hour budget constraint, features are categorized into **Core (MV
 
 These features are essential to replace the current system:
 
-| # | Feature | Hours | Description | Taylor Priority |
+| # | Feature | Hours | Description | Kenny Priority |
 |---|---------|-------|-------------|-----------------|
 | 1 | User Authentication | 1.5 | Magic link auth with email verification | Foundation |
 | 2 | Role-Based Access Control | 1.0 | 3-tier permission system (Wholesaler/Supplier/Super User) | Foundation |
@@ -117,11 +117,11 @@ These features are essential to replace the current system:
 ```
 Week 1                          Week 2                          Week 3
 │                               │                               │
-├─ M1: Login Demo ──────────────├─ M2: Taylor Workflow ─────────├─ M3: MVP Complete
+├─ M1: Login Demo ──────────────├─ M2: Kenny Workflow ─────────├─ M3: MVP Complete
 │  (Hour 3)                     │  (Hour 7)                     │  (Hour 10)
 │                               │                               │
 │  CHECKPOINT 1                 │  CHECKPOINT 2                 │  CHECKPOINT 3
-│  Discord call w/ Taylor       │  Discord call w/ Taylor       │  Final review w/ Jared
+│  Discord call w/ Kenny       │  Discord call w/ Kenny       │  Final review w/ Jared
 │  "Can you log in?"            │  "Does this work for you?"    │  "Ready for customers?"
 ```
 
@@ -139,8 +139,8 @@ Week 1                          Week 2                          Week 3
 | Basic navigation shell | 0.5 | NavigationRail/BottomNav |
 
 **Demo to Stakeholders:**
-- [ ] Taylor receives magic link email
-- [ ] Taylor logs in and sees her dashboard (empty state)
+- [ ] Kenny receives magic link email
+- [ ] Kenny logs in and sees her dashboard (empty state)
 - [ ] Show role separation (Supplier vs Super User view)
 
 **Checkpoint 1 Questions:**
@@ -152,7 +152,7 @@ Week 1                          Week 2                          Week 3
 
 ---
 
-### Milestone 2: Taylor's Core Workflow (Hours 4-7)
+### Milestone 2: Kenny's Core Workflow (Hours 4-7)
 **Target:** Mid Week 2 | **Demo Length:** 30 min
 
 | Task | Hours | Deliverable |
@@ -163,11 +163,11 @@ Week 1                          Week 2                          Week 3
 | Order Comments | 1.0 | Payment discussion thread |
 
 **Demo to Stakeholders:**
-- [ ] Taylor sees test orders in dashboard
-- [ ] Taylor filters by status/language/date
-- [ ] Taylor generates invoice for an order
-- [ ] Taylor sends invoice (receives email)
-- [ ] Taylor comments on order, customer sees it
+- [ ] Kenny sees test orders in dashboard
+- [ ] Kenny filters by status/language/date
+- [ ] Kenny generates invoice for an order
+- [ ] Kenny sends invoice (receives email)
+- [ ] Kenny comments on order, customer sees it
 
 **Checkpoint 2 Questions:**
 1. "Can you see everything you need about orders?"
@@ -175,7 +175,7 @@ Week 1                          Week 2                          Week 3
 3. "Does the comment flow work for payment discussions?"
 4. "What's missing before customers can use this?"
 
-**Go/No-Go:** Taylor confirms workflow works before building customer side
+**Go/No-Go:** Kenny confirms workflow works before building customer side
 
 ---
 
@@ -192,7 +192,7 @@ Week 1                          Week 2                          Week 3
 **Demo to Stakeholders:**
 - [ ] Test customer logs in
 - [ ] Customer places order (Japanese products)
-- [ ] Order appears in Taylor's dashboard immediately
+- [ ] Order appears in Kenny's dashboard immediately
 - [ ] Full cycle: Order → Invoice → Payment chat → Complete
 
 **Checkpoint 3 - Final Review Questions:**
@@ -209,7 +209,7 @@ Week 1                          Week 2                          Week 3
 
 | Task | Hours | Priority |
 |------|-------|----------|
-| Proof of payment upload | 0.75 | High (Taylor requested) |
+| Proof of payment upload | 0.75 | High (Kenny requested) |
 | Email notifications | 0.75 | Medium |
 | Order export CSV | 0.5 | Low |
 | Complex pricing | 1.0 | Defer to Jules |
@@ -220,9 +220,9 @@ Week 1                          Week 2                          Week 3
 
 | Checkpoint | When | Who | Format | Duration | Purpose |
 |------------|------|-----|--------|----------|---------|
-| **CP1** | After Hour 3 | Taylor | Discord call | 15 min | Validate auth & navigation |
-| **CP2** | After Hour 7 | Taylor | Discord call | 30 min | Validate internal workflow |
-| **CP3** | After Hour 10 | Taylor + Jared | Discord call | 30 min | MVP sign-off |
+| **CP1** | After Hour 3 | Kenny | Discord call | 15 min | Validate auth & navigation |
+| **CP2** | After Hour 7 | Kenny | Discord call | 30 min | Validate internal workflow |
+| **CP3** | After Hour 10 | Kenny + Jared | Discord call | 30 min | MVP sign-off |
 | **CP4** | After Hour 13 | Jared | Discord DM | Async | Stretch goals complete |
 
 ### Communication Protocol
@@ -254,7 +254,7 @@ After checkpoint:
 |------|-----------------|------------|
 | Auth takes too long | Hour 2 | Use Firebase UI drop-in |
 | Dashboard UX wrong | Checkpoint 2 | Iterate before customer flow |
-| Invoice format wrong | Checkpoint 2 | Get sample invoice from Taylor |
+| Invoice format wrong | Checkpoint 2 | Get sample invoice from Kenny |
 | Scope creep | Any checkpoint | Defer to stretch/post-MVP |
 | Over budget | Hour 8 | Cut to core features only |
 
@@ -265,7 +265,7 @@ After checkpoint:
 | Situation | Action |
 |-----------|--------|
 | Finished a milestone | Schedule checkpoint call |
-| Stuck for > 30 min | DM Jared/Taylor for clarification |
+| Stuck for > 30 min | DM Jared/Kenny for clarification |
 | Scope question | Ask before building |
 | UX decision | Screenshot + "Option A or B?" in Discord |
 | Budget concern | Flag immediately |
@@ -425,7 +425,7 @@ The following items are designated for implementation by the downstream AI agent
 ## 13. Communication Protocol
 
 - **Primary Channel:** Discord DMs
-- **Participants:** Taylor (end-user), Jared Hasson (decision-maker)
+- **Participants:** Kenny (end-user), Jared Hasson (decision-maker)
 - **Updates:** End of each development phase
 - **Scope Changes:** Must be approved via Discord before implementation
 
@@ -437,10 +437,10 @@ The following items are designated for implementation by the downstream AI agent
 - [ ] Wholesalers can sign in via magic link
 - [ ] Wholesalers can place orders for Japanese/Chinese/Korean products
 - [ ] Wholesalers can view order history (12-month default)
-- [ ] **Taylor can see all orders in real-time dashboard** (Priority #1)
-- [ ] **Taylor can generate and send invoices in-app** (Priority #2)
-- [ ] **Taylor can chat with customers about payment proof** (Priority #3)
-- [ ] **Taylor can message customers with real names** (Priority #4)
+- [ ] **Kenny can see all orders in real-time dashboard** (Priority #1)
+- [ ] **Kenny can generate and send invoices in-app** (Priority #2)
+- [ ] **Kenny can chat with customers about payment proof** (Priority #3)
+- [ ] **Kenny can message customers with real names** (Priority #4)
 - [ ] Supplier can view/manage Japanese orders only
 - [ ] Super Users can view/manage all orders
 - [ ] Application deployed and accessible via web URL
@@ -461,7 +461,7 @@ The following items are designated for implementation by the downstream AI agent
 ## Next Steps
 
 1. **Client Decision Required:** Review Core vs Stretch features and confirm final scope
-2. **Discord Confirmation:** Align Taylor on MVP feature set
+2. **Discord Confirmation:** Align Kenny on MVP feature set
 3. **Development Kickoff:** Begin Phase 1 upon approval
 
 ---

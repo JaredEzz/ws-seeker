@@ -1,12 +1,89 @@
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 abstract interface class AuthRepository {
   Future<AppUser?> getCurrentUser();
   Future<void> loginWithMagicLink(String email);
-  Future<AppUser> verifyMagicLink(String token);
+  Future<AppUser> verifyMagicLink(String email, String emailLink);
   Future<void> logout();
   Stream<AppUser?> get userChanges;
+}
+
+class FirebaseAuthRepository implements AuthRepository {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  @override
+  Future<AppUser?> getCurrentUser() async {
+    final user = _firebaseAuth.currentUser;
+    if (user == null) return null;
+    return _mapFirebaseUser(user);
+  }
+
+  @override
+  Future<void> loginWithMagicLink(String email) async {
+    final actionCodeSettings = ActionCodeSettings(
+      url: 'https://ws-seeker.web.app/login', // Update with your domain
+      handleCodeInApp: true,
+      androidPackageName: 'com.croma.ws_seeker',
+      androidInstallApp: true,
+      androidMinimumVersion: '12',
+      iOSBundleId: 'com.croma.wsSeeker',
+    );
+
+    await _firebaseAuth.sendSignInLinkToEmail(
+      email: email,
+      actionCodeSettings: actionCodeSettings,
+    );
+    
+    // Save email locally for verification flow (simulated here, but usually stored in shared_preferences)
+    // In Web, we might prompt user to re-enter email if opening link on different device.
+  }
+
+  @override
+  Future<AppUser> verifyMagicLink(String email, String emailLink) async {
+    if (_firebaseAuth.isSignInWithEmailLink(emailLink)) {
+      final userCredential = await _firebaseAuth.signInWithEmailLink(
+        email: email,
+        emailLink: emailLink,
+      );
+      
+      final user = userCredential.user;
+      if (user == null) throw Exception('Sign in failed');
+      
+      return _mapFirebaseUser(user);
+    } else {
+      throw Exception('Invalid magic link');
+    }
+  }
+
+  @override
+  Future<void> logout() async {
+    await _firebaseAuth.signOut();
+  }
+
+  @override
+  Stream<AppUser?> get userChanges {
+    return _firebaseAuth.authStateChanges().map((user) {
+      if (user == null) return null;
+      return _mapFirebaseUser(user);
+    });
+  }
+
+  AppUser _mapFirebaseUser(User user) {
+    // TODO: Fetch role from Firestore "users" collection
+    // For now, default to wholesaler unless email is whitelisted
+    final role = user.email == 'kenny@croma.com' 
+        ? UserRole.superUser 
+        : UserRole.wholesaler;
+
+    return AppUser(
+      id: user.uid,
+      email: user.email!,
+      role: role,
+      createdAt: user.metadata.creationTime ?? DateTime.now(),
+    );
+  }
 }
 
 class MockAuthRepository implements AuthRepository {
@@ -15,25 +92,22 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<AppUser?> getCurrentUser() async {
-    // TODO: Check Firebase Auth current user and fetch Firestore profile
     await Future.delayed(const Duration(milliseconds: 500));
     return _currentUser;
   }
 
   @override
   Future<void> loginWithMagicLink(String email) async {
-    // TODO: Call backend Cloud Run endpoint POST /auth/magic-link
     await Future.delayed(const Duration(seconds: 1));
-    // In a real app, this sends an email. In mock, we do nothing.
   }
 
   @override
-  Future<AppUser> verifyMagicLink(String token) async {
-    // TODO: Call Firebase Auth signInWithEmailLink and fetch Firestore profile
+  Future<AppUser> verifyMagicLink(String email, String token) async {
+    // Mock implementation ignores email/token specifics
     await Future.delayed(const Duration(seconds: 1));
     _currentUser = AppUser(
       id: 'mock-user-id',
-      email: 'taylor@croma.com',
+      email: 'kenny@croma.com',
       role: UserRole.superUser,
       createdAt: DateTime.now(),
     );
@@ -43,7 +117,6 @@ class MockAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout() async {
-    // TODO: Call Firebase Auth signOut
     _currentUser = null;
     _userController.add(null);
   }

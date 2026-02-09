@@ -16,7 +16,7 @@ enum UserRole {
   @JsonValue('supplier')
   supplier,
 
-  /// Super User (Kenny, Jared) - can manage all orders
+  /// Super User (Admin, Jared) - can manage all orders
   @JsonValue('super_user')
   superUser,
 }

@@ -99,12 +99,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       // Mock verification for local testing
                       context.read<AuthBloc>().add(
                             const AuthMagicLinkVerified(
-                              email: 'kenny@croma.com',
+                              email: 'admin@croma.com',
                               link: 'mock-token',
                             ),
                           );
                     },
-                    child: const Text('Dev Bypass: Login as Kenny'),
+                    child: const Text('Dev Bypass: Login as Admin'),
                   ),
                 ],
               );

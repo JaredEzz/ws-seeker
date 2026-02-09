@@ -84,7 +84,7 @@ cd frontend && flutter run -d chrome --web-renderer html
 |------|--------|
 | Wholesaler | Own orders, order history, payment submission |
 | Supplier (Mimi) | Japanese orders only |
-| Super User (Kenny/Jared) | All orders, all languages |
+| Super User (Admin/Jared) | All orders, all languages |
 
 ## Pricing Logic
 
@@ -109,7 +109,7 @@ The following items are designated for implementation by Jules:
 ## Communication
 
 - **Primary Channel**: Discord DMs
-- **Stakeholders**: Kenny (end-user), Jared Hasson (decision-maker)
+- **Stakeholders**: Admin (end-user), Jared Hasson (decision-maker)
 
 ## License
 

@@ -11,7 +11,7 @@
 - **Input:** Full history of comments/messages for a specific order.
 - **AI Output:**
   - **Current Status:** (e.g., "Waiting for payment proof")
-  - **Pending Action Items:** (e.g., "Kenny needs to approve shipping cost")
+  - **Pending Action Items:** (e.g., "Admin needs to approve shipping cost")
   - **Key Decisions:** (e.g., "Agreed to split shipping 50/50")
 - **Cost:** Extremely Low (Text-only input/output).
 

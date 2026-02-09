@@ -18,16 +18,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthMagicLinkVerified>(_onMagicLinkVerified);
     on<AuthGoogleLoginRequested>(_onGoogleLoginRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
-    on<_AuthUserChanged>(_onUserChanged);
+    on<AuthUserChanged>(_onUserChanged);
 
     // Listen to auth state changes (handles redirect result automatically)
     _userSubscription = _authRepository.userChanges.listen((user) {
-      add(_AuthUserChanged(user));
+      add(AuthUserChanged(user));
     });
   }
 
   Future<void> _onUserChanged(
-    _AuthUserChanged event,
+    AuthUserChanged event,
     Emitter<AuthState> emit,
   ) async {
     if (event.user != null) {

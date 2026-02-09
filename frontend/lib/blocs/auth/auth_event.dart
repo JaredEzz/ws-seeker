@@ -33,7 +33,7 @@ final class AuthLogoutRequested extends AuthEvent {
 }
 
 // Internal event for auth state stream changes
-final class _AuthUserChanged extends AuthEvent {
+final class AuthUserChanged extends AuthEvent {
   final AppUser? user;
-  const _AuthUserChanged(this.user);
+  const AuthUserChanged(this.user);
 }

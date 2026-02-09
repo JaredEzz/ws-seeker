@@ -20,6 +20,7 @@ dependencies:
   # Utilities
   dotenv: ^4.2.0
   uuid: ^4.4.2
+  http: ^1.2.0
   
   # Email
   mailer: ^6.1.2

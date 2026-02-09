@@ -8,6 +8,11 @@ final class AuthSessionChecked extends AuthEvent {
   const AuthSessionChecked();
 }
 
+final class AuthDeepLinkChecked extends AuthEvent {
+  final Uri uri;
+  const AuthDeepLinkChecked(this.uri);
+}
+
 final class AuthMagicLinkRequested extends AuthEvent {
   final String email;
   const AuthMagicLinkRequested({required this.email});

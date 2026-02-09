@@ -9,8 +9,32 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
 
+import 'package:dart_firebase_admin/dart_firebase_admin.dart';
+import 'package:dart_firebase_admin/firestore.dart';
+import 'package:ws_seeker_backend/handlers/sync_handler.dart';
+import 'package:ws_seeker_backend/services/shopify_service.dart';
+import 'package:ws_seeker_backend/services/user_service.dart';
+
 void main() async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
+
+  // Initialize Firebase Admin
+  // Note: Ensure GOOGLE_APPLICATION_CREDENTIALS is set in dev/prod
+  final admin = FirebaseAdminApp.initializeApp(
+    'ws-seeker',
+    Credential.fromApplicationDefaultCredentials(),
+  );
+  final firestore = Firestore(admin);
+
+  // Initialize Services
+  final shopifyService = ShopifyService();
+  final userService = UserService(firestore);
+
+  // Initialize Handlers
+  final syncHandler = SyncHandler(
+    shopifyService: shopifyService, 
+    userService: userService,
+  );
 
   final router = Router();
 
@@ -19,10 +43,8 @@ void main() async {
     return Response.ok('OK');
   });
 
-  // TODO: Mount handlers here
-  // router.mount('/auth', authHandler.router.call);
-  // router.mount('/api/orders', ordersHandler.router.call);
-  // router.mount('/api/products', productsHandler.router.call);
+  // Mount API Handlers
+  router.mount('/api/sync', syncHandler.router.call);
 
   // Apply middleware
   final handler = const Pipeline()

@@ -11,6 +11,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : _authRepository = authRepository,
         super(const AuthInitial()) {
     on<AuthSessionChecked>(_onSessionChecked);
+    on<AuthDeepLinkChecked>(_onDeepLinkChecked);
     on<AuthMagicLinkRequested>(_onMagicLinkRequested);
     on<AuthMagicLinkVerified>(_onMagicLinkVerified);
     on<AuthLogoutRequested>(_onLogoutRequested);
@@ -25,6 +26,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthAuthenticated(user: user));
     } else {
       emit(const AuthUnauthenticated());
+    }
+  }
+
+  Future<void> _onDeepLinkChecked(
+    AuthDeepLinkChecked event,
+    Emitter<AuthState> emit,
+  ) async {
+    final link = event.uri.toString();
+    if (_authRepository.isSignInWithEmailLink(link)) {
+      emit(const AuthLoading());
+      try {
+        final email = await _authRepository.retrievePendingEmail();
+        if (email != null) {
+          final user = await _authRepository.verifyMagicLink(email, link);
+          emit(AuthAuthenticated(user: user));
+        } else {
+          // Email not found on this device.
+          // In a real app, we would emit a state to prompt for email.
+          // For now, we fail gracefully.
+          emit(const AuthFailure(message: 'Please enter your email again to complete sign in.'));
+        }
+      } catch (e) {
+        emit(AuthFailure(message: e.toString()));
+      }
     }
   }
 

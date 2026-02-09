@@ -19,7 +19,8 @@ void main() {
 
   // Create AuthBloc immediately so we can pass it to the Router
   final authBloc = AuthBloc(authRepository: authRepository)
-    ..add(const AuthSessionChecked());
+    ..add(const AuthSessionChecked())
+    ..add(AuthDeepLinkChecked(Uri.base));
 
   runApp(
     MultiRepositoryProvider(

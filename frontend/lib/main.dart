@@ -25,7 +25,7 @@ void main() async {
 
   final authRepository = FirebaseAuthRepository();
   final orderRepository = MockOrderRepository();
-  final productRepository = MockProductRepository();
+  final productRepository = FirestoreProductRepository();
 
   // Create AuthBloc immediately so we can pass it to the Router
   final authBloc = AuthBloc(authRepository: authRepository)

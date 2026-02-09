@@ -12,8 +12,10 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:dart_firebase_admin/dart_firebase_admin.dart';
 import 'package:dart_firebase_admin/firestore.dart';
 import 'package:ws_seeker_backend/handlers/sync_handler.dart';
+import 'package:ws_seeker_backend/handlers/product_handler.dart';
 import 'package:ws_seeker_backend/services/shopify_service.dart';
 import 'package:ws_seeker_backend/services/user_service.dart';
+import 'package:ws_seeker_backend/services/product_service.dart';
 
 void main() async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -29,12 +31,14 @@ void main() async {
   // Initialize Services
   final shopifyService = ShopifyService();
   final userService = UserService(firestore);
+  final productService = ProductService(firestore);
 
   // Initialize Handlers
   final syncHandler = SyncHandler(
     shopifyService: shopifyService, 
     userService: userService,
   );
+  final productHandler = ProductHandler(productService: productService);
 
   final router = Router();
 
@@ -45,6 +49,7 @@ void main() async {
 
   // Mount API Handlers
   router.mount('/api/sync', syncHandler.router.call);
+  router.mount('/api/products', productHandler.router.call);
 
   // Apply middleware
   final handler = const Pipeline()

@@ -38,20 +38,20 @@ abstract final class AppConstants {
     'chinese': 'Chinese',
     'korean': 'Korean',
   };
-}
 
   /// API Base URL
   static const String apiBaseUrl = String.fromEnvironment(
     'BACKEND_URL',
     defaultValue: 'http://localhost:8080',
   );
+}
 
-  /// API route constants
-
+/// API route constants
 abstract final class ApiRoutes {
   static const String auth = '/api/auth';
   static const String magicLink = '/api/auth/magic-link';
   static const String verifyMagicLink = '/api/auth/verify-magic-link';
+  static const String syncShopify = '/api/sync/shopify';
   static const String orders = '/api/orders';
   static const String products = '/api/products';
   static const String invoices = '/api/invoices';

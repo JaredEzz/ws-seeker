@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
+import '../../app/design_tokens.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/orders_bloc.dart';
@@ -46,11 +47,13 @@ class DashboardScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(user?.role == UserRole.superUser ? 'Super User Dashboard' : 'Wholesale Dashboard'),
             actions: [
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                  // TODO: Refresh orders
-                },
+              Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    context.read<OrdersBloc>().add(const OrdersFetchRequested());
+                  },
+                ),
               ),
               const CircleAvatar(child: Icon(Icons.person)),
               const SizedBox(width: 16),
@@ -91,12 +94,48 @@ class DashboardScreen extends StatelessWidget {
   }
 }
 
+class _StatusDot extends StatelessWidget {
+  final OrderStatus status;
+  const _StatusDot({required this.status});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 10,
+      height: 10,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Tokens.statusColor(status),
+      ),
+    );
+  }
+}
+
 class _OrderList extends StatelessWidget {
   final List<Order> orders;
   const _OrderList({required this.orders});
 
   @override
   Widget build(BuildContext context) {
+    if (orders.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.inbox_outlined, size: 64, color: Theme.of(context).colorScheme.outline),
+            const SizedBox(height: 16),
+            Text('No orders yet', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            FilledButton.icon(
+              onPressed: () => context.push('/place-order'),
+              icon: const Icon(Icons.add),
+              label: const Text('Place Order'),
+            ),
+          ],
+        ),
+      );
+    }
+
     return ListView.builder(
       itemCount: orders.length,
       itemBuilder: (context, index) {
@@ -104,12 +143,17 @@ class _OrderList extends StatelessWidget {
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            title: Text('Order ${order.id} - ${order.language.name.toUpperCase()}'),
-            subtitle: Text('Status: ${order.status.name} • Total: \$${order.totalAmount}'),
-            trailing: const Icon(Icons.chevron_right),
-            onTap: () {
-              // TODO: Go to order details
-            },
+            title: Text('Order ${order.id.length > 8 ? order.id.substring(0, 8) : order.id} - ${order.language.name.toUpperCase()}'),
+            subtitle: Text('${Tokens.statusLabel(order.status)} • \$${order.totalAmount.toStringAsFixed(2)}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _StatusDot(status: order.status),
+                const SizedBox(width: 8),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+            onTap: () => context.push('/orders/${order.id}'),
           ),
         );
       },

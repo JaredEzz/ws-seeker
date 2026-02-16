@@ -91,6 +91,40 @@ class AuthService {
 
     final result = <String, dynamic>{'token': customToken};
 
+    // Check if user is an admin (superUser/supplier) — they bypass segment check
+    var isAdmin = false;
+    try {
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(userRecord.uid)
+          .get();
+      if (userDoc.exists) {
+        final userData = userDoc.data()!;
+        final role = userData['role'] as String?;
+        isAdmin = role == 'super_user' || role == 'supplier';
+        if (userData['role'] != null) {
+          result['role'] = userData['role'];
+        }
+        if (userData['savedAddress'] != null) {
+          result['savedAddress'] = userData['savedAddress'];
+        }
+      }
+    } catch (e) {
+      print('Firestore user lookup failed (non-blocking): $e');
+    }
+
+    // Validate Shopify segment membership (skip for admins)
+    if (!isAdmin &&
+        _shopifyService != null &&
+        _shopifyService.isConfigured) {
+      final inSegment =
+          await _shopifyService.isEmailInSegment(email, 'Appstle - Wholesale Membership');
+      if (!inSegment) {
+        throw Exception(
+            'Access denied. Your email is not associated with a wholesale membership.');
+      }
+    }
+
     // Try Shopify sync (non-blocking - failure must not prevent login)
     try {
       if (_shopifyService != null &&
@@ -111,25 +145,6 @@ class AuthService {
       }
     } catch (e) {
       print('Shopify sync failed during login (non-blocking): $e');
-    }
-
-    // No Shopify match - read existing Firestore profile for role/address
-    try {
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(userRecord.uid)
-          .get();
-      if (userDoc.exists) {
-        final userData = userDoc.data()!;
-        if (userData['role'] != null) {
-          result['role'] = userData['role'];
-        }
-        if (userData['savedAddress'] != null) {
-          result['savedAddress'] = userData['savedAddress'];
-        }
-      }
-    } catch (e) {
-      print('Firestore user lookup failed (non-blocking): $e');
     }
 
     return result;

@@ -6,6 +6,7 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 class ShopifyService {
   final String _shopDomain;
   final String _adminToken;
+  String? _wholesaleSegmentId;
 
   ShopifyService()
       : _shopDomain = Platform.environment['SHOPIFY_SHOP_DOMAIN'] ?? '',
@@ -119,6 +120,109 @@ class ShopifyService {
     } catch (e) {
       print('Shopify Sync Exception: $e');
       return null;
+    }
+  }
+
+  /// Check if an email belongs to a Shopify customer segment by name.
+  Future<bool> isEmailInSegment(String email, String segmentName) async {
+    if (!isConfigured) return false;
+
+    final uri = Uri.https(_shopDomain, '/admin/api/2024-01/graphql.json');
+    final headers = {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': _adminToken,
+    };
+
+    // Look up segment ID (cached after first call)
+    if (_wholesaleSegmentId == null) {
+      final segmentQuery = r'''
+        query($query: String!) {
+          segments(first: 10, query: $query) {
+            edges {
+              node {
+                id
+                name
+              }
+            }
+          }
+        }
+      ''';
+
+      try {
+        final response = await http.post(
+          uri,
+          headers: headers,
+          body: jsonEncode({
+            'query': segmentQuery,
+            'variables': {'query': 'name:$segmentName'},
+          }),
+        );
+
+        if (response.statusCode != 200) {
+          print('Shopify segments query failed: ${response.body}');
+          return false;
+        }
+
+        final data = jsonDecode(response.body);
+        final edges = data['data']?['segments']?['edges'] as List?;
+        if (edges == null || edges.isEmpty) {
+          print('Shopify segment "$segmentName" not found');
+          return false;
+        }
+
+        // Find exact name match
+        for (final edge in edges) {
+          final node = edge['node'];
+          if (node['name'] == segmentName) {
+            _wholesaleSegmentId = node['id'] as String;
+            break;
+          }
+        }
+
+        if (_wholesaleSegmentId == null) {
+          print('Shopify segment "$segmentName" not found (no exact match)');
+          return false;
+        }
+      } catch (e) {
+        print('Shopify segment lookup failed: $e');
+        return false;
+      }
+    }
+
+    // Check if email is a member of the segment
+    final memberQuery = r'''
+      query($segmentId: ID!, $query: String!) {
+        customerSegmentMembers(segmentId: $segmentId, first: 1, query: $query) {
+          totalCount
+        }
+      }
+    ''';
+
+    try {
+      final response = await http.post(
+        uri,
+        headers: headers,
+        body: jsonEncode({
+          'query': memberQuery,
+          'variables': {
+            'segmentId': _wholesaleSegmentId,
+            'query': "email = '$email'",
+          },
+        }),
+      );
+
+      if (response.statusCode != 200) {
+        print('Shopify segment member check failed: ${response.body}');
+        return false;
+      }
+
+      final data = jsonDecode(response.body);
+      final totalCount =
+          data['data']?['customerSegmentMembers']?['totalCount'] as int? ?? 0;
+      return totalCount > 0;
+    } catch (e) {
+      print('Shopify segment member check exception: $e');
+      return false;
     }
   }
 }

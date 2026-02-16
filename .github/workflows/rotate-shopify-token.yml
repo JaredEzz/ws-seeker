@@ -1,0 +1,37 @@
+name: Rotate Shopify Admin Token
+
+on:
+  schedule:
+    - cron: '0 */12 * * *' # Every 12 hours (token expires in 24h)
+  workflow_dispatch:
+
+jobs:
+  rotate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request new access token
+        id: token
+        run: |
+          RESPONSE=$(curl -s -X POST "https://${{ secrets.SHOPIFY_SHOP_DOMAIN }}/admin/oauth/access_token" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"client_id\": \"${{ secrets.SHOPIFY_CLIENT_ID }}\",
+              \"client_secret\": \"${{ secrets.SHOPIFY_CLIENT_SECRET }}\",
+              \"grant_type\": \"client_credentials\"
+            }")
+
+          TOKEN=$(echo "$RESPONSE" | jq -r '.access_token')
+
+          if [ "$TOKEN" = "null" ] || [ -z "$TOKEN" ]; then
+            echo "Failed to get token: $RESPONSE"
+            exit 1
+          fi
+
+          echo "::add-mask::$TOKEN"
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
+
+      - name: Update SHOPIFY_ADMIN_TOKEN secret
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          gh secret set SHOPIFY_ADMIN_TOKEN --body "${{ steps.token.outputs.token }}" --repo ${{ github.repository }}

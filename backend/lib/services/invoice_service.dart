@@ -29,7 +29,7 @@ class InvoiceService {
 
     // Check if invoice already exists for this order
     final existingInvoice = await _invoicesRef
-        .where('orderId', isEqualTo: orderId)
+        .where('orderId', WhereFilter.equal, orderId)
         .get();
     if (existingInvoice.docs.isNotEmpty) {
       throw StateError('Invoice already exists for order $orderId');
@@ -91,7 +91,7 @@ class InvoiceService {
     Query<Map<String, dynamic>> query = _invoicesRef;
 
     if (status != null) {
-      query = query.where('status', isEqualTo: status);
+      query = query.where('status', WhereFilter.equal, status);
     }
 
     query = query.orderBy('createdAt', descending: true);

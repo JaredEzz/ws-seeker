@@ -36,8 +36,8 @@ class ProductService {
         // Check if product with same SKU and language exists
         final existingQuery = row.sku != null
             ? await _productsRef
-                .where('sku', isEqualTo: row.sku)
-                .where('language', isEqualTo: language.name)
+                .where('sku', WhereFilter.equal, row.sku)
+                .where('language', WhereFilter.equal, language.name)
                 .get()
             : null;
 
@@ -81,8 +81,8 @@ class ProductService {
   /// Get all products for a language
   Future<List<Map<String, dynamic>>> getProducts(ProductLanguage language) async {
     final snapshot = await _productsRef
-        .where('language', isEqualTo: language.name)
-        .where('isActive', isEqualTo: true)
+        .where('language', WhereFilter.equal, language.name)
+        .where('isActive', WhereFilter.equal, true)
         .orderBy('name')
         .get();
 

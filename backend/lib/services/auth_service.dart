@@ -1,4 +1,5 @@
 import 'package:dart_firebase_admin/auth.dart';
+import 'package:dart_firebase_admin/dart_firebase_admin.dart';
 import 'package:dart_firebase_admin/firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
@@ -81,7 +82,7 @@ class AuthService {
     } catch (e) {
       // Create user if they don't exist
       userRecord = await _auth.createUser(
-        UserCustomAttributes(email: email, emailVerified: true),
+        CreateRequest(email: email, emailVerified: true),
       );
     }
 

@@ -56,7 +56,7 @@ class AuthHandler {
         );
       } catch (e) {
         return Response.forbidden(
-          body: jsonEncode({'error': e.toString()}),
+          jsonEncode({'error': e.toString()}),
           headers: {'Content-Type': 'application/json'},
         );
       }

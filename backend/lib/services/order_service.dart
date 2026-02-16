@@ -128,19 +128,19 @@ class OrderService {
     // Role-based filtering
     switch (role) {
       case UserRole.wholesaler:
-        query = query.where('userId', isEqualTo: userId);
+        query = query.where('userId', WhereFilter.equal, userId);
       case UserRole.supplier:
-        query = query.where('language', isEqualTo: 'japanese');
+        query = query.where('language', WhereFilter.equal, 'japanese');
       case UserRole.superUser:
         break; // No filter — sees all
     }
 
     // Apply optional filters
     if (filter?.status != null) {
-      query = query.where('status', isEqualTo: filter!.status!.name);
+      query = query.where('status', WhereFilter.equal, filter!.status!.name);
     }
     if (filter?.language != null) {
-      query = query.where('language', isEqualTo: filter!.language!.name);
+      query = query.where('language', WhereFilter.equal, filter!.language!.name);
     }
 
     query = query.orderBy('createdAt', descending: true);

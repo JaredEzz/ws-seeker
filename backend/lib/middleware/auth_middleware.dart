@@ -39,7 +39,7 @@ Middleware authMiddleware(Auth auth, Firestore firestore) {
 
         // Look up user role from Firestore
         final userDoc = await firestore.collection('users').doc(uid).get();
-        final role = _parseRole(userDoc.exists ? userDoc.data()?['role'] as String? : null);
+        final role = _parseRole(userDoc.exists ? (userDoc.data()?['role'] as String?) : null);
         final email = decodedToken.email ?? '';
 
         // Attach auth info to request context

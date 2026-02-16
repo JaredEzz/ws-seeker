@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
+import '../middleware/auth_middleware.dart';
 import '../services/shopify_service.dart';
 import '../services/user_service.dart';
 
@@ -21,15 +22,12 @@ class SyncHandler {
   }
 
   Future<Response> _syncShopify(Request request) async {
-    // 1. Parse Request
-    final body = await request.readAsString();
-    final data = jsonDecode(body) as Map<String, dynamic>;
-    
-    final userId = data['userId'] as String?;
-    final email = data['email'] as String?;
+    // Read userId and email from auth context (set by auth middleware)
+    final userId = request.context[AuthContext.userId] as String?;
+    final email = request.context[AuthContext.userEmail] as String?;
 
-    if (userId == null || email == null) {
-      return Response.badRequest(body: 'Missing userId or email');
+    if (userId == null || email == null || email.isEmpty) {
+      return Response.badRequest(body: 'Missing userId or email in auth context');
     }
 
     // 2. Call Shopify

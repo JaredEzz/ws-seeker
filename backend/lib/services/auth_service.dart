@@ -3,6 +3,8 @@ import 'package:dart_firebase_admin/firestore.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'shopify_service.dart';
+import 'user_service.dart';
 
 class AuthService {
   final Auth _auth;
@@ -10,6 +12,8 @@ class AuthService {
   final String _resendApiKey;
   final String _fromEmail;
   final String _baseUrl;
+  final ShopifyService? _shopifyService;
+  final UserService? _userService;
 
   AuthService(
     FirebaseAdminApp admin,
@@ -17,10 +21,14 @@ class AuthService {
     required String resendApiKey,
     required String fromEmail,
     required String baseUrl,
+    ShopifyService? shopifyService,
+    UserService? userService,
   })  : _auth = Auth(admin),
         _resendApiKey = resendApiKey,
         _fromEmail = fromEmail,
-        _baseUrl = baseUrl;
+        _baseUrl = baseUrl,
+        _shopifyService = shopifyService,
+        _userService = userService;
 
   Future<void> sendMagicLink(String email) async {
     final token = const Uuid().v4();
@@ -43,9 +51,9 @@ class AuthService {
     );
   }
 
-  Future<String> verifyMagicLink(String token, String email) async {
+  Future<Map<String, dynamic>> verifyMagicLink(String token, String email) async {
     final doc = await _firestore.collection('magic_links').doc(token).get();
-    
+
     if (!doc.exists) {
       throw Exception('Invalid or expired magic link');
     }
@@ -78,7 +86,52 @@ class AuthService {
     }
 
     // Generate Firebase Custom Token
-    return await _auth.createCustomToken(userRecord.uid);
+    final customToken = await _auth.createCustomToken(userRecord.uid);
+
+    final result = <String, dynamic>{'token': customToken};
+
+    // Try Shopify sync (non-blocking - failure must not prevent login)
+    try {
+      if (_shopifyService != null &&
+          _userService != null &&
+          _shopifyService.isConfigured) {
+        final shopifyResult =
+            await _shopifyService.getCustomerByEmail(email);
+        if (shopifyResult != null) {
+          await _userService.updateUserFromShopify(
+            userId: userRecord.uid,
+            role: shopifyResult.role,
+            address: shopifyResult.address,
+          );
+          result['role'] = shopifyResult.role.name;
+          result['savedAddress'] = shopifyResult.address.toJson();
+          return result;
+        }
+      }
+    } catch (e) {
+      print('Shopify sync failed during login (non-blocking): $e');
+    }
+
+    // No Shopify match - read existing Firestore profile for role/address
+    try {
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(userRecord.uid)
+          .get();
+      if (userDoc.exists) {
+        final userData = userDoc.data()!;
+        if (userData['role'] != null) {
+          result['role'] = userData['role'];
+        }
+        if (userData['savedAddress'] != null) {
+          result['savedAddress'] = userData['savedAddress'];
+        }
+      }
+    } catch (e) {
+      print('Firestore user lookup failed (non-blocking): $e');
+    }
+
+    return result;
   }
 
   Future<void> _sendEmail({

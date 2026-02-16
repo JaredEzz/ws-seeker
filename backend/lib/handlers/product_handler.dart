@@ -7,6 +7,7 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
+import '../middleware/auth_middleware.dart';
 import '../services/product_service.dart';
 
 class ProductHandler {
@@ -67,9 +68,22 @@ class ProductHandler {
     }
   }
 
+  /// Check if user has admin role (super_user or supplier)
+  Response? _requireAdmin(Request request) {
+    final role = request.context[AuthContext.userRole] as UserRole?;
+    if (role != UserRole.superUser && role != UserRole.supplier) {
+      return Response(403,
+          body: jsonEncode({'error': 'Admin access required'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+    return null;
+  }
+
   /// POST /api/products
   /// Body: { name, language, basePrice, description?, imageUrl?, sku? }
   Future<Response> _createProduct(Request request) async {
+    final denied = _requireAdmin(request);
+    if (denied != null) return denied;
     try {
       final body = await request.readAsString();
       final data = jsonDecode(body) as Map<String, dynamic>;
@@ -115,6 +129,8 @@ class ProductHandler {
   /// POST /api/products/import
   /// Body: { products: [{ name, language, price, description?, sku? }, ...] }
   Future<Response> _importProducts(Request request) async {
+    final denied = _requireAdmin(request);
+    if (denied != null) return denied;
     try {
       final body = await request.readAsString();
       final data = jsonDecode(body) as Map<String, dynamic>;
@@ -153,6 +169,8 @@ class ProductHandler {
 
   /// PUT /api/products/<id>
   Future<Response> _updateProduct(Request request, String id) async {
+    final denied = _requireAdmin(request);
+    if (denied != null) return denied;
     try {
       final body = await request.readAsString();
       final data = jsonDecode(body) as Map<String, dynamic>;
@@ -181,6 +199,8 @@ class ProductHandler {
 
   /// DELETE /api/products/<id>
   Future<Response> _deleteProduct(Request request, String id) async {
+    final denied = _requireAdmin(request);
+    if (denied != null) return denied;
     try {
       await _productService.deleteProduct(id);
       return Response.ok(

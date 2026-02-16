@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:http/http.dart' as http;
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 abstract interface class OrderRepository {
@@ -7,6 +11,202 @@ abstract interface class OrderRepository {
   Future<void> updateOrder(String id, UpdateOrderRequest request);
   Stream<List<OrderComment>> watchComments(String orderId);
   Future<void> addComment(String orderId, String content);
+}
+
+/// HTTP-based order repository that calls the backend API
+class HttpOrderRepository implements OrderRepository {
+  final String _baseUrl;
+
+  HttpOrderRepository({String? baseUrl})
+      : _baseUrl = baseUrl ?? AppConstants.apiBaseUrl;
+
+  /// Get the current user's Firebase ID token for Authorization header
+  Future<Map<String, String>> get _authHeaders async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) throw Exception('Not authenticated');
+    final token = await user.getIdToken();
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+  }
+
+  @override
+  Future<List<Order>> getOrders({OrderFilter? filter}) async {
+    final queryParams = <String, String>{};
+    if (filter?.status != null) {
+      queryParams['status'] = filter!.status!.name;
+    }
+    if (filter?.language != null) {
+      queryParams['language'] = filter!.language!.name;
+    }
+
+    final uri = Uri.parse('$_baseUrl${ApiRoutes.orders}')
+        .replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);
+
+    final response = await http.get(uri, headers: await _authHeaders);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to fetch orders: ${response.body}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final ordersJson = data['orders'] as List<dynamic>;
+
+    return ordersJson
+        .map((json) => _orderFromMap(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<Order> getOrderById(String id) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl${ApiRoutes.orders}/$id'),
+      headers: await _authHeaders,
+    );
+
+    if (response.statusCode == 404) {
+      throw Exception('Order not found');
+    }
+    if (response.statusCode != 200) {
+      throw Exception('Failed to fetch order: ${response.body}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return _orderFromMap(data['order'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<Order> createOrder(CreateOrderRequest request) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl${ApiRoutes.orders}'),
+      headers: await _authHeaders,
+      body: jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception('Failed to create order: ${response.body}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return _orderFromMap(data['order'] as Map<String, dynamic>);
+  }
+
+  @override
+  Future<void> updateOrder(String id, UpdateOrderRequest request) async {
+    final response = await http.patch(
+      Uri.parse('$_baseUrl${ApiRoutes.orders}/$id'),
+      headers: await _authHeaders,
+      body: jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update order: ${response.body}');
+    }
+  }
+
+  @override
+  Stream<List<OrderComment>> watchComments(String orderId) {
+    // Poll-based implementation since we're using HTTP, not Firestore streams
+    return Stream.periodic(const Duration(seconds: 10))
+        .asyncMap((_) => _fetchComments(orderId))
+        .distinct();
+  }
+
+  @override
+  Future<void> addComment(String orderId, String content) async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl${ApiRoutes.orders}/$orderId/comments'),
+      headers: await _authHeaders,
+      body: jsonEncode({'content': content}),
+    );
+
+    if (response.statusCode != 201) {
+      throw Exception('Failed to add comment: ${response.body}');
+    }
+  }
+
+  Future<List<OrderComment>> _fetchComments(String orderId) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl${ApiRoutes.orders}/$orderId/comments'),
+      headers: await _authHeaders,
+    );
+
+    if (response.statusCode != 200) return [];
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final commentsJson = data['comments'] as List<dynamic>;
+
+    return commentsJson
+        .map((json) => _commentFromMap(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  /// Parse order from backend response map
+  Order _orderFromMap(Map<String, dynamic> map) {
+    return Order(
+      id: map['id'] as String,
+      userId: map['userId'] as String,
+      language: ProductLanguage.values.firstWhere(
+        (l) => l.name == map['language'],
+      ),
+      items: (map['items'] as List<dynamic>)
+          .map((item) => OrderItem(
+                productId: item['productId'] as String,
+                productName: item['productName'] as String,
+                quantity: item['quantity'] as int,
+                unitPrice: (item['unitPrice'] as num).toDouble(),
+                totalPrice: (item['totalPrice'] as num).toDouble(),
+              ))
+          .toList(),
+      status: OrderStatus.values.firstWhere(
+        (s) => s.name == map['status'],
+      ),
+      shippingAddress: ShippingAddress(
+        fullName: map['shippingAddress']['fullName'] as String,
+        addressLine1: map['shippingAddress']['addressLine1'] as String,
+        addressLine2: map['shippingAddress']['addressLine2'] as String?,
+        city: map['shippingAddress']['city'] as String,
+        state: map['shippingAddress']['state'] as String,
+        postalCode: map['shippingAddress']['postalCode'] as String,
+        country: map['shippingAddress']['country'] as String,
+        phone: map['shippingAddress']['phone'] as String?,
+      ),
+      subtotal: (map['subtotal'] as num).toDouble(),
+      markup: (map['markup'] as num).toDouble(),
+      estimatedTariff: (map['estimatedTariff'] as num).toDouble(),
+      totalAmount: (map['totalAmount'] as num).toDouble(),
+      invoiceId: map['invoiceId'] as String?,
+      invoiceUrl: map['invoiceUrl'] as String?,
+      trackingNumber: map['trackingNumber'] as String?,
+      trackingCarrier: map['trackingCarrier'] as String?,
+      proofOfPaymentUrl: map['proofOfPaymentUrl'] as String?,
+      createdAt: _parseDateTime(map['createdAt']),
+      updatedAt: _parseDateTime(map['updatedAt']),
+    );
+  }
+
+  OrderComment _commentFromMap(Map<String, dynamic> map) {
+    return OrderComment(
+      id: map['id'] as String,
+      orderId: map['orderId'] as String,
+      userId: map['userId'] as String,
+      userName: map['userName'] as String,
+      content: map['content'] as String,
+      isInternal: map['isInternal'] as bool? ?? false,
+      createdAt: _parseDateTime(map['createdAt']),
+    );
+  }
+
+  DateTime _parseDateTime(dynamic value) {
+    if (value is String) return DateTime.parse(value);
+    if (value is Map) {
+      // Firestore Timestamp format
+      final seconds = value['_seconds'] as int? ?? 0;
+      return DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
+    }
+    return DateTime.now();
+  }
 }
 
 class MockOrderRepository implements OrderRepository {
@@ -73,22 +273,18 @@ class MockOrderRepository implements OrderRepository {
 
   @override
   Future<List<Order>> getOrders({OrderFilter? filter}) async {
-    // TODO: Connect to Firestore collection 'orders'
-    // Query by userId and apply filters
     await Future.delayed(const Duration(milliseconds: 800));
     return _mockOrders;
   }
 
   @override
   Future<Order> getOrderById(String id) async {
-    // TODO: Connect to Firestore document 'orders/$id'
     await Future.delayed(const Duration(milliseconds: 500));
     return _mockOrders.firstWhere((o) => o.id == id);
   }
 
   @override
   Future<Order> createOrder(CreateOrderRequest request) async {
-    // TODO: Call backend Cloud Run endpoint POST /api/orders
     await Future.delayed(const Duration(seconds: 1));
     final newOrder = Order(
       id: 'ORD-${_mockOrders.length + 1}',
@@ -116,7 +312,6 @@ class MockOrderRepository implements OrderRepository {
 
   @override
   Future<void> updateOrder(String id, UpdateOrderRequest request) async {
-    // TODO: Call backend Cloud Run endpoint PATCH /api/orders/$id
     await Future.delayed(const Duration(milliseconds: 500));
     final index = _mockOrders.indexWhere((o) => o.id == id);
     if (index != -1) {
@@ -134,7 +329,6 @@ class MockOrderRepository implements OrderRepository {
 
   @override
   Stream<List<OrderComment>> watchComments(String orderId) {
-    // TODO: Connect to Firestore subcollection 'orders/$orderId/comments'
     return Stream.value([
       OrderComment(
         id: 'c1',
@@ -149,7 +343,6 @@ class MockOrderRepository implements OrderRepository {
 
   @override
   Future<void> addComment(String orderId, String content) async {
-    // TODO: Call backend Cloud Run endpoint POST /api/comments
     await Future.delayed(const Duration(milliseconds: 300));
   }
 }

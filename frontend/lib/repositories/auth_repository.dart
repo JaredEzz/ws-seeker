@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,13 +19,14 @@ abstract interface class AuthRepository {
 
 class FirebaseAuthRepository implements AuthRepository {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static const _emailKey = 'pending_magic_link_email';
 
   @override
   Future<AppUser?> getCurrentUser() async {
     final user = _firebaseAuth.currentUser;
     if (user == null) return null;
-    return _mapFirebaseUser(user);
+    return _fetchUserProfile(user);
   }
 
   @override
@@ -84,19 +87,34 @@ class FirebaseAuthRepository implements AuthRepository {
         throw Exception('Failed to verify magic link: ${response.body}');
       }
 
-      final data = jsonDecode(response.body);
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
       final customToken = data['token'] as String;
 
       // 2. Sign in with Firebase Custom Token
       final userCredential = await _firebaseAuth.signInWithCustomToken(customToken);
-      
+
       final user = userCredential.user;
       if (user == null) throw Exception('Sign in failed');
-      
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_emailKey);
 
-      return _mapFirebaseUser(user);
+      // Parse role and address from enriched backend response
+      final role = _parseRole(data['role'] as String?, email);
+      ShippingAddress? savedAddress;
+      if (data['savedAddress'] != null) {
+        savedAddress = ShippingAddress.fromJson(
+          Map<String, dynamic>.from(data['savedAddress'] as Map),
+        );
+      }
+
+      return AppUser(
+        id: user.uid,
+        email: user.email ?? email,
+        role: role,
+        savedAddress: savedAddress,
+        createdAt: user.metadata.creationTime ?? DateTime.now(),
+      );
     } catch (e) {
       print('Verification failed: $e');
       rethrow;
@@ -116,25 +134,51 @@ class FirebaseAuthRepository implements AuthRepository {
 
   @override
   Stream<AppUser?> get userChanges {
-    return _firebaseAuth.authStateChanges().map((user) {
+    return _firebaseAuth.authStateChanges().asyncMap((user) async {
       if (user == null) return null;
-      return _mapFirebaseUser(user);
+      return _fetchUserProfile(user);
     });
   }
 
-  AppUser _mapFirebaseUser(User user) {
-    // TODO: Fetch role from Firestore "users" collection
-    // For now, default to wholesaler unless email is whitelisted
-    final role = user.email == 'admin@croma.com' 
-        ? UserRole.superUser 
-        : UserRole.wholesaler;
+  /// Fetch user profile from Firestore for returning users (app restart).
+  /// Falls back to default wholesaler role if Firestore read fails.
+  Future<AppUser> _fetchUserProfile(User user) async {
+    UserRole role = _parseRole(null, user.email);
+    ShippingAddress? savedAddress;
+
+    try {
+      final doc = await _firestore.collection('users').doc(user.uid).get();
+      if (doc.exists) {
+        final data = doc.data()!;
+        role = _parseRole(data['role'] as String?, user.email);
+        if (data['savedAddress'] != null) {
+          savedAddress = ShippingAddress.fromJson(
+            Map<String, dynamic>.from(data['savedAddress'] as Map),
+          );
+        }
+      }
+    } catch (e) {
+      print('Failed to fetch user profile from Firestore: $e');
+    }
 
     return AppUser(
       id: user.uid,
-      email: user.email!,
+      email: user.email ?? '',
       role: role,
+      savedAddress: savedAddress,
       createdAt: user.metadata.creationTime ?? DateTime.now(),
     );
+  }
+
+  /// Parse role string, with admin@croma.com override for backwards compatibility.
+  UserRole _parseRole(String? roleStr, String? email) {
+    if (email == 'admin@croma.com') return UserRole.superUser;
+    return switch (roleStr) {
+      'wholesaler' => UserRole.wholesaler,
+      'supplier' => UserRole.supplier,
+      'super_user' || 'superUser' => UserRole.superUser,
+      _ => UserRole.wholesaler,
+    };
   }
 }
 

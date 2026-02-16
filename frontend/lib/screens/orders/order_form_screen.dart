@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../blocs/orders/order_form_bloc.dart';
 import '../../repositories/order_repository.dart';
 import '../../repositories/product_repository.dart';
+import '../../widgets/forms/address_form.dart';
 
 class OrderFormScreen extends StatelessWidget {
   const OrderFormScreen({super.key});
@@ -29,6 +31,7 @@ class _OrderFormContent extends StatefulWidget {
 
 class _OrderFormContentState extends State<_OrderFormContent> {
   int _currentStep = 0;
+  ShippingAddress? _shippingAddress;
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +43,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Order placed successfully!')),
             );
-            Navigator.of(context).pop();
+            context.go('/dashboard');
           }
           if (state.status == OrderFormStatus.failure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -58,18 +61,18 @@ class _OrderFormContentState extends State<_OrderFormContent> {
               if (_currentStep < 2) {
                 setState(() => _currentStep++);
               } else {
-                // Submit
+                // Validate address before submitting
+                if (_shippingAddress == null ||
+                    _shippingAddress!.fullName.isEmpty ||
+                    _shippingAddress!.addressLine1.isEmpty ||
+                    _shippingAddress!.city.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill in the shipping address')),
+                  );
+                  return;
+                }
                 context.read<OrderFormBloc>().add(
-                      const OrderFormSubmitted(
-                        ShippingAddress(
-                          fullName: 'Demo User',
-                          addressLine1: '123 Test St',
-                          city: 'Demo City',
-                          state: 'DS',
-                          postalCode: '12345',
-                          country: 'USA',
-                        ),
-                      ),
+                      OrderFormSubmitted(_shippingAddress!),
                     );
               }
             },
@@ -93,7 +96,11 @@ class _OrderFormContentState extends State<_OrderFormContent> {
               ),
               Step(
                 title: const Text('Review & Address'),
-                content: _ReviewStep(state: state),
+                content: _ReviewStep(
+                  state: state,
+                  initialAddress: _shippingAddress,
+                  onAddressChanged: (addr) => _shippingAddress = addr,
+                ),
                 isActive: _currentStep >= 2,
               ),
             ],
@@ -174,7 +181,14 @@ class _ProductSelector extends StatelessWidget {
 
 class _ReviewStep extends StatelessWidget {
   final OrderFormState state;
-  const _ReviewStep({required this.state});
+  final ShippingAddress? initialAddress;
+  final ValueChanged<ShippingAddress> onAddressChanged;
+
+  const _ReviewStep({
+    required this.state,
+    this.initialAddress,
+    required this.onAddressChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +199,10 @@ class _ReviewStep extends StatelessWidget {
         const SizedBox(height: 8),
         Text('Items: ${state.itemRequests.length}'),
         const Divider(),
-        const Text('Shipping to: 123 Test St, Demo City, USA'),
+        AddressForm(
+          initialAddress: initialAddress,
+          onChanged: onAddressChanged,
+        ),
         const SizedBox(height: 16),
         if (state.status == OrderFormStatus.loading)
           const LinearProgressIndicator(),

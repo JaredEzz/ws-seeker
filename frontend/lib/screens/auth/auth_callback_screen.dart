@@ -19,7 +19,7 @@ class _AuthCallbackScreenState extends State<AuthCallbackScreen> {
   void initState() {
     super.initState();
     // Trigger verification automatically on land
-    context.read<AuthBloc>().add(AuthDeepLinkChecked(uri: widget.uri));
+    context.read<AuthBloc>().add(AuthDeepLinkChecked(widget.uri));
   }
 
   @override

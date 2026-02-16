@@ -24,7 +24,7 @@ void main() async {
   usePathUrlStrategy();
 
   final authRepository = FirebaseAuthRepository();
-  final orderRepository = MockOrderRepository();
+  final orderRepository = HttpOrderRepository();
   final productRepository = FirestoreProductRepository();
 
   // Create AuthBloc immediately so we can pass it to the Router

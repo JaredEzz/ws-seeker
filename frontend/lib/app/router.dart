@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_state.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/auth/auth_callback_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/orders/order_form_screen.dart';
+import '../screens/orders/order_detail_screen.dart';
 import '../screens/admin/product_management_screen.dart';
 import 'go_router_refresh_stream.dart';
 
@@ -58,6 +60,12 @@ class AppRouter {
       GoRoute(
         path: '/place-order',
         builder: (context, state) => const OrderFormScreen(),
+      ),
+      GoRoute(
+        path: '/orders/:id',
+        builder: (context, state) => OrderDetailScreen(
+          orderId: state.pathParameters['id']!,
+        ),
       ),
       GoRoute(
         path: '/admin/products',

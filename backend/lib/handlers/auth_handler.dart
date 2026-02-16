@@ -48,10 +48,10 @@ class AuthHandler {
           );
         }
 
-        final customToken = await _authService.verifyMagicLink(token, email);
+        final result = await _authService.verifyMagicLink(token, email);
 
         return Response.ok(
-          jsonEncode({'token': customToken}),
+          jsonEncode(result),
           headers: {'Content-Type': 'application/json'},
         );
       } catch (e) {

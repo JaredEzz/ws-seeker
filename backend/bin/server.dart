@@ -10,14 +10,21 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 import 'package:shelf_router/shelf_router.dart';
 
 import 'package:dart_firebase_admin/dart_firebase_admin.dart';
+import 'package:dart_firebase_admin/auth.dart';
 import 'package:dart_firebase_admin/firestore.dart';
 import 'package:ws_seeker_backend/handlers/auth_handler.dart';
 import 'package:ws_seeker_backend/handlers/sync_handler.dart';
 import 'package:ws_seeker_backend/handlers/product_handler.dart';
+import 'package:ws_seeker_backend/handlers/orders_handler.dart';
 import 'package:ws_seeker_backend/services/shopify_service.dart';
 import 'package:ws_seeker_backend/services/user_service.dart';
 import 'package:ws_seeker_backend/services/product_service.dart';
 import 'package:ws_seeker_backend/services/auth_service.dart';
+import 'package:ws_seeker_backend/services/order_service.dart';
+import 'package:ws_seeker_backend/services/comment_service.dart';
+import 'package:ws_seeker_backend/services/invoice_service.dart';
+import 'package:ws_seeker_backend/handlers/invoices_handler.dart';
+import 'package:ws_seeker_backend/middleware/auth_middleware.dart';
 
 void main() async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -33,16 +40,24 @@ void main() async {
   );
   final firestore = Firestore(admin);
 
+  // Initialize Firebase Auth
+  final auth = Auth(admin);
+
   // Initialize Services
   final shopifyService = ShopifyService();
   final userService = UserService(firestore);
   final productService = ProductService(firestore);
+  final orderService = OrderService(firestore);
+  final commentService = CommentService(firestore);
+  final invoiceService = InvoiceService(firestore);
   final authService = AuthService(
     admin,
     firestore,
     resendApiKey: resendApiKey,
     fromEmail: fromEmail,
     baseUrl: baseUrl,
+    shopifyService: shopifyService,
+    userService: userService,
   );
 
   // Initialize Handlers
@@ -51,6 +66,11 @@ void main() async {
     userService: userService,
   );
   final productHandler = ProductHandler(productService: productService);
+  final ordersHandler = OrdersHandler(
+    orderService: orderService,
+    commentService: commentService,
+  );
+  final invoicesHandler = InvoicesHandler(invoiceService: invoiceService);
   final authHandler = AuthHandler(authService);
 
   final router = Router();
@@ -60,10 +80,31 @@ void main() async {
     return Response.ok('OK');
   });
 
-  // Mount API Handlers
+  // Public API Handlers (no auth required)
   router.mount('/api/auth', authHandler.router.call);
-  router.mount('/api/sync', syncHandler.router.call);
-  router.mount('/api/products', productHandler.router.call);
+
+  // Protected routes (require auth)
+  final authMw = authMiddleware(auth, firestore);
+
+  final protectedSync = const Pipeline()
+      .addMiddleware(authMw)
+      .addHandler(syncHandler.router.call);
+  router.mount('/api/sync', protectedSync);
+
+  final protectedProducts = const Pipeline()
+      .addMiddleware(authMw)
+      .addHandler(productHandler.router.call);
+  router.mount('/api/products', protectedProducts);
+  final protectedOrders = const Pipeline()
+      .addMiddleware(authMw)
+      .addHandler(ordersHandler.router.call);
+  router.mount('/api/orders', protectedOrders);
+
+  final protectedInvoices = const Pipeline()
+      .addMiddleware(authMw)
+      .addHandler(invoicesHandler.router.call);
+  router.mount('/api/invoices', protectedInvoices);
+
 
   // Apply middleware
   final handler = const Pipeline()

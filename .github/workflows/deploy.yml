@@ -57,7 +57,7 @@ jobs:
       - name: Build Web (WASM) 🏗️
         run: |
           cd frontend
-          flutter build web --wasm
+          flutter build web --wasm --dart-define=BACKEND_URL=https://ws-seeker-backend-oilyxc6kdq-uc.a.run.app
 
       - name: Deploy to Firebase Hosting 🚀
         uses: FirebaseExtended/action-hosting-deploy@v0

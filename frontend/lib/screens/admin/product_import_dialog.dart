@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
 import 'package:http/http.dart' as http;
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
+import '../../app/design_tokens.dart';
 
 class ProductImportDialog extends StatefulWidget {
   final String backendUrl;
@@ -70,23 +71,23 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
 
   Widget _buildInstructions() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(Tokens.space16),
       decoration: BoxDecoration(
-        color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(8),
+        color: Tokens.feedbackInfoBg,
+        borderRadius: BorderRadius.circular(Tokens.radiusLg),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, color: Colors.blue.shade700),
-              const SizedBox(width: 8),
-              Text(
+              const Icon(Icons.info_outline, color: Tokens.feedbackInfoIcon),
+              const SizedBox(width: Tokens.space8),
+              const Text(
                 'CSV Format Requirements',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Colors.blue.shade900,
+                  color: Tokens.feedbackInfoText,
                 ),
               ),
             ],
@@ -130,8 +131,8 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Tokens.borderDefault),
+                borderRadius: BorderRadius.circular(Tokens.radiusSm),
               ),
               child: ListView.builder(
                 itemCount: _parsedProducts!.length,
@@ -192,12 +193,12 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
     final errors = result['errors'] as List<dynamic>;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(Tokens.space16),
       decoration: BoxDecoration(
-        color: failed > 0 ? Colors.orange.shade50 : Colors.green.shade50,
-        borderRadius: BorderRadius.circular(8),
+        color: failed > 0 ? Tokens.feedbackWarningBg : Tokens.feedbackSuccessBg,
+        borderRadius: BorderRadius.circular(Tokens.radiusLg),
         border: Border.all(
-          color: failed > 0 ? Colors.orange.shade300 : Colors.green.shade300,
+          color: failed > 0 ? Tokens.feedbackWarningBorder : Tokens.feedbackSuccessBorder,
         ),
       ),
       child: Column(
@@ -207,14 +208,14 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
             children: [
               Icon(
                 failed > 0 ? Icons.warning : Icons.check_circle,
-                color: failed > 0 ? Colors.orange.shade700 : Colors.green.shade700,
+                color: failed > 0 ? Tokens.feedbackWarningIcon : Tokens.feedbackSuccessIcon,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: Tokens.space8),
               Text(
                 'Import Complete',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: failed > 0 ? Colors.orange.shade900 : Colors.green.shade900,
+                  color: failed > 0 ? Tokens.feedbackWarningText : Tokens.feedbackSuccessText,
                 ),
               ),
             ],
@@ -349,7 +350,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
   void _showError(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(content: Text(message), backgroundColor: Tokens.destructive),
     );
   }
 }

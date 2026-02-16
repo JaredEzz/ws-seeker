@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../repositories/product_repository.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
+import '../../app/design_tokens.dart';
+import '../../repositories/product_repository.dart';
 import 'product_import_dialog.dart';
 
 class ProductManagementScreen extends StatefulWidget {
@@ -120,11 +121,11 @@ class _ProductManagementScreenState extends State<ProductManagementScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.inventory_2_outlined, size: 64, color: Colors.grey),
+            const Icon(Icons.inventory_2_outlined, size: 64, color: Tokens.textTertiary),
             const SizedBox(height: 16),
             const Text(
               'No products found in this catalog.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
+              style: TextStyle(fontSize: 16, color: Tokens.textTertiary),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(

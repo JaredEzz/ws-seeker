@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/orders_bloc.dart';
 import '../../repositories/order_repository.dart';
@@ -55,8 +56,14 @@ class DashboardScreen extends StatelessWidget {
                   },
                 ),
               ),
-              const CircleAvatar(child: Icon(Icons.person)),
-              const SizedBox(width: 16),
+              IconButton(
+                icon: const Icon(Icons.logout),
+                tooltip: 'Logout',
+                onPressed: () {
+                  context.read<AuthBloc>().add(const AuthLogoutRequested());
+                },
+              ),
+              const SizedBox(width: 8),
             ],
           ),
           body: Padding(

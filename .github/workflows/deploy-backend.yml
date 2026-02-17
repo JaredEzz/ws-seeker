@@ -62,21 +62,7 @@ jobs:
             FROM_EMAIL=${{ secrets.FROM_EMAIL }}
             BASE_URL=${{ secrets.BASE_URL }}
 
-      - name: Set Firebase service account env var
-        env:
-          FIREBASE_SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-        run: |
-          python3 << 'PYEOF'
-          import os, subprocess
-          sa_json = os.environ['FIREBASE_SA_JSON']
-          result = subprocess.run([
-              'gcloud', 'run', 'services', 'update', 'ws-seeker-backend',
-              '--region', 'us-central1',
-              '--project', 'ws-seeker',
-              '--update-env-vars', f'FIREBASE_SERVICE_ACCOUNT_JSON={sa_json}'
-          ], capture_output=True, text=True)
-          print(result.stdout)
-          if result.returncode != 0:
-              print(result.stderr)
-              exit(result.returncode)
-          PYEOF
+      # FIREBASE_SERVICE_ACCOUNT_JSON is set manually via gcloud and persists
+      # across deploys since deploy-cloudrun uses --update-env-vars (not --set).
+      # To update it: gcloud run services update ws-seeker-backend --region us-central1
+      #   --project ws-seeker --env-vars-file=<yaml-file-with-all-env-vars>

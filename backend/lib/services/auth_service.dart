@@ -181,124 +181,52 @@ class AuthService {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign in to WS-Seeker</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f9fafb;
-      color: #111827;
-      margin: 0;
-      padding: 0;
-    }
-    .wrapper {
-      width: 100%;
-      table-layout: fixed;
-      background-color: #f9fafb;
-      padding-bottom: 40px;
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #ffffff;
-      border: 1px solid #e5e7eb;
-      border-radius: 12px;
-      margin-top: 40px;
-      overflow: hidden;
-    }
-    .header {
-      background-color: #1d4ed8;
-      padding: 32px;
-      text-align: center;
-    }
-    .logo-text {
-      color: #ffffff;
-      font-size: 28px;
-      font-weight: 800;
-      letter-spacing: -0.025em;
-      margin: 0;
-    }
-    .content {
-      padding: 40px 32px;
-    }
-    h1 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #111827;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    p {
-      font-size: 16px;
-      line-height: 1.6;
-      color: #4b5563;
-      margin-bottom: 32px;
-      text-align: center;
-    }
-    .cta-container {
-      text-align: center;
-      margin-bottom: 32px;
-    }
-    .button {
-      background-color: #2563eb;
-      color: #ffffff !important;
-      padding: 16px 40px;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 16px;
-      display: inline-block;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    .divider {
-      border-top: 1px solid #e5e7eb;
-      margin: 32px 0;
-    }
-    .footer {
-      padding: 0 32px 40px;
-      text-align: center;
-      color: #6b7280;
-      font-size: 14px;
-    }
-    .security-note {
-      font-size: 12px;
-      color: #9ca3af;
-      margin-top: 16px;
-    }
-    .link-fallback {
-      word-break: break-all;
-      font-size: 13px;
-      color: #2563eb;
-      margin-top: 12px;
-      text-decoration: underline;
-    }
-  </style>
+  <title>Sign in to Croma TCG</title>
 </head>
-<body>
-  <div class="wrapper">
-    <div class="container">
-      <div class="header">
-        <div class="logo-text">🎯 WS-Seeker</div>
-      </div>
-      <div class="content">
-        <h1>Welcome back!</h1>
-        <p>Confirm your email address to securely sign in to your WS-Seeker account. This link will remain active for the next 15 minutes.</p>
-        
-        <div class="cta-container">
-          <a href="$link" class="button">Confirm & Sign In</a>
-        </div>
-
-        <p class="security-note">
-          If the button doesn't work, you can copy and paste this link into your browser:
-          <br>
-          <a href="$link" class="link-fallback">$link</a>
-        </p>
-      </div>
-      <div class="footer">
-        <p>&copy; ${DateTime.now().year} WS-Seeker. All rights reserved.<br>
-        If you didn't request this sign-in link, you can safely ignore this email.</p>
-      </div>
-    </div>
-  </div>
+<body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5;padding:40px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="480" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);">
+          <!-- Header -->
+          <tr>
+            <td style="background-color:#18181b;padding:28px 32px;text-align:center;">
+              <span style="color:#ffffff;font-size:22px;font-weight:700;letter-spacing:0.5px;">CROMA TCG</span>
+            </td>
+          </tr>
+          <!-- Body -->
+          <tr>
+            <td style="padding:40px 32px 16px;">
+              <h1 style="margin:0 0 12px;font-size:20px;font-weight:600;color:#18181b;">Sign in to your account</h1>
+              <p style="margin:0 0 28px;font-size:15px;line-height:1.6;color:#52525b;">Click the button below to securely sign in. This link expires in 15 minutes.</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+                <tr>
+                  <td style="background-color:#18181b;border-radius:6px;">
+                    <a href="$link" style="display:inline-block;padding:14px 32px;color:#ffffff;font-size:15px;font-weight:600;text-decoration:none;">Sign In</a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0;font-size:13px;line-height:1.5;color:#a1a1aa;">If the button doesn't work, copy and paste this link:</p>
+              <p style="margin:4px 0 0;font-size:13px;line-height:1.5;word-break:break-all;"><a href="$link" style="color:#3b82f6;text-decoration:underline;">$link</a></p>
+            </td>
+          </tr>
+          <!-- Divider -->
+          <tr>
+            <td style="padding:0 32px;">
+              <hr style="border:none;border-top:1px solid #e4e4e7;margin:24px 0;">
+            </td>
+          </tr>
+          <!-- Footer -->
+          <tr>
+            <td style="padding:0 32px 32px;">
+              <p style="margin:0;font-size:12px;line-height:1.5;color:#a1a1aa;">If you didn't request this link, you can safely ignore this email.</p>
+              <p style="margin:8px 0 0;font-size:12px;color:#d4d4d8;">Croma TCG &middot; Wholesale Portal</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
 </body>
 </html>
 ''';

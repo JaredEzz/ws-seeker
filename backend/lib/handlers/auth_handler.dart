@@ -54,7 +54,9 @@ class AuthHandler {
           jsonEncode(result),
           headers: {'Content-Type': 'application/json'},
         );
-      } catch (e) {
+      } catch (e, st) {
+        print('verify-magic-link error: $e');
+        print('Stack trace: $st');
         return Response.forbidden(
           jsonEncode({'error': e.toString()}),
           headers: {'Content-Type': 'application/json'},

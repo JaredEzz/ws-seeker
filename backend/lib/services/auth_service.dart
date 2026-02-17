@@ -134,8 +134,10 @@ class AuthService {
     }
 
     // Try Shopify sync (non-blocking - failure must not prevent login)
+    // Skip for admins so Shopify doesn't overwrite their elevated role.
     try {
-      if (_shopifyService != null &&
+      if (!isAdmin &&
+          _shopifyService != null &&
           _userService != null &&
           _shopifyService.isConfigured) {
         final shopifyResult =

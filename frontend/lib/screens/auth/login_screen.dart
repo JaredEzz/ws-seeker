@@ -92,21 +92,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                         : const Text('Send Magic Link'),
                   ),
-                  const SizedBox(height: 24),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      // Mock verification for local testing
-                      context.read<AuthBloc>().add(
-                            const AuthMagicLinkVerified(
-                              email: 'admin@croma.com',
-                              link: 'mock-token',
-                            ),
-                          );
-                    },
-                    child: const Text('Dev Bypass: Login as Admin'),
-                  ),
                 ],
               );
             },

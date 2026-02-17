@@ -58,4 +58,7 @@ jobs:
           env_vars: |
             SHOPIFY_SHOP_DOMAIN=${{ secrets.SHOPIFY_SHOP_DOMAIN }}
             SHOPIFY_ADMIN_TOKEN=${{ secrets.SHOPIFY_ADMIN_TOKEN }}
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            FROM_EMAIL=${{ secrets.FROM_EMAIL }}
+            BASE_URL=${{ secrets.BASE_URL }}
           flags: '--allow-unauthenticated'

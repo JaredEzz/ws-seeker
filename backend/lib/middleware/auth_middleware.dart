@@ -50,11 +50,14 @@ Middleware authMiddleware(Auth auth, Firestore firestore) {
         });
 
         return innerHandler(updatedRequest);
-      } on FirebaseAuthAdminException {
+      } on FirebaseAuthAdminException catch (e) {
+        print('Auth middleware FirebaseAuthAdminException: $e');
         return Response(401,
             body: jsonEncode({'error': 'Invalid or expired token'}),
             headers: {'Content-Type': 'application/json'});
-      } catch (e) {
+      } catch (e, stack) {
+        print('Auth middleware error: $e');
+        print('Auth middleware stack: $stack');
         return Response.internalServerError(
             body: jsonEncode({'error': 'Authentication failed: $e'}),
             headers: {'Content-Type': 'application/json'});

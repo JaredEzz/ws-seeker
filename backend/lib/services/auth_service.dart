@@ -42,7 +42,7 @@ class AuthService {
       'createdAt': FieldValue.serverTimestamp,
     });
 
-    final link = '$_baseUrl/#/auth/callback?token=$token&email=$email';
+    final link = '$_baseUrl/auth/callback?token=$token&email=$email';
 
     // Send email via Resend
     await _sendEmail(

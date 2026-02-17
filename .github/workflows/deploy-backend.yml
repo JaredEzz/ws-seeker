@@ -61,4 +61,19 @@ jobs:
             RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
             FROM_EMAIL=${{ secrets.FROM_EMAIL }}
             BASE_URL=${{ secrets.BASE_URL }}
-          flags: '--allow-unauthenticated'
+
+      - name: Set Firebase service account env var
+        env:
+          FIREBASE_SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+        run: |
+          python3 << 'PYEOF'
+          import os
+          sa_json = os.environ['FIREBASE_SA_JSON']
+          escaped = sa_json.replace("'", "''")
+          with open('/tmp/update-env.yaml', 'w') as f:
+              f.write(f"FIREBASE_SERVICE_ACCOUNT_JSON: '{escaped}'\n")
+          PYEOF
+          gcloud run services update ws-seeker-backend \
+            --region us-central1 \
+            --project ws-seeker \
+            --update-env-vars-file=/tmp/update-env.yaml

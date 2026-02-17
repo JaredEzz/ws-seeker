@@ -33,10 +33,20 @@ void main() async {
   final baseUrl = Platform.environment['BASE_URL'] ?? 'https://ws-seeker.web.app';
 
   // Initialize Firebase Admin
-  // Note: Ensure GOOGLE_APPLICATION_CREDENTIALS is set in dev/prod
+  // Use service account JSON from env var if available (Cloud Run),
+  // otherwise fall back to Application Default Credentials (local dev).
+  final serviceAccountJson = Platform.environment['FIREBASE_SERVICE_ACCOUNT_JSON'];
+  Credential credential;
+  if (serviceAccountJson != null && serviceAccountJson.isNotEmpty) {
+    final tmpFile = File('/tmp/firebase-sa.json');
+    tmpFile.writeAsStringSync(serviceAccountJson);
+    credential = Credential.fromServiceAccount(tmpFile);
+  } else {
+    credential = Credential.fromApplicationDefaultCredentials();
+  }
   final admin = FirebaseAdminApp.initializeApp(
     'ws-seeker',
-    Credential.fromApplicationDefaultCredentials(),
+    credential,
   );
   final firestore = Firestore(admin);
 

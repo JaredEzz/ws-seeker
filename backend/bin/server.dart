@@ -94,7 +94,7 @@ void main() async {
   router.mount('/api/auth', authHandler.router.call);
 
   // Protected routes (require auth)
-  final authMw = authMiddleware(auth, firestore);
+  final authMw = authMiddleware(firestore, projectId: 'ws-seeker');
 
   final protectedSync = const Pipeline()
       .addMiddleware(authMw)

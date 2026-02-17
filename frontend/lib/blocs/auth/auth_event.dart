@@ -15,7 +15,9 @@ final class AuthDeepLinkChecked extends AuthEvent {
 
 final class AuthMagicLinkRequested extends AuthEvent {
   final String email;
-  const AuthMagicLinkRequested({required this.email});
+  // TODO: Remove skipEmail when ready for production
+  final bool skipEmail;
+  const AuthMagicLinkRequested({required this.email, this.skipEmail = false});
 }
 
 final class AuthMagicLinkVerified extends AuthEvent {

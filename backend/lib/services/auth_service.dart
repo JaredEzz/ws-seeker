@@ -31,7 +31,8 @@ class AuthService {
         _shopifyService = shopifyService,
         _userService = userService;
 
-  Future<void> sendMagicLink(String email) async {
+  // TODO: Remove skipEmail parameter when ready for production
+  Future<String?> sendMagicLink(String email, {bool skipEmail = false}) async {
     final token = const Uuid().v4();
     final expiresAt = DateTime.now().add(const Duration(minutes: 15));
 
@@ -44,12 +45,19 @@ class AuthService {
 
     final link = '$_baseUrl/auth/callback?token=$token&email=$email';
 
+    // TODO: Remove skipEmail branch when ready for production
+    if (skipEmail) {
+      return link;
+    }
+
     // Send email via Resend
     await _sendEmail(
       to: email,
       subject: 'Sign in to WS-Seeker',
       html: _buildHtmlTemplate(link),
     );
+
+    return null;
   }
 
   Future<Map<String, dynamic>> verifyMagicLink(String token, String email) async {

@@ -85,8 +85,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      await _authRepository.loginWithMagicLink(event.email);
-      emit(const AuthMagicLinkSent());
+      // TODO: Remove skipEmail when ready for production
+      final link = await _authRepository.loginWithMagicLink(
+        event.email,
+        skipEmail: event.skipEmail,
+      );
+      emit(AuthMagicLinkSent(link: link));
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }

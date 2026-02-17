@@ -15,6 +15,10 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
 
+  // TODO: Remove _debugMode and all related code when ready for production.
+  // Set to false to send real emails via Resend.
+  bool _debugMode = true;
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -35,9 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   SnackBar(content: Text(state.message)),
                 );
               } else if (state is AuthMagicLinkSent) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Magic link sent! Check your email.')),
-                );
+                // TODO: Remove debug link dialog when ready for production
+                if (state.link != null) {
+                  _showDebugLinkDialog(context, state.link!);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Magic link sent! Check your email.')),
+                  );
+                }
               }
             },
             builder: (context, state) {
@@ -46,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
-                    '🎯 WS-Seeker',
+                    'WS-Seeker',
                     style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -78,6 +87,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             context.read<AuthBloc>().add(
                                   AuthMagicLinkRequested(
                                     email: _emailController.text,
+                                    // TODO: Remove skipEmail when ready for production
+                                    skipEmail: _debugMode,
                                   ),
                                 );
                           },
@@ -92,11 +103,59 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                         : const Text('Send Magic Link'),
                   ),
+                  // TODO: Remove debug mode switch when ready for production
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Debug mode (skip email)',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Tokens.textTertiary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Switch(
+                        value: _debugMode,
+                        onChanged: (v) => setState(() => _debugMode = v),
+                      ),
+                    ],
+                  ),
                 ],
               );
             },
           ),
         ),
+      ),
+    );
+  }
+
+  // TODO: Remove this method when ready for production
+  void _showDebugLinkDialog(BuildContext context, String link) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Debug: Magic Link'),
+        content: SelectableText(
+          link,
+          style: const TextStyle(fontSize: 14, color: Colors.blue),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Close'),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              // Navigate to the callback URL directly
+              final uri = Uri.parse(link);
+              context.read<AuthBloc>().add(AuthDeepLinkChecked(uri));
+            },
+            child: const Text('Open Link'),
+          ),
+        ],
       ),
     );
   }

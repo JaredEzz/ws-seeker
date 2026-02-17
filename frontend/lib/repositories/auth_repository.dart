@@ -8,7 +8,8 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 abstract interface class AuthRepository {
   Future<AppUser?> getCurrentUser();
-  Future<void> loginWithMagicLink(String email);
+  // TODO: Remove skipEmail parameter when ready for production
+  Future<String?> loginWithMagicLink(String email, {bool skipEmail = false});
   Future<AppUser> verifyMagicLink(String email, String token);
   Future<String?> retrievePendingEmail();
   bool isSignInWithEmailLink(String link);
@@ -29,21 +30,29 @@ class FirebaseAuthRepository implements AuthRepository {
     return _fetchUserProfile(user);
   }
 
+  // TODO: Remove skipEmail parameter when ready for production
   @override
-  Future<void> loginWithMagicLink(String email) async {
+  Future<String?> loginWithMagicLink(String email, {bool skipEmail = false}) async {
     try {
       final response = await http.post(
         Uri.parse('${AppConstants.apiBaseUrl}${ApiRoutes.magicLink}'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
+        body: jsonEncode({
+          'email': email,
+          if (skipEmail) 'skipEmail': true,
+        }),
       );
 
       if (response.statusCode != 200) {
         throw Exception('Failed to send magic link: ${response.body}');
       }
-      
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_emailKey, email);
+
+      // TODO: Remove link return when ready for production
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return data['link'] as String?;
     } catch (e) {
       print('Failed to send magic link: $e');
       rethrow;
@@ -193,8 +202,9 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> loginWithMagicLink(String email) async {
+  Future<String?> loginWithMagicLink(String email, {bool skipEmail = false}) async {
     await Future.delayed(const Duration(seconds: 1));
+    return null;
   }
 
   @override

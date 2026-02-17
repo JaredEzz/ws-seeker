@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:dart_firebase_admin/auth.dart';
 import 'package:dart_firebase_admin/dart_firebase_admin.dart';
 import 'package:dart_firebase_admin/firestore.dart';
-import 'package:uuid/uuid.dart';
+import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:uuid/uuid.dart';
+
 import 'shopify_service.dart';
 import 'user_service.dart';
 
@@ -95,7 +99,8 @@ class AuthService {
     }
 
     // Generate Firebase Custom Token
-    final customToken = await _auth.createCustomToken(userRecord.uid);
+    // (bypass dart_firebase_admin's createCustomToken — its JWT signature is broken)
+    final customToken = _createCustomToken(userRecord.uid);
 
     final result = <String, dynamic>{'token': customToken};
 
@@ -158,6 +163,34 @@ class AuthService {
     }
 
     return result;
+  }
+
+  String _createCustomToken(String uid) {
+    final saJson = Platform.environment['FIREBASE_SERVICE_ACCOUNT_JSON'];
+    if (saJson == null || saJson.isEmpty) {
+      throw Exception('FIREBASE_SERVICE_ACCOUNT_JSON env var is not set');
+    }
+    final sa = jsonDecode(saJson) as Map<String, dynamic>;
+    final privateKeyPem = sa['private_key'] as String;
+    final serviceAccountEmail = sa['client_email'] as String;
+
+    final now = DateTime.now();
+    final jwt = JWT(
+      {
+        'uid': uid,
+      },
+      issuer: serviceAccountEmail,
+      subject: serviceAccountEmail,
+      audience: Audience.one(
+        'https://identitytoolkit.googleapis.com/google.identity.identitytoolkit.v1.IdentityToolkit',
+      ),
+    );
+
+    return jwt.sign(
+      RSAPrivateKey(privateKeyPem),
+      algorithm: JWTAlgorithm.RS256,
+      expiresIn: const Duration(hours: 1),
+    );
   }
 
   Future<void> _sendEmail({

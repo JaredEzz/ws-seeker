@@ -17,6 +17,9 @@ dependencies:
   # Firebase Admin
   dart_firebase_admin: ^0.4.0
   
+  # JWT (workaround for dart_firebase_admin createCustomToken bug)
+  dart_jsonwebtoken: ^2.14.0
+
   # Utilities
   dotenv: ^4.2.0
   uuid: ^4.4.2

@@ -67,13 +67,16 @@ jobs:
           FIREBASE_SA_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
         run: |
           python3 << 'PYEOF'
-          import os
+          import os, subprocess
           sa_json = os.environ['FIREBASE_SA_JSON']
-          escaped = sa_json.replace("'", "''")
-          with open('/tmp/update-env.yaml', 'w') as f:
-              f.write(f"FIREBASE_SERVICE_ACCOUNT_JSON: '{escaped}'\n")
+          result = subprocess.run([
+              'gcloud', 'run', 'services', 'update', 'ws-seeker-backend',
+              '--region', 'us-central1',
+              '--project', 'ws-seeker',
+              '--update-env-vars', f'FIREBASE_SERVICE_ACCOUNT_JSON={sa_json}'
+          ], capture_output=True, text=True)
+          print(result.stdout)
+          if result.returncode != 0:
+              print(result.stderr)
+              exit(result.returncode)
           PYEOF
-          gcloud run services update ws-seeker-backend \
-            --region us-central1 \
-            --project ws-seeker \
-            --update-env-vars-file=/tmp/update-env.yaml

@@ -5,6 +5,7 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/order_form_bloc.dart';
+import '../../blocs/orders/orders_bloc.dart';
 import '../../repositories/order_repository.dart';
 import '../../repositories/product_repository.dart';
 import '../../widgets/forms/address_form.dart';
@@ -54,6 +55,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Order placed successfully!')),
             );
+            context.read<OrdersBloc>().add(const OrdersFetchRequested());
             context.go('/dashboard');
           }
           if (state.status == OrderFormStatus.failure) {

@@ -6,6 +6,7 @@ import 'app/router.dart';
 import 'app/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_event.dart';
+import 'blocs/orders/orders_bloc.dart';
 import 'firebase_options.dart';
 import 'repositories/auth_repository.dart';
 import 'repositories/invoice_repository.dart';
@@ -51,6 +52,11 @@ void main() async {
       child: MultiBlocProvider(
         providers: [
           BlocProvider<AuthBloc>.value(value: authBloc),
+          BlocProvider<OrdersBloc>(
+            create: (context) => OrdersBloc(
+              orderRepository: context.read<OrderRepository>(),
+            ),
+          ),
         ],
         child: WSSeekerApp(authBloc: authBloc),
       ),

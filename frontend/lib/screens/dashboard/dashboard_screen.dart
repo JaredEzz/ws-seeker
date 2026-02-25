@@ -7,22 +7,28 @@ import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/orders_bloc.dart';
-import '../../repositories/order_repository.dart';
 import '../../widgets/navigation/adaptive_navigation.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<OrdersBloc>().add(const OrdersFetchRequested());
+  }
 
   @override
   Widget build(BuildContext context) {
     final authState = context.watch<AuthBloc>().state;
     final user = authState is AuthAuthenticated ? authState.user : null;
 
-    return BlocProvider(
-      create: (context) => OrdersBloc(
-        orderRepository: context.read<OrderRepository>(),
-      )..add(const OrdersFetchRequested()),
-      child: AdaptiveNavigation(
+    return AdaptiveNavigation(
         selectedIndex: 0,
         onDestinationSelected: (index) {
           if (index == 1) context.push('/place-order');
@@ -110,7 +116,6 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
     );
   }
 }

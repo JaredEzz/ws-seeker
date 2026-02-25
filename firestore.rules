@@ -8,10 +8,10 @@ service cloud.firestore {
     }
     
     // Helper function to check if user is admin/superUser
-    // Note: This checks a custom claim or looks up the users collection
     function isAdmin() {
-      return isAuthenticated() && 
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'superUser';
+      return isAuthenticated() &&
+        (get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'super_user' ||
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'supplier');
     }
     
     // Products collection

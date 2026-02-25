@@ -31,7 +31,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     if (event.user != null) {
-      emit(AuthAuthenticated(user: event.user!));
+      final incoming = event.user!;
+      // Don't let authStateChanges overwrite a known role with the default
+      // wholesaler fallback. verifyMagicLink returns the authoritative role;
+      // _fetchUserProfile may fall back to wholesaler if Firestore read fails.
+      final current = state;
+      if (current is AuthAuthenticated &&
+          current.user.id == incoming.id &&
+          current.user.role != UserRole.wholesaler &&
+          incoming.role == UserRole.wholesaler) {
+        return; // keep the authoritative role from verifyMagicLink
+      }
+      emit(AuthAuthenticated(user: incoming));
     } else {
       emit(const AuthUnauthenticated());
     }

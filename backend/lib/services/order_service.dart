@@ -59,6 +59,7 @@ class OrderService {
 
     // Look up product details and build order items
     final orderItems = <OrderItem>[];
+    var hasQuoteRequired = false;
     for (final itemRequest in request.items) {
       if (itemRequest.quantity <= 0 ||
           itemRequest.quantity > AppConstants.maxItemQuantity) {
@@ -74,6 +75,10 @@ class OrderService {
       final productData = productDoc.data()!;
       if (productData['isActive'] != true) {
         throw ArgumentError('Product is not available: ${itemRequest.productId}');
+      }
+
+      if (productData['quoteRequired'] == true) {
+        hasQuoteRequired = true;
       }
 
       // Resolve unit price: for JPN products with a type, use the type-specific price
@@ -115,7 +120,10 @@ class OrderService {
                 if (item.productType != null) 'productType': item.productType,
               })
           .toList(),
-      'status': OrderStatus.submitted.name,
+      'status': hasQuoteRequired
+          ? OrderStatus.awaitingQuote.name
+          : OrderStatus.submitted.name,
+      if (hasQuoteRequired) 'quoteRequired': true,
       'shippingAddress': {
         'fullName': request.shippingAddress.fullName,
         'addressLine1': request.shippingAddress.addressLine1,

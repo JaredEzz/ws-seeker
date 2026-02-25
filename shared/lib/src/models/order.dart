@@ -63,6 +63,7 @@ class Order with _$Order {
     String? displayOrderNumber,
     double? airShippingCost,
     double? oceanShippingCost,
+    @Default(false) bool quoteRequired,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _Order;

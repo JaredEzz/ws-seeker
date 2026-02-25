@@ -170,7 +170,7 @@ class _OrderList extends StatelessWidget {
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
             title: Text('Order ${order.displayOrderNumber ?? (order.id.length > 8 ? order.id.substring(0, 8) : order.id)} - ${order.language.name.toUpperCase()}'),
-            subtitle: Text('${Tokens.statusLabel(order.status)} • \$${order.totalAmount.toStringAsFixed(2)}'),
+            subtitle: Text('${Tokens.statusLabel(order.status)} • ${order.quoteRequired ? 'Quote Needed' : '\$${order.totalAmount.toStringAsFixed(2)}'}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

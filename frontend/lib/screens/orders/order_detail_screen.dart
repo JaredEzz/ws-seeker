@@ -259,6 +259,57 @@ class _PricingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (order.quoteRequired) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Pricing', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Tokens.feedbackWarningBg,
+                  border: Border.all(color: Tokens.feedbackWarningBorder),
+                  borderRadius: BorderRadius.circular(Tokens.radiusLg),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.request_quote,
+                        color: Tokens.feedbackWarningIcon),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Quote Needed',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(color: Tokens.feedbackWarningText)),
+                          const SizedBox(height: 4),
+                          Text(
+                            'This order contains products that require a supplier quote. '
+                            'Pricing will be confirmed once the quote is provided.',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(color: Tokens.feedbackWarningText),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),

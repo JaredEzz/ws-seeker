@@ -4,11 +4,13 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 class AddressForm extends StatefulWidget {
   final ShippingAddress? initialAddress;
   final ValueChanged<ShippingAddress> onChanged;
+  final GlobalKey<FormState>? formKey;
 
   const AddressForm({
     super.key,
     this.initialAddress,
     required this.onChanged,
+    this.formKey,
   });
 
   @override
@@ -71,35 +73,38 @@ class _AddressFormState extends State<AddressForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Shipping Address', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 16),
-        _buildField(_fullNameController, 'Full Name', required: true),
-        const SizedBox(height: 12),
-        _buildField(_addressLine1Controller, 'Address Line 1', required: true),
-        const SizedBox(height: 12),
-        _buildField(_addressLine2Controller, 'Address Line 2 (optional)'),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(child: _buildField(_cityController, 'City', required: true)),
-            const SizedBox(width: 12),
-            Expanded(child: _buildField(_stateController, 'State', required: true)),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(child: _buildField(_postalCodeController, 'Postal Code', required: true)),
-            const SizedBox(width: 12),
-            Expanded(child: _buildField(_countryController, 'Country', required: true)),
-          ],
-        ),
-        const SizedBox(height: 12),
-        _buildField(_phoneController, 'Phone', required: true),
-      ],
+    return Form(
+      key: widget.formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Shipping Address *', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 16),
+          _buildField(_fullNameController, 'Full Name', required: true),
+          const SizedBox(height: 12),
+          _buildField(_addressLine1Controller, 'Address Line 1', required: true),
+          const SizedBox(height: 12),
+          _buildField(_addressLine2Controller, 'Address Line 2 (optional)'),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _buildField(_cityController, 'City', required: true)),
+              const SizedBox(width: 12),
+              Expanded(child: _buildField(_stateController, 'State', required: true)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _buildField(_postalCodeController, 'Postal Code', required: true)),
+              const SizedBox(width: 12),
+              Expanded(child: _buildField(_countryController, 'Country', required: true)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _buildField(_phoneController, 'Phone', required: true),
+        ],
+      ),
     );
   }
 

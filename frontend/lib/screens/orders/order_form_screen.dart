@@ -44,6 +44,8 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   int _currentStep = 0;
   ShippingAddress? _shippingAddress;
   bool _addressInitialized = false;
+  final _reviewFormKey = GlobalKey<FormState>();
+  final _addressFormKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -124,6 +126,8 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                   state: state,
                   initialAddress: _shippingAddress,
                   onAddressChanged: (addr) => _shippingAddress = addr,
+                  reviewFormKey: _reviewFormKey,
+                  addressFormKey: _addressFormKey,
                 ),
                 isActive: _currentStep >= 2,
               ),
@@ -141,29 +145,55 @@ class _OrderFormContentState extends State<_OrderFormContent> {
       );
       return;
     }
-    if (_currentStep == 1 && state.itemRequests.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one product')),
-      );
-      return;
+    if (_currentStep == 1) {
+      if (state.itemRequests.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select at least one product')),
+        );
+        return;
+      }
+      // Validate JPN product types are selected
+      if (state.language == ProductLanguage.japanese) {
+        for (final entry
+            in state.selectedItems.entries.where((e) => e.value > 0)) {
+          final product = state.availableProducts
+              .where((p) => p.id == entry.key)
+              .firstOrNull;
+          if (product != null &&
+              OrderFormState.availableTypesFor(product).isNotEmpty &&
+              !state.selectedProductTypes.containsKey(entry.key)) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                  content: Text(
+                      'Please select a product type for ${product.name}')),
+            );
+            return;
+          }
+        }
+      }
     }
 
     if (_currentStep < 2) {
       setState(() => _currentStep++);
     } else {
-      // Validate address before submitting
-      if (_shippingAddress == null ||
-          _shippingAddress!.fullName.isEmpty ||
-          _shippingAddress!.addressLine1.isEmpty ||
-          _shippingAddress!.city.isEmpty ||
-          (_shippingAddress!.phone == null ||
-              _shippingAddress!.phone!.isEmpty)) {
+      // Validate review fields and address
+      final reviewValid = _reviewFormKey.currentState?.validate() ?? false;
+      final addressValid = _addressFormKey.currentState?.validate() ?? false;
+
+      if (!reviewValid || !addressValid) return;
+
+      // JPN: check wise email exists on profile
+      if (state.language == ProductLanguage.japanese &&
+          (state.wiseEmail == null || state.wiseEmail!.isEmpty)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-              content: Text('Please fill in all required address fields')),
+            content: Text(
+                'Please set your Wise email in your Profile before placing a JPN order.'),
+          ),
         );
         return;
       }
+
       context.read<OrderFormBloc>().add(
             OrderFormSubmitted(_shippingAddress!),
           );
@@ -304,11 +334,33 @@ class _ProductSelectorState extends State<_ProductSelector> {
                 child: Column(
                   children: [
                     ListTile(
-                      title: Text(p.name),
+                      title: Row(
+                        children: [
+                          Flexible(child: Text(p.name)),
+                          if (p.quoteRequired) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.shade100,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'Quote Required',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.orange.shade900,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
                       subtitle: Text(
-                        '\$${displayPrice.toStringAsFixed(2)}'
-                        '${p.sku != null ? ' — ${p.sku}' : ''}'
-                        '${p.quoteRequired ? ' (Quote Required)' : ''}',
+                        '${p.quoteRequired ? 'Price TBD' : '\$${displayPrice.toStringAsFixed(2)}'}'
+                        '${p.sku != null ? ' — ${p.sku}' : ''}',
                       ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -338,7 +390,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
                         ],
                       ),
                     ),
-                    // JPN product type selector
+                    // Product type selector (JPN: Box/No Shrink/Case, CN: Loose Box/Sealed Case)
                     if (availableTypes.isNotEmpty && qty > 0)
                       Padding(
                         padding: const EdgeInsets.only(
@@ -380,11 +432,15 @@ class _ReviewStep extends StatefulWidget {
   final OrderFormState state;
   final ShippingAddress? initialAddress;
   final ValueChanged<ShippingAddress> onAddressChanged;
+  final GlobalKey<FormState> reviewFormKey;
+  final GlobalKey<FormState> addressFormKey;
 
   const _ReviewStep({
     required this.state,
     this.initialAddress,
     required this.onAddressChanged,
+    required this.reviewFormKey,
+    required this.addressFormKey,
   });
 
   @override
@@ -413,6 +469,8 @@ class _ReviewStepState extends State<_ReviewStep> {
     final theme = Theme.of(context);
     final shippingMethods =
         OrderFormState.shippingMethodsFor(state.language);
+    final paymentMethods =
+        OrderFormState.paymentMethodsFor(state.language);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,11 +507,12 @@ class _ReviewStepState extends State<_ReviewStep> {
                   final unitPrice =
                       OrderFormState.resolvePrice(product, typeKey);
                   final lineTotal = unitPrice * entry.value;
+                  final isCn = product.language == ProductLanguage.chinese;
                   final typeLabel = typeKey != null
                       ? ' (${switch (typeKey) {
-                          'box' => 'Box',
+                          'box' => isCn ? 'Loose Box' : 'Box',
                           'no_shrink' => 'No Shrink',
-                          'case' => 'Case',
+                          'case' => isCn ? 'Sealed Case' : 'Case',
                           _ => typeKey,
                         }})'
                       : '';
@@ -509,51 +568,117 @@ class _ReviewStepState extends State<_ReviewStep> {
         ),
         const SizedBox(height: 16),
 
-        // Discord Name
-        Text('Contact Info', style: theme.textTheme.titleMedium),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: _discordController,
-          decoration: const InputDecoration(
-            labelText: 'Discord Name',
-            border: OutlineInputBorder(),
-            contentPadding:
-                EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        // Validated fields (discord, shipping, payment)
+        Form(
+          key: widget.reviewFormKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Discord Name (required)
+              Text('Contact Info', style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              TextFormField(
+                controller: _discordController,
+                decoration: const InputDecoration(
+                  labelText: 'Discord Name *',
+                  border: OutlineInputBorder(),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                ),
+                validator: (value) =>
+                    (value == null || value.trim().isEmpty)
+                        ? 'Discord name is required'
+                        : null,
+                onChanged: (val) {
+                  context
+                      .read<OrderFormBloc>()
+                      .add(OrderFormDiscordNameChanged(val));
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Payment Method (required)
+              Text('Payment Method *', style: theme.textTheme.titleMedium),
+              const SizedBox(height: 8),
+              if (state.language == ProductLanguage.japanese) ...[
+                // JPN: Wise only, auto-selected
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.payment),
+                    title: const Text('Wise'),
+                    subtitle: state.wiseEmail != null &&
+                            state.wiseEmail!.isNotEmpty
+                        ? Text('Wise email: ${state.wiseEmail}')
+                        : Text(
+                            'Set your Wise email in Profile',
+                            style:
+                                TextStyle(color: theme.colorScheme.error),
+                          ),
+                  ),
+                ),
+              ] else if (paymentMethods.isNotEmpty) ...[
+                // CN/KR: Dropdown
+                DropdownButtonFormField<String>(
+                  value: state.paymentMethod,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  ),
+                  hint: const Text('Select payment method'),
+                  validator: (value) =>
+                      (value == null || value.isEmpty)
+                          ? 'Payment method is required'
+                          : null,
+                  items: paymentMethods
+                      .map(
+                          (m) => DropdownMenuItem(value: m, child: Text(m)))
+                      .toList(),
+                  onChanged: (val) {
+                    context
+                        .read<OrderFormBloc>()
+                        .add(OrderFormPaymentMethodChanged(val));
+                  },
+                ),
+              ],
+              const SizedBox(height: 16),
+
+              // Shipping Method (required for JPN and CN)
+              if (shippingMethods.isNotEmpty) ...[
+                Text('Shipping Method *',
+                    style: theme.textTheme.titleMedium),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  value: state.shippingMethod,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  ),
+                  hint: const Text('Select shipping method'),
+                  validator: (value) =>
+                      (value == null || value.isEmpty)
+                          ? 'Shipping method is required'
+                          : null,
+                  items: shippingMethods
+                      .map(
+                          (m) => DropdownMenuItem(value: m, child: Text(m)))
+                      .toList(),
+                  onChanged: (val) {
+                    context
+                        .read<OrderFormBloc>()
+                        .add(OrderFormShippingMethodChanged(val));
+                  },
+                ),
+                const SizedBox(height: 16),
+              ],
+            ],
           ),
-          onChanged: (val) {
-            context
-                .read<OrderFormBloc>()
-                .add(OrderFormDiscordNameChanged(val));
-          },
         ),
-        const SizedBox(height: 16),
 
-        // Shipping Method (language-dependent)
-        if (shippingMethods.isNotEmpty) ...[
-          Text('Shipping Method', style: theme.textTheme.titleMedium),
-          const SizedBox(height: 8),
-          DropdownButtonFormField<String>(
-            value: state.shippingMethod,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            ),
-            hint: const Text('Select shipping method'),
-            items: shippingMethods
-                .map((m) => DropdownMenuItem(value: m, child: Text(m)))
-                .toList(),
-            onChanged: (val) {
-              context
-                  .read<OrderFormBloc>()
-                  .add(OrderFormShippingMethodChanged(val));
-            },
-          ),
-          const SizedBox(height: 16),
-        ],
-
-        // Shipping Address
+        // Shipping Address (own Form)
         AddressForm(
+          formKey: widget.addressFormKey,
           initialAddress: widget.initialAddress,
           onChanged: widget.onAddressChanged,
         ),

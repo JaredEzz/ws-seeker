@@ -271,7 +271,9 @@ class _OrdersTable extends StatelessWidget {
         DataCell(Text(order.shippingAddress.fullName)),
         DataCell(Text(order.discordName ?? '-')),
         DataCell(Text('${order.items.length}')),
-        DataCell(Text('\$${order.totalAmount.toStringAsFixed(2)}')),
+        DataCell(Text(order.quoteRequired
+            ? 'Quote Needed'
+            : '\$${order.totalAmount.toStringAsFixed(2)}')),
         DataCell(_StatusChip(
           order: order,
           onStatusChanged: currentUserRole == UserRole.superUser

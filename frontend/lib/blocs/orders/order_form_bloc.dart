@@ -29,6 +29,11 @@ final class OrderFormShippingMethodChanged extends OrderFormEvent {
   const OrderFormShippingMethodChanged(this.shippingMethod);
 }
 
+final class OrderFormPaymentMethodChanged extends OrderFormEvent {
+  final String? paymentMethod;
+  const OrderFormPaymentMethodChanged(this.paymentMethod);
+}
+
 final class OrderFormDiscordNameChanged extends OrderFormEvent {
   final String discordName;
   const OrderFormDiscordNameChanged(this.discordName);
@@ -58,6 +63,9 @@ class OrderFormState {
   final String? errorMessage;
   final String? discordName;
   final String? shippingMethod;
+  final String? paymentMethod;
+  final String? wiseEmail;
+  final String? prefillPaymentMethod;
   final ShippingAddress? prefillAddress;
   final String? prefillPhone;
 
@@ -71,6 +79,9 @@ class OrderFormState {
     this.errorMessage,
     this.discordName,
     this.shippingMethod,
+    this.paymentMethod,
+    this.wiseEmail,
+    this.prefillPaymentMethod,
     this.prefillAddress,
     this.prefillPhone,
   });
@@ -85,6 +96,9 @@ class OrderFormState {
     String? errorMessage,
     String? discordName,
     String? shippingMethod,
+    String? paymentMethod,
+    String? wiseEmail,
+    String? prefillPaymentMethod,
     ShippingAddress? prefillAddress,
     String? prefillPhone,
   }) {
@@ -98,6 +112,9 @@ class OrderFormState {
       errorMessage: errorMessage ?? this.errorMessage,
       discordName: discordName ?? this.discordName,
       shippingMethod: shippingMethod ?? this.shippingMethod,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      wiseEmail: wiseEmail ?? this.wiseEmail,
+      prefillPaymentMethod: prefillPaymentMethod ?? this.prefillPaymentMethod,
       prefillAddress: prefillAddress ?? this.prefillAddress,
       prefillPhone: prefillPhone ?? this.prefillPhone,
     );
@@ -131,20 +148,22 @@ class OrderFormState {
     return product.basePrice;
   }
 
-  /// Available product types for a JPN product (only types with prices).
+  /// Available product types based on language.
+  /// JPN: Box / No Shrink / Case (per order form instructions).
+  /// CN: Loose Box / Sealed Case (per order form examples).
   static List<(String value, String label)> availableTypesFor(Product product) {
-    final types = <(String, String)>[];
-    if (product.language != ProductLanguage.japanese) return types;
-    if (product.boxPriceUsd != null || product.boxPriceUsdWithTariff != null) {
-      types.add(('box', 'Box'));
-    }
-    if (product.noShrinkPriceUsd != null || product.noShrinkPriceUsdWithTariff != null) {
-      types.add(('no_shrink', 'No Shrink'));
-    }
-    if (product.casePriceUsd != null || product.casePriceUsdWithTariff != null) {
-      types.add(('case', 'Case'));
-    }
-    return types;
+    return switch (product.language) {
+      ProductLanguage.japanese => [
+        ('box', 'Box'),
+        ('no_shrink', 'No Shrink'),
+        ('case', 'Case'),
+      ],
+      ProductLanguage.chinese => [
+        ('box', 'Loose Box'),
+        ('case', 'Sealed Case'),
+      ],
+      ProductLanguage.korean => [],
+    };
   }
 
   /// Shipping method options based on language
@@ -157,6 +176,15 @@ class OrderFormState {
       ],
       ProductLanguage.chinese => ['Air', 'Ocean', 'Mix'],
       ProductLanguage.korean || null => [],
+    };
+  }
+
+  /// Payment method options based on language
+  static List<String> paymentMethodsFor(ProductLanguage? language) {
+    return switch (language) {
+      ProductLanguage.japanese => ['Wise'],
+      ProductLanguage.chinese || ProductLanguage.korean => ['Venmo', 'PayPal', 'ACH'],
+      null => [],
     };
   }
 }
@@ -177,6 +205,7 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
     on<OrderFormProductTypeChanged>(_onProductTypeChanged);
     on<OrderFormProfileLoaded>(_onProfileLoaded);
     on<OrderFormShippingMethodChanged>(_onShippingMethodChanged);
+    on<OrderFormPaymentMethodChanged>(_onPaymentMethodChanged);
     on<OrderFormDiscordNameChanged>(_onDiscordNameChanged);
     on<OrderFormSubmitted>(_onSubmitted);
   }
@@ -189,6 +218,8 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
       discordName: event.user.discordName,
       prefillAddress: event.user.savedAddress,
       prefillPhone: event.user.phone,
+      wiseEmail: event.user.wiseEmail,
+      prefillPaymentMethod: event.user.preferredPaymentMethod,
     ));
   }
 
@@ -199,12 +230,20 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
     emit(state.copyWith(status: OrderFormStatus.loading, language: event.language));
     try {
       final products = await _productRepository.getProducts(event.language);
-      emit(state.copyWith(
+      final autoPayment = event.language == ProductLanguage.japanese
+          ? 'Wise'
+          : state.prefillPaymentMethod;
+      // Use constructor to properly reset nullable fields
+      emit(OrderFormState(
         status: OrderFormStatus.initial,
+        language: event.language,
         availableProducts: products,
-        selectedItems: {},
-        selectedProductTypes: {},
-        shippingMethod: null,
+        discordName: state.discordName,
+        paymentMethod: autoPayment,
+        wiseEmail: state.wiseEmail,
+        prefillPaymentMethod: state.prefillPaymentMethod,
+        prefillAddress: state.prefillAddress,
+        prefillPhone: state.prefillPhone,
       ));
     } catch (e) {
       emit(state.copyWith(status: OrderFormStatus.failure, errorMessage: e.toString()));
@@ -274,6 +313,13 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
     emit(state.copyWith(shippingMethod: event.shippingMethod));
   }
 
+  void _onPaymentMethodChanged(
+    OrderFormPaymentMethodChanged event,
+    Emitter<OrderFormState> emit,
+  ) {
+    emit(state.copyWith(paymentMethod: event.paymentMethod));
+  }
+
   void _onDiscordNameChanged(
     OrderFormDiscordNameChanged event,
     Emitter<OrderFormState> emit,
@@ -294,6 +340,7 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
         items: state.itemRequests,
         shippingAddress: event.address,
         shippingMethod: state.shippingMethod,
+        paymentMethod: state.paymentMethod,
         discordName: state.discordName,
       );
       await _orderRepository.createOrder(request);

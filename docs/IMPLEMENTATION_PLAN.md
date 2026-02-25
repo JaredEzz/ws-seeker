@@ -136,17 +136,19 @@ CROMA WHOLESALE template:
 
 ---
 
-## Phase 2: Workflow Polish (After Phase 1)
+## Phase 2: Workflow Polish — COMPLETE
 
-- Quote builder (product × qty × price, shipping estimate)
-- Supplier dashboard (Mimi — JPN orders only)
-- Display order number generation (auto-increment per language)
+- [x] User profile screen (discord name, phone, payment method, shipping address)
+- [x] Display order number generation (auto-increment per language: CN35, JPN42, KR13)
+- [x] JPN product type selector (Box/No Shrink/Case) with type-specific pricing
+- [x] Cloud Storage file upload for proof of payment (replaces URL-only)
+- [x] Supplier dashboard (Mimi — JPN orders only, tailored admin UI)
 
-## Phase 3: Automation (After Phase 2)
+## Phase 3: Automation — COMPLETE
 
-- PDF invoice generation
-- Email notifications (Resend)
-- Pricing engine (13% markup CN/KR, JPY→USD, tariff calc)
+- [x] Pricing engine (13% markup CN/KR, JPY→USD conversion, tariff calc)
+- [x] Email notifications (Resend) — order confirmation, invoice sent, payment received, shipped
+- [x] PDF invoice generation — CROMA WHOLESALE template, downloadable from admin UI
 
 ---
 

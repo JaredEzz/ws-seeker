@@ -8,6 +8,7 @@ abstract interface class InvoiceRepository {
   Future<Invoice> getInvoiceById(String id);
   Future<Invoice> generateInvoice(String orderId);
   Future<void> updateInvoiceStatus(String id, String status);
+  Future<List<int>> downloadPdf(String id);
 }
 
 class HttpInvoiceRepository implements InvoiceRepository {
@@ -89,6 +90,20 @@ class HttpInvoiceRepository implements InvoiceRepository {
     if (response.statusCode != 200) {
       throw Exception('Failed to update invoice status: ${response.body}');
     }
+  }
+
+  @override
+  Future<List<int>> downloadPdf(String id) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl${ApiRoutes.invoices}/$id/pdf'),
+      headers: await _authHeaders,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to download PDF: ${response.body}');
+    }
+
+    return response.bodyBytes;
   }
 
   Invoice _invoiceFromMap(Map<String, dynamic> map) {

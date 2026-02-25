@@ -1,3 +1,6 @@
+import 'dart:js_interop';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:web/web.dart' as web;
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
@@ -64,6 +67,33 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
     }
   }
 
+  Future<void> _downloadPdf(Invoice invoice) async {
+    try {
+      final bytes = await _invoiceRepository.downloadPdf(invoice.id);
+      final data = Uint8List.fromList(bytes);
+      final blob = web.Blob(
+        [data.toJS].toJS,
+        web.BlobPropertyBag(type: 'application/pdf'),
+      );
+      final url = web.URL.createObjectURL(blob);
+      final filename =
+          'Invoice_${invoice.displayInvoiceNumber ?? invoice.id}.pdf';
+      final anchor = web.document.createElement('a') as web.HTMLAnchorElement
+        ..href = url
+        ..download = filename;
+      web.document.body!.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      web.URL.revokeObjectURL(url);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to download PDF: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AdminShell(
@@ -120,6 +150,7 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
                           : _InvoiceList(
                               invoices: _invoices,
                               onUpdateStatus: _updateStatus,
+                              onDownloadPdf: _downloadPdf,
                             ),
             ),
           ],
@@ -132,10 +163,12 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
 class _InvoiceList extends StatelessWidget {
   final List<Invoice> invoices;
   final void Function(String invoiceId, String status) onUpdateStatus;
+  final void Function(Invoice invoice) onDownloadPdf;
 
   const _InvoiceList({
     required this.invoices,
     required this.onUpdateStatus,
+    required this.onDownloadPdf,
   });
 
   @override
@@ -148,6 +181,7 @@ class _InvoiceList extends StatelessWidget {
         return _InvoiceCard(
           invoice: invoice,
           onUpdateStatus: onUpdateStatus,
+          onDownloadPdf: onDownloadPdf,
         );
       },
     );
@@ -157,10 +191,12 @@ class _InvoiceList extends StatelessWidget {
 class _InvoiceCard extends StatelessWidget {
   final Invoice invoice;
   final void Function(String invoiceId, String status) onUpdateStatus;
+  final void Function(Invoice invoice) onDownloadPdf;
 
   const _InvoiceCard({
     required this.invoice,
     required this.onUpdateStatus,
+    required this.onDownloadPdf,
   });
 
   @override
@@ -296,11 +332,7 @@ class _InvoiceCard extends StatelessWidget {
                   runSpacing: 8,
                   children: [
                     OutlinedButton.icon(
-                      onPressed: () {
-                        final pdfUrl =
-                            '${AppConstants.apiBaseUrl}${ApiRoutes.invoices}/${invoice.id}/pdf';
-                        web.window.open(pdfUrl, '_blank');
-                      },
+                      onPressed: () => onDownloadPdf(invoice),
                       icon: const Icon(Icons.picture_as_pdf, size: 18),
                       label: const Text('Download PDF'),
                     ),

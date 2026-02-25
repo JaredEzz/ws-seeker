@@ -36,3 +36,8 @@ coverage/
 # Flutter Web
 frontend/build/
 frontend/web/.last_build_id
+
+# Large media files
+*.mp4
+*.mov
+*.avi

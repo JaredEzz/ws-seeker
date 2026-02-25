@@ -1,0 +1,592 @@
+ Let me pull up my thing.
+ Mom, I'm glad you guys met.
+ That's good.
+ Taylor, if you're there, right?
+ Yes, we're both here.
+ This was a terrible example of being the boss.
+ I'm not going to lie to you.
+ I was sitting there, working on the website and fell asleep.
+ Don't worry.
+ You've got to catch the rest when you can.
+ Yeah.
+ OK.
+ Wait.
+ [INAUDIBLE]
+ Let's see it on the new tab.
+ So for our health cell program, everything's
+ done through Google Forms, you can see my screen, right?
+ Yeah.
+ Everything's kind of done through a Google Forms.
+ So they had three different Google Forms
+ that ordered through for Chinese, Japanese, and Korean.
+ I mean, this initially built up because we
+ had three different suppliers that
+ were kind of writing this for themselves.
+ And we wanted to keep it separate so
+ that the suppliers didn't get confused on what orders
+ were being placed to which supplier.
+ And it's very simple and basic.
+ They'll just enter information that we need.
+ They didn't get ingested into an Excel sheet.
+ This is your current setup, right?
+ Not how you want it to be, OK?
+ Yeah.
+ This current setup, there's the back end of it.
+ All the information gets ingested from Google Forms
+ into the back end.
+ There's an invoice generator, too, for Taylor to use.
+ And then there's a front side.
+ Then there's a public server.
+ What are those invoices for?
+ It's for the orders.
+ A seller or to your supplier.
+ So Japanese and Korean--
+ I'm sorry, Chinese and Korean.
+ We used to have them go directly to our supplier,
+ and our supplier would just go up and back in the Excel sheet.
+ But now, Taylor, those relationships,
+ they didn't like how it was being done.
+ They wanted to have us pay instead of the members
+ in the wholesale program pay them directly.
+ Because it kind of streamlined everything for them.
+ They didn't have to worry about all the different payment
+ options coming to them from different people.
+ OK.
+ So we ended up moving it back to the members paying
+ chroma for Chinese and Korean.
+ For Japanese, they still pay our Japanese supplier directly.
+ And she's very plugged in with the process.
+ She knows how to send them the invoice and everything.
+ So that's great.
+ So essentially, what they would do--
+ let's say someone placed an order to come to the Excel sheet.
+ Our Japanese supplier would quote,
+ let's use the Japanese order form, actually.
+ Sorry, it's like three different forms.
+ So this is our Japanese supplier.
+ And we kind of need this to mirror
+ how she's using it now, because it will be--
+ how do I describe it?
+ Since she's so familiar with the process,
+ so we can get this into an app instead of just Excel sheet.
+ Yeah.
+ Essentially, she'll come in.
+ She'll see the order come in.
+ She'll put her quote here.
+ Let's fix it if I do it here.
+ Oh no, this is her master form, OK?
+ Is this shared like she owns this?
+ We own the--
+ So she has added access or something?
+ She logs into an email that we gave her.
+ Because we wanted to make sure we can moderate what
+ she was sending and receiving, right?
+ So that people don't backdoor our supplier.
+ She'll fill it out.
+ She'll create the invoice and she'll send it and everything's--
+ I can give you the Excel sheet to see how that's set up.
+ But essentially, when she sends it,
+ the invoice is just from email from here.
+ There's a template that's built.
+ And then when she's done, she'll just
+ talk to a different stat.
+ This automatically switches to set.
+ And then she has different statuses, OK?
+ She can put it.
+ And then she can put tracking ID.
+ Sorry, I'm like airheaded right now.
+ So I need a front end.
+ High level, I need a front end kind of like an order
+ form for them to fill.
+ But rather than them putting in the products themselves,
+ they have a dropdown list of products
+ that they can select from, or in the quantity.
+ And they just keep doing the dropdowns as they go.
+ Where would those available products come from?
+ They are being pulled from--
+ so they have a pricing--
+ so this is the public-facing one, which one?
+ So this is the public-facing sheet.
+ It just has the different order status sheets
+ that the members can look at, and then different pricing
+ sheets for each of the products too.
+ If you can--
+ I mean, if I can have it pulled from Excel,
+ because all the suppliers always do us to the data in Excel,
+ if I can try and get a dropdown--
+ Is it a pretty consistent format?
+ Japanese, Korean are.
+ We can-- I mean, AI is pretty good for reading Excel
+ and fitting into it.
+ So if we have a specific format that we can set up
+ and include all of the stuff that we want to go into,
+ we can ingest pretty much whatever Excel.
+ And then I can just set up a feedback to message
+ just their issues.
+ Give me a second.
+ Everybody's calling me.
+ OK.
+ OK.
+ [INAUDIBLE]
+ Do you guys coordinate all this through Discord, too?
+ [INAUDIBLE]
+ Yeah.
+ Yeah.
+ I'm actually in Oklahoma, so I'm completely remote.
+ Oh, OK.
+ Yeah.
+ Got it.
+ This is fun for me, but yeah, so we
+ read everything over Discord.
+ Even when I meet with members, I do it over Discord.
+ And then they have access to all the forms over Discord
+ as well.
+ And then the suppliers, we've got you over whatnot.
+ Wait, not whatnot.
+ What's that?
+ What's that?
+ Yeah.
+ So a Japanese supplier, we can--
+ she'll have to have a login of herself.
+ And then Taylor will handle the Chinese and Korean
+ and the pricing and everything and clothes and stuff.
+ So essentially, I need a front end where
+ they can place their orders in three different languages.
+ We can't mix the orders.
+ We can't have an invoice have three different language.
+ Each product-- language has to have its own orders
+ for when they're placing it, right?
+ OK.
+ So I would imagine they would be able to select the--
+ English-- sorry, Japanese Chinese or Korean.
+ And then once they select that, it just goes into the product
+ list, and they can select how many quantities they want,
+ either whether it's a dropdown or just kind of like a product
+ card, right?
+ Is this product requested the only complicated thing,
+ like everything else in the form, because it's copy and pasted?
+ Yeah.
+ OK.
+ Do you want shipping validation or address
+ validation there on that one, or--
+ I would prefer, but--
+ I mean, I can just run into these things as needed.
+ Yeah.
+ That would help, and I'm pretty sure it helped the members.
+ Well, and also, a lot of this stuff is going to be the same.
+ And so I'm thinking accounts for--
+ so sorry, you can keep going.
+ But at this point, we want accounts
+ so that the same information is saved so they don't have
+ the input, like--
+ Yes.
+ I want an address and stuff every single time.
+ They just have to change the products requested, right?
+ And so I do want the member accounts, and then out--
+ so in Shopify, we've built it out
+ where they had the membership to get a tag attached
+ to the Shopify.
+ OK.
+ And so we can get--
+ Do you have an easy, exported list?
+ Or I'm sure Shopify has an API that I could get that list from.
+ Yeah, I'm curious if you can just
+ use their Shopify login as well, as long as they
+ have the tag on the profile, they're
+ able to log in and proceed.
+ Yeah, that'd be interesting.
+ I need to be back access again.
+ I had to remove everyone's permissions to service bugs.
+ That's totally fine.
+ I assume you were happy with it, and you weren't just cutting
+ me off, because--
+ No, no, no.
+ I just said you did was crap, so--
+ No, I still need to help with the website.
+ It's just a point where it's just quality of life
+ and not graphic.
+ Yeah.
+ Totally get it.
+ This will help you guys out a lot more than I'm sure the website
+ stuff will--
+ OK, so it counts the different roles that you've had.
+ You have the wholesaler role, and those
+ are the ones that would be signing in through the Shopify.
+ Yeah.
+ So this is the supplier role and whatever Taylor's role is.
+ Supplier would be Mimi, and then you
+ can just do an add-in role for Taylor, myself,
+ and if we're more than more than super users,
+ that can just do any of it.
+ Yeah, yep.
+ OK.
+ So there's a segment for it.
+ You can use it's-- ignore the second one.
+ This is the one that it's the segment with every active
+ wholesome member of the company, huh?
+ Can you-- are you sharing that part or--
+ Oh, whoops, I'm not.
+ That's awkward.
+ So under segments, it'll be the first one,
+ the Chinese ones, you can ignore Chinese one.
+ But this one's the one-- it literally just
+ pulled all the customers from the tag for you right away.
+ OK.
+ So you can probably reference that tag pretty easy, right?
+ Or the segment I'm assuming.
+ Yeah, I could definitely reference it for--
+ I don't know if their email address is attached to that.
+ It should be.
+ It should be.
+ Yeah, I haven't done it off with Shopify before,
+ but I'm sure it's doable.
+ So either I will have them sign in with that email address
+ and just have a magic link sign in,
+ like no passwords or anything.
+ Or if they can sign in with Shopify,
+ that's what I'll prefer to, and then we can match it.
+ But the way we'll use the email address
+ is the source of truth and the primary identifier.
+ Yeah.
+ So I guess that's kind of the high level of what information
+ do you-- it's pretty straightforward.
+ Let's talk through the flow for each of the users
+ to see what you need.
+ So let's start with the wholesalers,
+ because that's the first role.
+ They would sign in with Shopify.
+ They would see this--
+ They would need a price.
+ Yeah.
+ Maybe.
+ What do you want them to see when they first log in?
+ Other than an option where they can see past orders and stuff,
+ but I don't know if that's what you want.
+ Yeah, I definitely want to account history,
+ like order history as well.
+ OK.
+ So I'll show Kim some more prepared.
+ They log in, then they have the option
+ to see place in order for previous orders or account
+ order history, right?
+ If they do place in order, then they
+ select between the three languages that are available.
+ Once they do that, there will be a price sheet
+ that they can reference really quickly.
+ Yeah.
+ Maybe--
+ Can the price sheet just be the same as the dropdown
+ that where they're selecting it from?
+ Oh, yeah, yeah.
+ Because they'll select the language,
+ and then do all of the fields the same
+ other than the products per language.
+ Yeah.
+ We can make it all the same, yes.
+ OK.
+ There's just different payment options.
+ So and the payment options manually required or OK.
+ So that doesn't have to be part of the app that you're
+ building, but I do need a part where
+ they can confirm that their payment was made.
+ And you would usually just ask them for a screenshot.
+ Our Japanese player demand requires a screenshot
+ from Wwise, the payment app that she uses.
+ And they're for promo, they can just--
+ How have they been doing this?
+ Let me show you.
+ They just reply to email.
+ You want them to be able to submit the form.
+ And then after they submit the form, or like part of the form,
+ they submit the screenshot, or can they be separate or what?
+ So they'll go up the form, they'll place the form.
+ The form goes to Taylor or our Japanese supplier, whoever,
+ right?
+ They build their invoice.
+ The invoice gets sent to their account,
+ whether it's on the app.
+ If you could do it on the app, that'd be great.
+ Yeah, you can do it on the app.
+ They get their invoice from the app.
+ I don't need a notification just to say, hey,
+ you got an invoice, check it out on the app.
+ Yeah, perfect.
+ They get their invoice, they make their payment,
+ whatever option they it is, and then
+ they have an option to attach a proof of payment.
+ And then at that point, it would kick back
+ to Taylor and my Japanese supplier.
+ Once they can confirm they've received the payment on our
+ Japanese supplier, whoever brings the account, obviously,
+ and then Taylor through ours, they can mark it as payment
+ received, and then they need an option to put tracking in this
+ and then the tracking information back out to the user.
+ Great.
+ And so I mean, we can kind of mirror how the status looks
+ and kind of like this, for them, where it shows shipping.
+ I'll clean this down a little bit and show you exactly
+ what fields we need.
+ Because most of the suppliers just use one shipping method
+ to help and payment method and stuff like that,
+ so you don't have to worry about some of these fields.
+ I'll trim it all and let you know which fields
+ to pull from the Excel sheet.
+ And then do you want access to the Excel sheets at all?
+ Yeah, I will need access to--
+ even just as schema is fine.
+ I don't need all of the data or like some example rows,
+ because I don't want you to be sharing all of these people's
+ information if that's for part.
+ I don't know, I'll have access to it eventually,
+ so it's probably not that big of a deal.
+ How much do you care about--
+ this would be a big lift, but importing past history,
+ or are we just starting fresh?
+ I'll start fresh.
+ And then I would keep this Excel sheets live
+ for a bit, and then describe it if no one cares for me.
+ OK, and everything being web-based is OK.
+ I would prefer--
+ let's go and have on a go, just a little bit.
+ Yeah, everything is fine on web-based.
+ Hey.
+ How do you want to communicate about this just DMs
+ and Discord still, or like--
+ DMs and Discord, and I'm still on what I have with Taylor.
+ That way she's kept in the loop, because she'll
+ be using this the most--
+ Yeah, and she might be able to provide me
+ with some context for questions if you can't, or--
+ Yeah, if I'm unreliable.
+ Or like if you're unavailable, so--
+ Yeah.
+ OK, I think I have enough to get started or probably
+ mock-ups and stuff.
+ What I'm envisioning right now is a homepage where they can
+ either start an order or check the status of their previous
+ orders, and just kind of messaging back and forth.
+ But instead of just--
+ instead of messages, each person will have an action
+ where they can either submit a form, upload a picture,
+ or mark the order as the status, either payment center,
+ or like-- and that's going to be all of these.
+ I can still probably track all of this in a spreadsheet
+ if you want to use that as the database.
+ But I would probably prefer to use a database that I'm--
+ Yeah.
+ --reformant and stuff, and then just give you
+ a view that's similar to the spreadsheet in the app.
+ Yeah, yeah, that'd be great.
+ Yeah, yeah, yeah, you could.
+ Another thing, Taylor, could there also
+ be comments enabled where, let's say--
+ because sometimes there's the supplies
+ where I was talking or something like that.
+ And so Taylor needs to comment or tell--
+ a lot of her communications to Discord right now.
+ Yeah.
+ And that's cool and all, but it gets lost.
+ It could get lost in the sauce.
+ And they just have-- in that order,
+ they're able to leave comments and get notified
+ when there's a comment for them or a response for them.
+ Yeah, I mean, a comment is probably
+ the easiest one to do to send text back and forth.
+ The other stuff is going to be--
+ anytime we have to pre-set something like status or something,
+ like marking that is going to be more complicated than just--
+ so we might just be able to start with it being like,
+ hey, submit the form, and then everything else
+ is just chats back and forth.
+ Yeah, OK.
+ Because that's kind of what you're asking for.
+ I know you currently do it through Discord.
+ How much Discord integration do you need to have?
+ Or do you need any of it?
+ Is it just Shopify?
+ It's through Shopify, yeah.
+ And then the Discord integration is through Shopify.
+ We already have that built up with Shopify, so--
+ right, but I'm saying, does my app--
+ Oh, no.
+ Does Shopify need to integrate with Discord at all?
+ No, no, no.
+ That'd be cool, wouldn't it, but not now?
+ Yeah, I mean, it'd be cool to get people's notifications
+ there instead of their email.
+ But this is fine.
+ OK.
+ Taylor, yeah.
+ Anything you want to add to, Jared, that would help you?
+ I don't think so.
+ No, not right now.
+ OK.
+ And then, Jared, as you built this out,
+ there's some pricing that we do.
+ In Japan, Korean and Chinese, we do an upcharge of 13%.
+ OK.
+ We'll be receiving the price sheet.
+ Maybe we just do that manually still.
+ And we just-- the source that you pull the information from
+ will be what we've already edited to increase that markup.
+ Is your invoice currently calculated?
+ No, that's manually accessible currently, yeah,
+ because do you want this act to generate the invoices for you?
+ Yes.
+ But for just Chinese and Koreans, the markup,
+ Japanese will not be the markup.
+ And the prices on the products, the pricing sheets,
+ the prices on the products that they can select from Chinese
+ and Korean need to be marked up as well.
+ But Japanese is that.
+ Or do they need to be converted also, or are they in USD?
+ They need-- Japanese needs to be converted as well.
+ So if you look at the--
+ Yeah, see the yet-not-here.
+ Yeah, Japanese prices, I do the conversion just to Google
+ Finance for now, and then includes Terrace.
+ This is like an estimate of what it would cost in USD per box.
+ It includes the Terrace for Japanese.
+ But we can leave that out.
+ OK, yeah, it sounds like there's a lot of complexity
+ around generating the invoices.
+ Is that something you do, or does that what Taylor does?
+ Taylor does the invoices.
+ We don't worry about Terrace for Chinese and Korean,
+ because they're kind of taxed into--
+ it was the Terrace get sent to the customers for Korean,
+ Chinese.
+ It's baked into the shipping company's cost.
+ And then Japanese are Japanese supplier adds that manually
+ into her-- what's her word?
+ The quote that she gives them.
+ So that, you know-- sorry.
+ How about you start building that in order
+ when I can make left from right and explain the spirit to you?
+ I will get that information all that needs to bundle to you
+ on what I mean.
+ OK, can I get one-- like, two more questions answered.
+ One is-- so I think I have a good idea of what the wholesalers
+ will do, like how they're going to log in, everything.
+ What about the supplier?
+ And supplier/tailer, because it seems to me,
+ and maybe I'm not understanding this, right,
+ is that they kind of fill the same role.
+ It's like sending the invoice and marking things
+ as completed and stuff.
+ It's for different languages.
+ Yes, so are Japanese supplier needs
+ exclusive to see exclusive new in Japanese orders?
+ We can toggle which orders they see?
+ Yeah, for sure.
+ That'd be great.
+ So that way, for whatever reason, Taylor
+ ends up taking over Japanese, too,
+ then we just toggle her to be able to do Japanese.
+ See all the orders, right, whereas are Japanese suppliers
+ exclusively Japanese right now?
+ Yeah, I was going to walk down the Japanese one
+ to just Japanese, but Taylor and you and me
+ can see, like, everything.
+ Yeah, perfect.
+ And then, obviously, the user can see every order that's,
+ like, Japanese, Chinese, or Korean,
+ but just for their user.
+ Yeah, for their user base, yeah.
+ OK, yeah, it's going to--
+ I don't have an estimate currently.
+ I mean, it's a lot that I'll have to get into,
+ but I can make a plan.
+ And what are you thinking, as far as size,
+ and how much you want to spend on and stuff,
+ just so I can tell you if that's feasible?
+ 1,000 would be a starting range.
+ I think that's a fairly large number
+ that we're willing to invest into this,
+ because we want to look very professional and sleek.
+ Yeah.
+ I know how-- how was that?
+ Your previous work from you was around $4,500, right?
+ But there--
+ Yeah, yeah, it was.
+ So I think 1,000 would be safe and comfortable for us
+ to say that's a good price range for us to aim for and how
+ many hours we'd hope you'd be sinking into it.
+ Yeah.
+ That's 10, 20, 13 hours about, right?
+ Yeah, and are we OK to do that all cash since I'm kind of
+ backed up?
+ I haven't made it back up.
+ Yeah, yeah, yeah, absolutely fine.
+ Instead of in-store credit.
+ Yeah, yeah, we need a little bit to do.
+ 100% cash for this, yeah.
+ OK, great.
+ Yeah, I'll get a plan set out.
+ And that'll help me with that estimate in mind.
+ I'll make sure it fits within those hours.
+ And then I'll say stretch goals, OK, if you want to add another
+ hour or two, or we can cut it out, I'll try to scope it so
+ that you can choose how much you want it done, because other
+ stuff like Discord integrations and really complex
+ notifications and stuff.
+ And maybe it turns out that the Shopify login is just going
+ to be more work than it's worth, and so we can just have
+ people sign in with email.
+ I'll figure that out, and get you over a design spec and let you
+ know.
+ Cool, yeah.
+ Can you shoot me your email again to the--
+ yeah.
+ Jared, as a Gmail, was it?
+ I've got a few, but yeah, I'll just put it in the chat.
+ OK, Taylor, any requests from Jared?
+ I don't think so.
+ I think everything that you talked about sounds really
+ great and really thorough.
+ Wow, really?
+ Because I feel like I'm a spaz right now.
+ I mean, you said a lot of words, and I think you covered it.
+ OK.
+ I mean, I use the sheet, and it sounds better.
+ OK, oh, yeah.
+ No payment integration, right?
+ Just clear.
+ No, yeah, we don't need way about payment integration.
+ That becomes a nightmare.
+ The only thing is just uploading the screenshots and stuff.
+ Yeah.
+ Oh, do you want to just preserve all the data?
+ Like, we're not no 30-day retention policy or anything.
+ You just want all of the records stored always.
+ Let's do it for everybody or--
+ Yeah, let's do it for--
+ can we do it 90 days and then download a backup
+ for every 90 days?
+ Yeah, that's great.
+ Yeah, let's do that.
+ And that way we can refer to it if needed.
+ And we'll start there, because I don't
+ want a database that fills up too.
+ Well, I guess it's not too much.
+ I mean, yeah, no, yeah, yeah, yeah, yeah.
+ I mean, we can run.
+ It's just in terms of what you want
+ to see in this view when you're looking at it.
+ It's just the last 30 days or 90 days or something.
+ So yeah, let's keep all the data.
+ And then we can just show the last 30, last--
+ We'll build filters into it.
+ Thank you.
+ There you go.
+ OK.
+ Sounds good.
+ All right, Jared.
+ It's cool, each and all, every time.
+ Thanks for understanding, guys.
+ Yep.
+ Get some more rest.
+ Cool.
+ Bye, guys.
+ See you.
+ Bye.

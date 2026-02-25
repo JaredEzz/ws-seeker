@@ -249,19 +249,19 @@ class _AuditLogTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final details = log.details;
+    final detailStr = _formatDetails(log.action, log.details);
 
     return ListTile(
       leading: _actionIcon(log.action),
-      title:
-          Text(log.action, style: const TextStyle(fontWeight: FontWeight.w500)),
+      title: Text(_actionLabel(log.action),
+          style: const TextStyle(fontWeight: FontWeight.w500)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${log.userEmail} on ${log.resourceType}/${log.resourceId}'),
-          if (details != null && details.isNotEmpty)
+          Text('by ${log.userEmail}'),
+          if (detailStr.isNotEmpty)
             Text(
-              details.entries.map((e) => '${e.key}: ${e.value}').join(', '),
+              detailStr,
               style: theme.textTheme.bodySmall
                   ?.copyWith(color: theme.colorScheme.outline),
               maxLines: 2,
@@ -273,8 +273,68 @@ class _AuditLogTile extends StatelessWidget {
         _formatTimestamp(log.createdAt),
         style: theme.textTheme.bodySmall,
       ),
-      isThreeLine: details != null && details.isNotEmpty,
+      isThreeLine: detailStr.isNotEmpty,
     );
+  }
+
+  static String _actionLabel(String action) {
+    return switch (action) {
+      'order.created' => 'Order Created',
+      'order.updated' => 'Order Updated',
+      'order.deleted' => 'Order Deleted',
+      'comment.created' => 'Comment Added',
+      'product.created' => 'Product Created',
+      'product.updated' => 'Product Updated',
+      'product.deleted' => 'Product Deleted',
+      'product.imported' => 'Products Imported',
+      'invoice.generated' => 'Invoice Generated',
+      'invoice.statusUpdated' => 'Invoice Status Updated',
+      'user.profileUpdated' => 'Profile Updated',
+      'auth.login' => 'User Logged In',
+      _ => action,
+    };
+  }
+
+  static const _statusLabels = {
+    'submitted': 'Submitted',
+    'awaiting_quote': 'Awaiting Quote',
+    'invoiced': 'Invoice Sent',
+    'payment_pending': 'Payment Pending',
+    'payment_received': 'Payment Received',
+    'shipped': 'Shipped',
+    'delivered': 'Delivered',
+    'cancelled': 'Cancelled',
+  };
+
+  static String _formatDetails(String action, Map<String, dynamic>? details) {
+    if (details == null || details.isEmpty) return '';
+
+    final parts = <String>[];
+    for (final entry in details.entries) {
+      switch (entry.key) {
+        case 'statusChange':
+          final raw = entry.value.toString();
+          final arrow = raw.split(' -> ');
+          if (arrow.length == 2) {
+            final from = _statusLabels[arrow[0]] ?? arrow[0];
+            final to = _statusLabels[arrow[1]] ?? arrow[1];
+            parts.add('$from → $to');
+          } else {
+            parts.add(raw);
+          }
+        case 'language':
+          parts.add(entry.value.toString().toUpperCase());
+        case 'itemCount':
+          parts.add('${entry.value} item${entry.value == 1 ? '' : 's'}');
+        case 'productCount':
+          parts.add('${entry.value} product${entry.value == 1 ? '' : 's'}');
+        case 'commentId':
+          break; // not useful to display
+        default:
+          parts.add('${entry.key}: ${entry.value}');
+      }
+    }
+    return parts.join(' · ');
   }
 
   Widget _actionIcon(String action) {

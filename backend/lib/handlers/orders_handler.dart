@@ -10,16 +10,24 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../middleware/auth_middleware.dart';
 import '../services/order_service.dart';
 import '../services/comment_service.dart';
+import '../services/email_service.dart';
+import '../services/user_service.dart';
 
 class OrdersHandler {
   final OrderService _orderService;
   final CommentService _commentService;
+  final EmailService? _emailService;
+  final UserService? _userService;
 
   OrdersHandler({
     required OrderService orderService,
     required CommentService commentService,
+    EmailService? emailService,
+    UserService? userService,
   })  : _orderService = orderService,
-        _commentService = commentService;
+        _commentService = commentService,
+        _emailService = emailService,
+        _userService = userService;
 
   Router get router {
     final router = Router();
@@ -61,6 +69,9 @@ class OrdersHandler {
       final createRequest = CreateOrderRequest.fromJson(data);
 
       final order = await _orderService.createOrder(userId, createRequest);
+
+      // Send order confirmation email (fire-and-forget)
+      _sendOrderConfirmationEmail(userId, order);
 
       return Response(201,
           body: jsonEncode({'order': order}),
@@ -202,6 +213,11 @@ class OrdersHandler {
 
       await _orderService.updateOrder(id, updateRequest);
 
+      // Send status change emails (fire-and-forget)
+      if (updateRequest.status != null) {
+        _sendStatusChangeEmail(order, updateRequest);
+      }
+
       return Response.ok(
           jsonEncode({'message': 'Order updated'}),
           headers: {'Content-Type': 'application/json'});
@@ -309,5 +325,92 @@ class OrdersHandler {
       'korean' || 'kr' || 'kor' || 'korea' => ProductLanguage.korean,
       _ => null,
     };
+  }
+
+  /// Send order confirmation email (fire-and-forget)
+  void _sendOrderConfirmationEmail(
+    String userId,
+    Map<String, dynamic> order,
+  ) async {
+    final emailSvc = _emailService;
+    final userSvc = _userService;
+    if (emailSvc == null || userSvc == null) return;
+    try {
+      final user = await userSvc.getUser(userId);
+      if (user == null) return;
+      final email = user['email'] as String?;
+      if (email == null) return;
+
+      await emailSvc.sendOrderConfirmation(
+        toEmail: email,
+        orderId: order['id'] as String,
+        displayOrderNumber:
+            order['displayOrderNumber'] as String? ?? order['id'] as String,
+        customerName: (order['shippingAddress']
+                as Map<String, dynamic>?)?['fullName'] as String? ??
+            'Customer',
+        totalAmount: (order['totalAmount'] as num).toDouble(),
+        language: order['language'] as String,
+      );
+    } catch (e) {
+      print('Failed to send order confirmation email: $e');
+    }
+  }
+
+  /// Send status change emails (fire-and-forget)
+  void _sendStatusChangeEmail(
+    Map<String, dynamic> order,
+    UpdateOrderRequest update,
+  ) async {
+    final emailSvc = _emailService;
+    final userSvc = _userService;
+    if (emailSvc == null || userSvc == null) return;
+    final newStatus = update.status;
+    if (newStatus == null) return;
+    try {
+      final userId = order['userId'] as String;
+      final user = await userSvc.getUser(userId);
+      if (user == null) return;
+      final email = user['email'] as String?;
+      if (email == null) return;
+
+      final orderId = order['id'] as String;
+      final displayNumber =
+          order['displayOrderNumber'] as String? ?? orderId;
+      final customerName = (order['shippingAddress']
+              as Map<String, dynamic>?)?['fullName'] as String? ??
+          'Customer';
+
+      switch (newStatus) {
+        case OrderStatus.invoiced:
+          await emailSvc.sendInvoiceNotification(
+            toEmail: email,
+            orderId: orderId,
+            displayOrderNumber: displayNumber,
+            customerName: customerName,
+            totalAmount: (order['totalAmount'] as num).toDouble(),
+            invoiceNumber: order['invoiceId'] as String?,
+          );
+        case OrderStatus.paymentReceived:
+          await emailSvc.sendPaymentReceived(
+            toEmail: email,
+            displayOrderNumber: displayNumber,
+            customerName: customerName,
+          );
+        case OrderStatus.shipped:
+          await emailSvc.sendOrderShipped(
+            toEmail: email,
+            orderId: orderId,
+            displayOrderNumber: displayNumber,
+            customerName: customerName,
+            trackingNumber: update.trackingNumber ?? order['trackingNumber'] as String?,
+            trackingCarrier: update.trackingCarrier ?? order['trackingCarrier'] as String?,
+          );
+        default:
+          break; // No email for other status changes
+      }
+    } catch (e) {
+      print('Failed to send status change email: $e');
+    }
   }
 }

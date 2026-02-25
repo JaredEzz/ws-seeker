@@ -23,6 +23,7 @@ import 'package:ws_seeker_backend/services/auth_service.dart';
 import 'package:ws_seeker_backend/services/order_service.dart';
 import 'package:ws_seeker_backend/services/comment_service.dart';
 import 'package:ws_seeker_backend/services/invoice_service.dart';
+import 'package:ws_seeker_backend/services/email_service.dart';
 import 'package:ws_seeker_backend/handlers/invoices_handler.dart';
 import 'package:ws_seeker_backend/handlers/users_handler.dart';
 import 'package:ws_seeker_backend/middleware/auth_middleware.dart';
@@ -61,6 +62,11 @@ void main() async {
   final orderService = OrderService(firestore);
   final commentService = CommentService(firestore);
   final invoiceService = InvoiceService(firestore);
+  final emailService = EmailService(
+    resendApiKey: resendApiKey,
+    fromEmail: fromEmail,
+    appUrl: baseUrl,
+  );
   final authService = AuthService(
     admin,
     firestore,
@@ -80,6 +86,8 @@ void main() async {
   final ordersHandler = OrdersHandler(
     orderService: orderService,
     commentService: commentService,
+    emailService: emailService,
+    userService: userService,
   );
   final invoicesHandler = InvoicesHandler(invoiceService: invoiceService);
   final usersHandler = UsersHandler(userService: userService);

@@ -30,6 +30,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '229602699928',
     projectId: 'ws-seeker',
     authDomain: 'ws-seeker.firebaseapp.com',
-    storageBucket: 'ws-seeker-storage',
+    storageBucket: 'ws-seeker.firebasestorage.app',
   );
 }

@@ -238,38 +238,77 @@ class _ProductSelector extends StatelessWidget {
           ),
           ...state.availableProducts.map((p) {
             final qty = state.selectedItems[p.id] ?? 0;
+            final availableTypes = OrderFormState.availableTypesFor(p);
+            final selectedType = state.selectedProductTypes[p.id];
+            final displayPrice = OrderFormState.resolvePrice(p, selectedType);
+
             return Card(
-              child: ListTile(
-                title: Text(p.name),
-                subtitle: Text(
-                  '\$${p.basePrice.toStringAsFixed(2)}'
-                  '${p.sku != null ? ' — ${p.sku}' : ''}',
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Column(
                   children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove_circle_outline),
-                      onPressed: qty > 0
-                          ? () => context
-                              .read<OrderFormBloc>()
-                              .add(OrderFormItemAdded(p, qty - 1))
-                          : null,
-                    ),
-                    SizedBox(
-                      width: 40,
-                      child: Text(
-                        '$qty',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleMedium,
+                    ListTile(
+                      title: Text(p.name),
+                      subtitle: Text(
+                        '\$${displayPrice.toStringAsFixed(2)}'
+                        '${p.sku != null ? ' — ${p.sku}' : ''}'
+                        '${p.quoteRequired ? ' (Quote Required)' : ''}',
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle_outline),
+                            onPressed: qty > 0
+                                ? () => context
+                                    .read<OrderFormBloc>()
+                                    .add(OrderFormItemAdded(p, qty - 1))
+                                : null,
+                          ),
+                          SizedBox(
+                            width: 40,
+                            child: Text(
+                              '$qty',
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.add_circle_outline),
+                            onPressed: () => context
+                                .read<OrderFormBloc>()
+                                .add(OrderFormItemAdded(p, qty + 1)),
+                          ),
+                        ],
                       ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.add_circle_outline),
-                      onPressed: () => context
-                          .read<OrderFormBloc>()
-                          .add(OrderFormItemAdded(p, qty + 1)),
-                    ),
+                    // JPN product type selector
+                    if (availableTypes.isNotEmpty && qty > 0)
+                      Padding(
+                        padding: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 8),
+                        child: DropdownButtonFormField<String>(
+                          value: selectedType,
+                          decoration: const InputDecoration(
+                            labelText: 'Product Type',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
+                            isDense: true,
+                          ),
+                          items: availableTypes
+                              .map((t) => DropdownMenuItem(
+                                    value: t.$1,
+                                    child: Text(t.$2),
+                                  ))
+                              .toList(),
+                          onChanged: (val) {
+                            context.read<OrderFormBloc>().add(
+                                  OrderFormProductTypeChanged(p.id, val),
+                                );
+                          },
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -350,14 +389,25 @@ class _ReviewStepState extends State<_ReviewStep> {
                       .where((p) => p.id == entry.key)
                       .firstOrNull;
                   if (product == null) return const SizedBox.shrink();
-                  final lineTotal = product.basePrice * entry.value;
+                  final typeKey = state.selectedProductTypes[entry.key];
+                  final unitPrice =
+                      OrderFormState.resolvePrice(product, typeKey);
+                  final lineTotal = unitPrice * entry.value;
+                  final typeLabel = typeKey != null
+                      ? ' (${switch (typeKey) {
+                          'box' => 'Box',
+                          'no_shrink' => 'No Shrink',
+                          'case' => 'Case',
+                          _ => typeKey,
+                        }})'
+                      : '';
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
                       children: [
                         Expanded(
                           child: Text(
-                            '${product.name} x${entry.value}',
+                            '${product.name}$typeLabel x${entry.value}',
                             style: theme.textTheme.bodySmall,
                           ),
                         ),

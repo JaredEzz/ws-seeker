@@ -30,6 +30,8 @@ class OrderItemRequest with _$OrderItemRequest {
   const factory OrderItemRequest({
     required String productId,
     required int quantity,
+    /// JPN product type: 'box', 'no_shrink', or 'case'
+    String? productType,
   }) = _OrderItemRequest;
 
   factory OrderItemRequest.fromJson(Map<String, dynamic> json) =>

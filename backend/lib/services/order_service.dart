@@ -80,7 +80,12 @@ class OrderService {
         throw ArgumentError('Product is not available: ${itemRequest.productId}');
       }
 
-      final unitPrice = (productData['basePrice'] as num).toDouble();
+      // Resolve unit price: for JPN products with a type, use the type-specific price
+      final unitPrice = _resolveUnitPrice(
+        productData,
+        request.language,
+        itemRequest.productType,
+      );
       final totalPrice = unitPrice * itemRequest.quantity;
 
       orderItems.add(OrderItem(
@@ -89,6 +94,7 @@ class OrderService {
         quantity: itemRequest.quantity,
         unitPrice: unitPrice,
         totalPrice: totalPrice,
+        productType: itemRequest.productType,
       ));
     }
 
@@ -110,6 +116,7 @@ class OrderService {
                 'quantity': item.quantity,
                 'unitPrice': item.unitPrice,
                 'totalPrice': item.totalPrice,
+                if (item.productType != null) 'productType': item.productType,
               })
           .toList(),
       'status': OrderStatus.submitted.name,
@@ -291,6 +298,39 @@ class OrderService {
       throw StateError(
           'Invalid status transition: cannot go from ${current.name} to ${next.name}');
     }
+  }
+
+  /// Resolve the unit price for a product, considering JPN product types.
+  ///
+  /// For Japanese products with a type selector, uses the USD price with tariff
+  /// for the given type. Falls back to basePrice.
+  double _resolveUnitPrice(
+    Map<String, dynamic> productData,
+    ProductLanguage language,
+    String? productType,
+  ) {
+    if (language == ProductLanguage.japanese && productType != null) {
+      final priceField = switch (productType) {
+        'box' => 'boxPriceUsdWithTariff',
+        'no_shrink' => 'noShrinkPriceUsdWithTariff',
+        'case' => 'casePriceUsdWithTariff',
+        _ => null,
+      };
+      if (priceField != null && productData[priceField] != null) {
+        return (productData[priceField] as num).toDouble();
+      }
+      // Fallback to USD without tariff
+      final fallbackField = switch (productType) {
+        'box' => 'boxPriceUsd',
+        'no_shrink' => 'noShrinkPriceUsd',
+        'case' => 'casePriceUsd',
+        _ => null,
+      };
+      if (fallbackField != null && productData[fallbackField] != null) {
+        return (productData[fallbackField] as num).toDouble();
+      }
+    }
+    return (productData['basePrice'] as num).toDouble();
   }
 
   OrderStatus? _parseOrderStatus(String status) {

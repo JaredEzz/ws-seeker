@@ -34,6 +34,12 @@ final class OrderFormDiscordNameChanged extends OrderFormEvent {
   const OrderFormDiscordNameChanged(this.discordName);
 }
 
+final class OrderFormProductTypeChanged extends OrderFormEvent {
+  final String productId;
+  final String? productType;
+  const OrderFormProductTypeChanged(this.productId, this.productType);
+}
+
 final class OrderFormSubmitted extends OrderFormEvent {
   final ShippingAddress address;
   const OrderFormSubmitted(this.address);
@@ -47,6 +53,7 @@ class OrderFormState {
   final ProductLanguage? language;
   final List<Product> availableProducts;
   final Map<String, int> selectedItems; // productId -> quantity
+  final Map<String, String> selectedProductTypes; // productId -> type (box/no_shrink/case)
   final List<OrderItemRequest> itemRequests;
   final String? errorMessage;
   final String? discordName;
@@ -59,6 +66,7 @@ class OrderFormState {
     this.language,
     this.availableProducts = const [],
     this.selectedItems = const {},
+    this.selectedProductTypes = const {},
     this.itemRequests = const [],
     this.errorMessage,
     this.discordName,
@@ -72,6 +80,7 @@ class OrderFormState {
     ProductLanguage? language,
     List<Product>? availableProducts,
     Map<String, int>? selectedItems,
+    Map<String, String>? selectedProductTypes,
     List<OrderItemRequest>? itemRequests,
     String? errorMessage,
     String? discordName,
@@ -84,6 +93,7 @@ class OrderFormState {
       language: language ?? this.language,
       availableProducts: availableProducts ?? this.availableProducts,
       selectedItems: selectedItems ?? this.selectedItems,
+      selectedProductTypes: selectedProductTypes ?? this.selectedProductTypes,
       itemRequests: itemRequests ?? this.itemRequests,
       errorMessage: errorMessage ?? this.errorMessage,
       discordName: discordName ?? this.discordName,
@@ -99,10 +109,42 @@ class OrderFormState {
     for (final entry in selectedItems.entries) {
       final product = availableProducts.where((p) => p.id == entry.key).firstOrNull;
       if (product != null) {
-        total += product.basePrice * entry.value;
+        final price = resolvePrice(product, selectedProductTypes[entry.key]);
+        total += price * entry.value;
       }
     }
     return total;
+  }
+
+  /// Resolve the display price for a product based on the selected type.
+  /// For JPN products with a type, uses the USD with tariff price.
+  static double resolvePrice(Product product, String? productType) {
+    if (product.language == ProductLanguage.japanese && productType != null) {
+      final price = switch (productType) {
+        'box' => product.boxPriceUsdWithTariff ?? product.boxPriceUsd,
+        'no_shrink' => product.noShrinkPriceUsdWithTariff ?? product.noShrinkPriceUsd,
+        'case' => product.casePriceUsdWithTariff ?? product.casePriceUsd,
+        _ => null,
+      };
+      if (price != null) return price;
+    }
+    return product.basePrice;
+  }
+
+  /// Available product types for a JPN product (only types with prices).
+  static List<(String value, String label)> availableTypesFor(Product product) {
+    final types = <(String, String)>[];
+    if (product.language != ProductLanguage.japanese) return types;
+    if (product.boxPriceUsd != null || product.boxPriceUsdWithTariff != null) {
+      types.add(('box', 'Box'));
+    }
+    if (product.noShrinkPriceUsd != null || product.noShrinkPriceUsdWithTariff != null) {
+      types.add(('no_shrink', 'No Shrink'));
+    }
+    if (product.casePriceUsd != null || product.casePriceUsdWithTariff != null) {
+      types.add(('case', 'Case'));
+    }
+    return types;
   }
 
   /// Shipping method options based on language
@@ -132,6 +174,7 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
         super(const OrderFormState()) {
     on<OrderFormLanguageSelected>(_onLanguageSelected);
     on<OrderFormItemAdded>(_onItemAdded);
+    on<OrderFormProductTypeChanged>(_onProductTypeChanged);
     on<OrderFormProfileLoaded>(_onProfileLoaded);
     on<OrderFormShippingMethodChanged>(_onShippingMethodChanged);
     on<OrderFormDiscordNameChanged>(_onDiscordNameChanged);
@@ -160,6 +203,7 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
         status: OrderFormStatus.initial,
         availableProducts: products,
         selectedItems: {},
+        selectedProductTypes: {},
         shippingMethod: null,
       ));
     } catch (e) {
@@ -172,19 +216,53 @@ class OrderFormBloc extends Bloc<OrderFormEvent, OrderFormState> {
     Emitter<OrderFormState> emit,
   ) {
     final updatedItems = Map<String, int>.from(state.selectedItems);
+    final updatedTypes = Map<String, String>.from(state.selectedProductTypes);
     if (event.quantity <= 0) {
       updatedItems.remove(event.product.id);
+      updatedTypes.remove(event.product.id);
     } else {
       updatedItems[event.product.id] = event.quantity;
     }
 
     final updatedRequests = updatedItems.entries
         .where((e) => e.value > 0)
-        .map((e) => OrderItemRequest(productId: e.key, quantity: e.value))
+        .map((e) => OrderItemRequest(
+              productId: e.key,
+              quantity: e.value,
+              productType: updatedTypes[e.key],
+            ))
         .toList();
 
     emit(state.copyWith(
       selectedItems: updatedItems,
+      selectedProductTypes: updatedTypes,
+      itemRequests: updatedRequests,
+    ));
+  }
+
+  void _onProductTypeChanged(
+    OrderFormProductTypeChanged event,
+    Emitter<OrderFormState> emit,
+  ) {
+    final updatedTypes = Map<String, String>.from(state.selectedProductTypes);
+    if (event.productType == null) {
+      updatedTypes.remove(event.productId);
+    } else {
+      updatedTypes[event.productId] = event.productType!;
+    }
+
+    // Rebuild item requests with updated types
+    final updatedRequests = state.selectedItems.entries
+        .where((e) => e.value > 0)
+        .map((e) => OrderItemRequest(
+              productId: e.key,
+              quantity: e.value,
+              productType: updatedTypes[e.key],
+            ))
+        .toList();
+
+    emit(state.copyWith(
+      selectedProductTypes: updatedTypes,
       itemRequests: updatedRequests,
     ));
   }

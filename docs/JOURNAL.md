@@ -73,5 +73,95 @@
 - Backend: All commits deploying successfully to Cloud Run
 - Frontend: Initial commit failed (non-exhaustive switch on OrderStatus), fixed in Step 2 commit
 - Step 2 frontend deploy: SUCCESS
-- Step 3+4 frontend deploy: In progress
+- Step 3+4 frontend deploy: SUCCESS
+
+---
+
+## 2026-02-25 — Bug Fixes, Testing & New Features
+
+### Systematic API Testing
+**Status:** Complete
+
+Full end-to-end API testing of all endpoints using test accounts and the live Cloud Run backend. All 25+ test cases passing:
+
+- **Auth:** Magic link → custom token → ID token exchange via identitytoolkit API
+- **Products:** All 3 languages verified (44 JPN, 187 CN, 55 KR)
+- **Orders:** CN order with 13% markup ($38.22 on $294), JPN order with boxPriceUsdWithTariff ($109.45, 0% markup)
+- **Role-based filtering:** Wholesaler sees own orders, supplier sees JPN only, admin sees all
+- **Status progression:** Full lifecycle submitted→awaitingQuote→invoiced→paymentPending→paymentReceived→shipped→delivered. Backward transitions blocked. Cancellation from mid-pipeline works, from terminal blocked.
+- **Comments:** Admin internal + wholesaler external both work
+- **Profile:** GET/PATCH with new payment fields persist correctly
+- **Invoices:** Generation, listing, status progression (draft→sent→paid), void, PDF download (valid %PDF-1.5)
+- **Product CRUD:** Create, update, soft-delete all work
+- **Product import:** Create + deduplicate by SKU, invalid language returns proper error
+- **Proof of payment URL:** Wholesaler sets, admin sees
+- **Shipping costs:** Admin adds airShippingCost, oceanShippingCost, adminNotes
+- **Access restrictions:** Wholesaler blocked from admin ops, supplier blocked from CN orders, unauthenticated blocked
+- **Edge cases:** Empty order, invalid product, zero/negative quantity, empty comment, nonexistent order/invoice — all return proper errors
+
+### Bug Fixes
+
+**OrderStatus JSON serialization mismatch** (commit `744a62b`)
+- `@JsonValue` annotations in order.dart used snake_case but backend writes camelCase via `.name`
+- Fix: Changed `@JsonValue` to camelCase, updated `_parseStatus` to accept both formats
+
+**Supplier could change order status** (commit `1b04f60`)
+- `order_management_screen.dart` allowed supplier to change status (checked `!= wholesaler` instead of `== superUser`)
+- Fix: Changed to `currentUserRole == UserRole.superUser ? callback : null`
+
+**Silent error swallowing on status update** (commit `1b04f60`)
+- `orders_bloc.dart` catch block had `// Handle error` doing nothing
+- Fix: Changed to `emit(OrdersFailure(message: 'Status update failed: $e'))`
+
+### Payment Method Conditional Fields (commit `f7210a9`)
+- Added `venmoHandle` and `paypalEmail` to AppUser model
+- Profile screen split into **Contact Info** + **Payment Info** cards
+- Payment fields conditionally visible per method (Wise → Wise Email, Venmo → Venmo Handle, PayPal → PayPal Email)
+- All values persist regardless of active payment method
+
+### Firebase Storage Setup (commits `6ce510e`, `12450fe`)
+- Created `storage.rules` for proof of payment uploads (10MB max, image/pdf only)
+- Deployed rules and CORS via REST APIs
+- Bucket: `gs://ws-seeker.firebasestorage.app`
+
+### Proof of Payment Inline Viewer
+- Replaced raw URL display with inline viewer in `_ProofOfPaymentCard`
+- **Images** (png/jpg/gif/webp): Shown inline via `Image.network` with loading progress, max 300px height, error fallback
+- **PDFs**: Shown as icon card with PDF icon and hint text
+- **Open / Download** button opens file in new browser tab via `web.window.open`
+- **Upload New** button for re-uploading
+- Detects file type from decoded Firebase Storage URL path
+
+### Comments BLoC Fix
+- Added `fetchComments()` direct method to `OrderRepository` (avoids stream-first workaround)
+- `CommentsBloc` now calls `fetchComments` directly instead of `watchComments.first`
+- `watchComments` now emits immediately then polls every 10s (was missing initial emit)
+
+### Audit Logging System
+- **Backend:** New `AuditService` backed by PostgreSQL (Neon) via `package:postgres`
+  - Graceful degradation: if `AUDIT_DATABASE_URL` not set, audit logging is disabled
+  - Fire-and-forget logging with error catching
+  - Query with filters (action, resourceType, userId, search, date range) + pagination
+- **Backend handlers:** All handlers instrumented with audit logging:
+  - `auth.login`, `order.created`, `order.updated`, `comment.created`
+  - `product.created`, `product.updated`, `product.deleted`, `product.imported`
+  - `invoice.generated`, `invoice.statusUpdated`, `user.profileUpdated`
+- **New endpoint:** `GET /api/audit-logs` with query parameters
+- **Frontend:** New `AuditLog` model, `AuditLogRepository`, `AuditLogsBloc`
+- **Frontend:** New `AuditLogsScreen` at `/admin/audit-logs` with:
+  - Search, action filter, resource type filter, date range picker
+  - Paginated list with colored action icons
+  - Relative timestamps (just now, 5m ago, 2h ago)
+- **Admin nav:** Added "Audit Logs" tab (4th tab, icon: history)
+
+### Demo Walkthrough Updated (commit `c3e404b`)
+- Added app URL, updated profile section for payment info cards, corrected invoice generation description
+
+### All Deploys
+- `f7210a9` — Payment method fields
+- `744a62b` — OrderStatus JSON fix
+- `1b04f60` — Supplier status access, storage rules, error handling
+- `6ce510e` → `12450fe` — Firebase Storage bucket
+- `c3e404b` — Demo walkthrough update
+- Frontend deployed via Firebase Hosting REST API (system gzip + SHA256 hashing)
 

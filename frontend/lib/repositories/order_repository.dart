@@ -110,15 +110,11 @@ class HttpOrderRepository implements OrderRepository {
   Future<List<OrderComment>> fetchComments(String orderId) => _fetchComments(orderId);
 
   @override
-  Stream<List<OrderComment>> watchComments(String orderId) {
+  Stream<List<OrderComment>> watchComments(String orderId) async* {
     // Emit immediately, then poll every 10 seconds
-    return Stream.value(null)
-        .asyncMap((_) => _fetchComments(orderId))
-        .followedBy(
-          Stream.periodic(const Duration(seconds: 10))
-              .asyncMap((_) => _fetchComments(orderId)),
-        )
-        .distinct();
+    yield await _fetchComments(orderId);
+    yield* Stream.periodic(const Duration(seconds: 10))
+        .asyncMap((_) => _fetchComments(orderId));
   }
 
   @override

@@ -170,20 +170,24 @@ At each step, verify:
 1. From Dashboard, tap the **CN order** to open details
 2. Scroll to the **Proof of Payment** section
 3. Click **Upload Screenshot**
-4. Pick any image file (PNG/JPG)
-5. Watch the upload progress
-6. After upload, the section shows a green checkmark + the file link
-7. You can click **Upload New** to replace it
+4. Pick any image file (PNG/JPG) or PDF
+5. Watch the upload progress indicator
+6. After upload, the proof displays inline:
+   - **Images** (PNG/JPG/GIF/WEBP): Shown as an inline preview with loading progress bar, max 300px height
+   - **PDFs**: Shown as a styled card with PDF icon and "Tap Open / Download to view" hint
+7. Click **"Open / Download"** to open the file in a new browser tab (works for both images and PDFs)
+8. Click **"Upload New"** to replace with a different file
 
 ### Check in Super User window
 1. Click the order number to view order details
-2. Scroll to Proof of Payment — the uploaded file link should be visible
+2. Scroll to Proof of Payment — the inline viewer shows the same image/PDF preview
+3. The **"Open / Download"** button works here too
 
 | Role | Access |
 |------|--------|
-| Wholesaler | Upload + re-upload |
-| Supplier | View uploaded proof (on JPN orders) |
-| Super User | View uploaded proof |
+| Wholesaler | Upload + re-upload + inline viewer + download |
+| Supplier | Inline viewer + download (on JPN orders) |
+| Super User | Inline viewer + download (all orders) |
 
 ---
 
@@ -296,21 +300,72 @@ Invoice generation is currently a manual step via the API — it is **not** auto
 
 ---
 
-## 11. Admin Navigation (Super User vs Supplier)
+## 11. Audit Logs (Super User window)
+
+Supplier does **not** have access to this screen.
+
+1. Click **Audit Logs** in the admin nav rail (4th tab, clock icon)
+2. You land on the audit log list — every significant action is recorded
+
+### Browse logs
+1. Recent entries show at the top with relative timestamps ("just now", "5m ago", "2h ago")
+2. Each entry shows:
+   - **Color-coded icon** by category (blue=order, green=product, orange=invoice, purple=user, teal=auth)
+   - **Action name** (e.g., `order.created`, `auth.login`, `product.imported`)
+   - **User email** and **resource type/ID**
+   - **Details** (e.g., language, item count, status change)
+
+### Filter logs
+1. **Search** — type a user email, resource ID, or action name
+2. **Action dropdown** — filter to specific actions (order.created, invoice.generated, etc.)
+3. **Resource type dropdown** — filter by Order, Product, Invoice, or User
+4. **Date range picker** — filter to a specific time window
+5. Click **Refresh** to re-fetch
+
+### Pagination
+- Logs load in pages of 50
+- Scroll to the bottom → click **"Load More (50/123)"** to fetch the next page
+
+### What gets logged
+| Action | Trigger |
+|--------|---------|
+| `auth.login` | User logs in via magic link |
+| `order.created` | Wholesaler places an order |
+| `order.updated` | Status change, tracking number, proof of payment upload |
+| `comment.created` | Anyone posts a comment |
+| `product.created` | Admin creates a product |
+| `product.updated` | Admin edits a product |
+| `product.deleted` | Admin deletes a product |
+| `product.imported` | Admin imports CSV |
+| `invoice.generated` | Admin generates an invoice |
+| `invoice.statusUpdated` | Admin changes invoice status |
+| `user.profileUpdated` | Any user updates their profile |
+
+| Role | Access |
+|------|--------|
+| Wholesaler | No access |
+| Supplier | No access (Audit Logs tab hidden) |
+| Super User | Full read access with filters |
+
+> **Note:** Audit logging requires the `AUDIT_DATABASE_URL` environment variable (Neon PostgreSQL). If not configured, the audit log screen will be empty but the rest of the app works normally.
+
+---
+
+## 12. Admin Navigation (Super User vs Supplier)
 
 ### Super User window
-- Nav rail shows 3 tabs: **Orders**, **Products**, **Invoices**
+- Nav rail shows 4 tabs: **Orders**, **Products**, **Invoices**, **Audit Logs**
 - Label at top: **"Admin"**
 - Back arrow at bottom → returns to wholesaler Dashboard
 
 ### Supplier window
 - Nav rail shows 1 tab: **Orders** only
 - Label at top: **"Supplier"**
-- Products and Invoices tabs are hidden
+- Products, Invoices, and Audit Logs tabs are hidden
 
 ---
 
-## 12. Responsive Layout (any window)
+## 13. Responsive Layout (any window)
 
 1. Resize the browser window to < 800px wide
 2. Nav rail collapses into a **bottom navigation bar**
@@ -328,11 +383,13 @@ Invoice generation is currently a manual step via the API — it is **not** auto
 | Place order | Yes | No | No |
 | Order detail | Own orders | JPN orders | All orders |
 | Upload proof of payment | Yes | No | No |
+| View proof (inline + download) | Own orders | JPN orders | All orders |
 | Comments | Own orders | JPN orders | All orders |
 | Profile edit | Yes | Yes | Yes |
 | Admin: Order list | No | JPN only (read-only status) | All (full control) |
 | Admin: Change order status | No | No | Yes |
 | Admin: Products | No | No | Full CRUD + import |
 | Admin: Invoices | No | No | Full management + PDF |
+| Admin: Audit Logs | No | No | Full read + filters |
 | Language filter | N/A | Hidden | Yes |
 | Search orders | N/A | Yes | Yes |

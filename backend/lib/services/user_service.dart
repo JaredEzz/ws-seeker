@@ -35,6 +35,8 @@ class UserService {
       'phone',
       'preferredPaymentMethod',
       'wiseEmail',
+      'venmoHandle',
+      'paypalEmail',
       'savedAddress',
     ];
 

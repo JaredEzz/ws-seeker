@@ -33,6 +33,8 @@ class AppUser with _$AppUser {
     String? phone,
     String? preferredPaymentMethod,
     String? wiseEmail,
+    String? venmoHandle,
+    String? paypalEmail,
     required DateTime createdAt,
     DateTime? updatedAt,
   }) = _AppUser;

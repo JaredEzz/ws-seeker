@@ -17,6 +17,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   late TextEditingController _discordNameController;
   late TextEditingController _phoneController;
   late TextEditingController _wiseEmailController;
+  late TextEditingController _venmoHandleController;
+  late TextEditingController _paypalEmailController;
   late TextEditingController _fullNameController;
   late TextEditingController _addressLine1Controller;
   late TextEditingController _addressLine2Controller;
@@ -40,6 +42,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _phoneController = TextEditingController(text: user?.phone ?? '');
     _wiseEmailController =
         TextEditingController(text: user?.wiseEmail ?? '');
+    _venmoHandleController =
+        TextEditingController(text: user?.venmoHandle ?? '');
+    _paypalEmailController =
+        TextEditingController(text: user?.paypalEmail ?? '');
     _fullNameController =
         TextEditingController(text: addr?.fullName ?? '');
     _addressLine1Controller =
@@ -60,6 +66,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _discordNameController.dispose();
     _phoneController.dispose();
     _wiseEmailController.dispose();
+    _venmoHandleController.dispose();
+    _paypalEmailController.dispose();
     _fullNameController.dispose();
     _addressLine1Controller.dispose();
     _addressLine2Controller.dispose();
@@ -97,6 +105,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             wiseEmail: _wiseEmailController.text.trim().isEmpty
                 ? null
                 : _wiseEmailController.text.trim(),
+            venmoHandle: _venmoHandleController.text.trim().isEmpty
+                ? null
+                : _venmoHandleController.text.trim(),
+            paypalEmail: _paypalEmailController.text.trim().isEmpty
+                ? null
+                : _paypalEmailController.text.trim(),
             savedAddress: address,
           );
 
@@ -162,9 +176,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _field(_discordNameController, 'Discord Name'),
                       const SizedBox(height: 12),
                       _field(_phoneController, 'Phone'),
-                      const SizedBox(height: 12),
-                      _field(_wiseEmailController, 'Wise Email',
-                          hint: 'For Japanese orders'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Payment info
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Payment Info',
+                          style: theme.textTheme.titleMedium),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                         value: _preferredPaymentMethod,
@@ -187,6 +213,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         onChanged: (val) =>
                             setState(() => _preferredPaymentMethod = val),
                       ),
+                      if (_preferredPaymentMethod == 'Wise') ...[
+                        const SizedBox(height: 12),
+                        _field(_wiseEmailController, 'Wise Email',
+                            hint: 'Email registered with Wise'),
+                      ],
+                      if (_preferredPaymentMethod == 'Venmo') ...[
+                        const SizedBox(height: 12),
+                        _field(_venmoHandleController, 'Venmo Handle',
+                            hint: '@username'),
+                      ],
+                      if (_preferredPaymentMethod == 'PayPal') ...[
+                        const SizedBox(height: 12),
+                        _field(_paypalEmailController, 'PayPal Email',
+                            hint: 'Email registered with PayPal'),
+                      ],
                     ],
                   ),
                 ),

@@ -10,6 +10,8 @@ abstract interface class UserRepository {
     String? phone,
     String? preferredPaymentMethod,
     String? wiseEmail,
+    String? venmoHandle,
+    String? paypalEmail,
     ShippingAddress? savedAddress,
   });
 }
@@ -51,6 +53,8 @@ class HttpUserRepository implements UserRepository {
     String? phone,
     String? preferredPaymentMethod,
     String? wiseEmail,
+    String? venmoHandle,
+    String? paypalEmail,
     ShippingAddress? savedAddress,
   }) async {
     final body = <String, dynamic>{};
@@ -60,6 +64,8 @@ class HttpUserRepository implements UserRepository {
       body['preferredPaymentMethod'] = preferredPaymentMethod;
     }
     if (wiseEmail != null) body['wiseEmail'] = wiseEmail;
+    if (venmoHandle != null) body['venmoHandle'] = venmoHandle;
+    if (paypalEmail != null) body['paypalEmail'] = paypalEmail;
     if (savedAddress != null) body['savedAddress'] = savedAddress.toJson();
 
     final response = await http.patch(
@@ -93,6 +99,8 @@ class HttpUserRepository implements UserRepository {
       phone: map['phone'] as String?,
       preferredPaymentMethod: map['preferredPaymentMethod'] as String?,
       wiseEmail: map['wiseEmail'] as String?,
+      venmoHandle: map['venmoHandle'] as String?,
+      paypalEmail: map['paypalEmail'] as String?,
       createdAt: _parseDateTime(map['createdAt']),
       updatedAt: _parseDateTime(map['updatedAt']),
     );

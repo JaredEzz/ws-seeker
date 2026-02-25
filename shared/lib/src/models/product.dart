@@ -20,6 +20,31 @@ class Product with _$Product {
     String? sku,
     @Default(true) bool isActive,
     required DateTime updatedAt,
+
+    // Japanese multi-price fields (JPY)
+    double? boxPriceJpy,
+    double? noShrinkPriceJpy,
+    double? casePriceJpy,
+
+    // Japanese multi-price fields (USD)
+    double? boxPriceUsd,
+    double? boxPriceUsdWithTariff,
+    double? noShrinkPriceUsd,
+    double? noShrinkPriceUsdWithTariff,
+    double? casePriceUsd,
+    double? casePriceUsdWithTariff,
+
+    // Chinese category: "official" or "fan_art"
+    String? category,
+
+    // Pack hierarchy, e.g. "1 Case = 20 Boxes"
+    String? specifications,
+
+    // Availability remarks
+    String? notes,
+
+    // True when price is "ask" (quote required)
+    @Default(false) bool quoteRequired,
   }) = _Product;
 
   factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
@@ -35,6 +60,31 @@ class ProductImportRow with _$ProductImportRow {
     required double price,
     String? description,
     String? sku,
+
+    // Japanese multi-price fields (JPY)
+    double? boxPriceJpy,
+    double? noShrinkPriceJpy,
+    double? casePriceJpy,
+
+    // Japanese multi-price fields (USD)
+    double? boxPriceUsd,
+    double? boxPriceUsdWithTariff,
+    double? noShrinkPriceUsd,
+    double? noShrinkPriceUsdWithTariff,
+    double? casePriceUsd,
+    double? casePriceUsdWithTariff,
+
+    // Chinese category: "official" or "fan_art"
+    String? category,
+
+    // Pack hierarchy
+    String? specifications,
+
+    // Availability remarks
+    String? notes,
+
+    // True when price is "ask"
+    @Default(false) bool quoteRequired,
   }) = _ProductImportRow;
 
   factory ProductImportRow.fromJson(Map<String, dynamic> json) =>

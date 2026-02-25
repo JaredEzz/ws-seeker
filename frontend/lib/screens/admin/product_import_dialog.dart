@@ -1,18 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
-import 'package:http/http.dart' as http;
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
+import '../../repositories/product_repository.dart';
 
 class ProductImportDialog extends StatefulWidget {
-  final String backendUrl;
-  
-  const ProductImportDialog({
-    super.key,
-    required this.backendUrl,
-  });
+  const ProductImportDialog({super.key});
 
   @override
   State<ProductImportDialog> createState() => _ProductImportDialogState();
@@ -76,14 +72,14 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
         color: Tokens.feedbackInfoBg,
         borderRadius: BorderRadius.circular(Tokens.radiusLg),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.info_outline, color: Tokens.feedbackInfoIcon),
-              const SizedBox(width: Tokens.space8),
-              const Text(
+              Icon(Icons.info_outline, color: Tokens.feedbackInfoIcon),
+              SizedBox(width: Tokens.space8),
+              Text(
                 'CSV Format Requirements',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -92,14 +88,14 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             'Your CSV file should have the following columns:\n'
-            '• name (required)\n'
-            '• language (required: japanese, chinese, or korean)\n'
-            '• price (required: numeric)\n'
-            '• sku (optional: used for updates)\n'
-            '• description (optional)',
+            '\u2022 name (required)\n'
+            '\u2022 language (required: japanese, chinese, or korean)\n'
+            '\u2022 price (required: numeric)\n'
+            '\u2022 sku (optional: used for updates)\n'
+            '\u2022 description (optional)',
             style: TextStyle(fontSize: 13),
           ),
         ],
@@ -160,13 +156,15 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         TextButton(
-          onPressed: _isProcessing ? null : () {
-            setState(() {
-              _parsedProducts = null;
-              _fileName = null;
-              _importResult = null;
-            });
-          },
+          onPressed: _isProcessing
+              ? null
+              : () {
+                  setState(() {
+                    _parsedProducts = null;
+                    _fileName = null;
+                    _importResult = null;
+                  });
+                },
           child: const Text('Cancel'),
         ),
         const SizedBox(width: 8),
@@ -198,7 +196,9 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
         color: failed > 0 ? Tokens.feedbackWarningBg : Tokens.feedbackSuccessBg,
         borderRadius: BorderRadius.circular(Tokens.radiusLg),
         border: Border.all(
-          color: failed > 0 ? Tokens.feedbackWarningBorder : Tokens.feedbackSuccessBorder,
+          color: failed > 0
+              ? Tokens.feedbackWarningBorder
+              : Tokens.feedbackSuccessBorder,
         ),
       ),
       child: Column(
@@ -208,27 +208,35 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
             children: [
               Icon(
                 failed > 0 ? Icons.warning : Icons.check_circle,
-                color: failed > 0 ? Tokens.feedbackWarningIcon : Tokens.feedbackSuccessIcon,
+                color: failed > 0
+                    ? Tokens.feedbackWarningIcon
+                    : Tokens.feedbackSuccessIcon,
               ),
               const SizedBox(width: Tokens.space8),
               Text(
                 'Import Complete',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: failed > 0 ? Tokens.feedbackWarningText : Tokens.feedbackSuccessText,
+                  color: failed > 0
+                      ? Tokens.feedbackWarningText
+                      : Tokens.feedbackSuccessText,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 8),
-          Text('✓ Created: $created'),
-          Text('⟳ Updated: $updated'),
-          if (failed > 0) Text('✗ Failed: $failed'),
+          Text('Created: $created'),
+          Text('Updated: $updated'),
+          if (failed > 0) Text('Failed: $failed'),
           if (errors.isNotEmpty) ...[
             const SizedBox(height: 8),
-            const Text('Errors:', style: TextStyle(fontWeight: FontWeight.bold)),
-            ...errors.take(5).map((e) => Text('• $e', style: const TextStyle(fontSize: 12))),
-            if (errors.length > 5) Text('... and ${errors.length - 5} more'),
+            const Text('Errors:',
+                style: TextStyle(fontWeight: FontWeight.bold)),
+            ...errors
+                .take(5)
+                .map((e) => Text('\u2022 $e', style: const TextStyle(fontSize: 12))),
+            if (errors.length > 5)
+              Text('... and ${errors.length - 5} more'),
           ],
         ],
       ),
@@ -260,7 +268,8 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
       final rows = const CsvToListConverter().convert(csvString);
 
       if (rows.isEmpty || rows.length < 2) {
-        _showError('CSV file must contain a header row and at least one data row');
+        _showError(
+            'CSV file must contain a header row and at least one data row');
         setState(() {
           _isProcessing = false;
           _fileName = null;
@@ -269,7 +278,8 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
       }
 
       // Parse header
-      final headers = rows.first.map((e) => e.toString().toLowerCase().trim()).toList();
+      final headers =
+          rows.first.map((e) => e.toString().toLowerCase().trim()).toList();
       final nameIdx = headers.indexOf('name');
       final langIdx = headers.indexOf('language');
       final priceIdx = headers.indexOf('price');
@@ -296,8 +306,12 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
             name: row[nameIdx].toString(),
             language: row[langIdx].toString(),
             price: double.parse(row[priceIdx].toString()),
-            sku: skuIdx >= 0 && row.length > skuIdx ? row[skuIdx].toString() : null,
-            description: descIdx >= 0 && row.length > descIdx ? row[descIdx].toString() : null,
+            sku: skuIdx >= 0 && row.length > skuIdx
+                ? row[skuIdx].toString()
+                : null,
+            description: descIdx >= 0 && row.length > descIdx
+                ? row[descIdx].toString()
+                : null,
           ));
         } catch (e) {
           // Skip invalid rows
@@ -323,24 +337,12 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
     setState(() => _isProcessing = true);
 
     try {
-      final response = await http.post(
-        Uri.parse('${widget.backendUrl}/api/products/import'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'products': _parsedProducts!.map((p) => p.toJson()).toList(),
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final result = jsonDecode(response.body) as Map<String, dynamic>;
-        setState(() {
-          _importResult = result;
-          _isProcessing = false;
-        });
-      } else {
-        _showError('Server error: ${response.statusCode} - ${response.body}');
-        setState(() => _isProcessing = false);
-      }
+      final repo = context.read<ProductRepository>();
+      final result = await repo.importProducts(_parsedProducts!);
+      setState(() {
+        _importResult = result;
+        _isProcessing = false;
+      });
     } catch (e) {
       _showError('Upload failed: $e');
       setState(() => _isProcessing = false);

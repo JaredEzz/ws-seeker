@@ -31,9 +31,10 @@ class AppRouter {
         return loggingIn ? null : '/login';
       }
 
-      // Check for Admin access to admin routes
-      if (state.matchedLocation.startsWith('/admin') && 
-          authState.user.role != UserRole.superUser) {
+      // Check for Admin access to admin routes (superUser and supplier)
+      if (state.matchedLocation.startsWith('/admin') &&
+          authState.user.role != UserRole.superUser &&
+          authState.user.role != UserRole.supplier) {
         return '/dashboard';
       }
 

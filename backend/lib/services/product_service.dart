@@ -13,10 +13,11 @@ class ProductService {
       _firestore.collection('products');
 
   /// Import products from a list of ProductImportRow
-  /// 
+  ///
   /// This will:
   /// - Create new products if SKU doesn't exist
   /// - Update existing products if SKU exists
+  /// - Fall back to name+language dedup for products without SKU
   /// - Return a summary of operations
   Future<ProductImportResult> importProducts(List<ProductImportRow> rows) async {
     int created = 0;
@@ -33,26 +34,34 @@ class ProductService {
           continue;
         }
 
-        // Check if product with same SKU and language exists
-        final existingQuery = row.sku != null
-            ? await _productsRef
-                .where('sku', WhereFilter.equal, row.sku)
-                .where('language', WhereFilter.equal, language.name)
-                .get()
-            : null;
+        // Try dedup by SKU first, then fall back to name+language
+        QuerySnapshot<Map<String, dynamic>>? existingQuery;
+        if (row.sku != null && row.sku!.isNotEmpty) {
+          existingQuery = await _productsRef
+              .where('sku', WhereFilter.equal, row.sku)
+              .where('language', WhereFilter.equal, language.name)
+              .get();
+        }
+        if (existingQuery == null || existingQuery.docs.isEmpty) {
+          existingQuery = await _productsRef
+              .where('name', WhereFilter.equal, row.name)
+              .where('language', WhereFilter.equal, language.name)
+              .get();
+        }
 
-        if (existingQuery != null && existingQuery.docs.isNotEmpty) {
-          // Update existing product
+        final extFields = _extendedFieldsFromRow(row);
+
+        if (existingQuery.docs.isNotEmpty) {
           final docId = existingQuery.docs.first.id;
           await _productsRef.doc(docId).update({
             'name': row.name,
             'basePrice': row.price,
             'description': row.description,
+            ...extFields,
             'updatedAt': FieldValue.serverTimestamp,
           });
           updated++;
         } else {
-          // Create new product
           await _productsRef.add({
             'name': row.name,
             'language': language.name,
@@ -60,6 +69,7 @@ class ProductService {
             'description': row.description,
             'sku': row.sku,
             'isActive': true,
+            ...extFields,
             'updatedAt': FieldValue.serverTimestamp,
           });
           created++;
@@ -101,6 +111,19 @@ class ProductService {
     String? description,
     String? imageUrl,
     String? sku,
+    double? boxPriceJpy,
+    double? noShrinkPriceJpy,
+    double? casePriceJpy,
+    double? boxPriceUsd,
+    double? boxPriceUsdWithTariff,
+    double? noShrinkPriceUsd,
+    double? noShrinkPriceUsdWithTariff,
+    double? casePriceUsd,
+    double? casePriceUsdWithTariff,
+    String? category,
+    String? specifications,
+    String? notes,
+    bool quoteRequired = false,
   }) async {
     final docRef = await _productsRef.add({
       'name': name,
@@ -110,6 +133,19 @@ class ProductService {
       'imageUrl': imageUrl,
       'sku': sku,
       'isActive': true,
+      if (boxPriceJpy != null) 'boxPriceJpy': boxPriceJpy,
+      if (noShrinkPriceJpy != null) 'noShrinkPriceJpy': noShrinkPriceJpy,
+      if (casePriceJpy != null) 'casePriceJpy': casePriceJpy,
+      if (boxPriceUsd != null) 'boxPriceUsd': boxPriceUsd,
+      if (boxPriceUsdWithTariff != null) 'boxPriceUsdWithTariff': boxPriceUsdWithTariff,
+      if (noShrinkPriceUsd != null) 'noShrinkPriceUsd': noShrinkPriceUsd,
+      if (noShrinkPriceUsdWithTariff != null) 'noShrinkPriceUsdWithTariff': noShrinkPriceUsdWithTariff,
+      if (casePriceUsd != null) 'casePriceUsd': casePriceUsd,
+      if (casePriceUsdWithTariff != null) 'casePriceUsdWithTariff': casePriceUsdWithTariff,
+      if (category != null) 'category': category,
+      if (specifications != null) 'specifications': specifications,
+      if (notes != null) 'notes': notes,
+      'quoteRequired': quoteRequired,
       'updatedAt': FieldValue.serverTimestamp,
     });
     return docRef.id;
@@ -124,6 +160,19 @@ class ProductService {
     String? imageUrl,
     String? sku,
     bool? isActive,
+    double? boxPriceJpy,
+    double? noShrinkPriceJpy,
+    double? casePriceJpy,
+    double? boxPriceUsd,
+    double? boxPriceUsdWithTariff,
+    double? noShrinkPriceUsd,
+    double? noShrinkPriceUsdWithTariff,
+    double? casePriceUsd,
+    double? casePriceUsdWithTariff,
+    String? category,
+    String? specifications,
+    String? notes,
+    bool? quoteRequired,
   }) async {
     final updates = <String, dynamic>{
       'updatedAt': FieldValue.serverTimestamp,
@@ -135,6 +184,19 @@ class ProductService {
     if (imageUrl != null) updates['imageUrl'] = imageUrl;
     if (sku != null) updates['sku'] = sku;
     if (isActive != null) updates['isActive'] = isActive;
+    if (boxPriceJpy != null) updates['boxPriceJpy'] = boxPriceJpy;
+    if (noShrinkPriceJpy != null) updates['noShrinkPriceJpy'] = noShrinkPriceJpy;
+    if (casePriceJpy != null) updates['casePriceJpy'] = casePriceJpy;
+    if (boxPriceUsd != null) updates['boxPriceUsd'] = boxPriceUsd;
+    if (boxPriceUsdWithTariff != null) updates['boxPriceUsdWithTariff'] = boxPriceUsdWithTariff;
+    if (noShrinkPriceUsd != null) updates['noShrinkPriceUsd'] = noShrinkPriceUsd;
+    if (noShrinkPriceUsdWithTariff != null) updates['noShrinkPriceUsdWithTariff'] = noShrinkPriceUsdWithTariff;
+    if (casePriceUsd != null) updates['casePriceUsd'] = casePriceUsd;
+    if (casePriceUsdWithTariff != null) updates['casePriceUsdWithTariff'] = casePriceUsdWithTariff;
+    if (category != null) updates['category'] = category;
+    if (specifications != null) updates['specifications'] = specifications;
+    if (notes != null) updates['notes'] = notes;
+    if (quoteRequired != null) updates['quoteRequired'] = quoteRequired;
 
     await _productsRef.doc(productId).update(updates);
   }
@@ -145,6 +207,25 @@ class ProductService {
       'isActive': false,
       'updatedAt': FieldValue.serverTimestamp,
     });
+  }
+
+  /// Build a map of extended fields from an import row
+  Map<String, dynamic> _extendedFieldsFromRow(ProductImportRow row) {
+    return {
+      if (row.boxPriceJpy != null) 'boxPriceJpy': row.boxPriceJpy,
+      if (row.noShrinkPriceJpy != null) 'noShrinkPriceJpy': row.noShrinkPriceJpy,
+      if (row.casePriceJpy != null) 'casePriceJpy': row.casePriceJpy,
+      if (row.boxPriceUsd != null) 'boxPriceUsd': row.boxPriceUsd,
+      if (row.boxPriceUsdWithTariff != null) 'boxPriceUsdWithTariff': row.boxPriceUsdWithTariff,
+      if (row.noShrinkPriceUsd != null) 'noShrinkPriceUsd': row.noShrinkPriceUsd,
+      if (row.noShrinkPriceUsdWithTariff != null) 'noShrinkPriceUsdWithTariff': row.noShrinkPriceUsdWithTariff,
+      if (row.casePriceUsd != null) 'casePriceUsd': row.casePriceUsd,
+      if (row.casePriceUsdWithTariff != null) 'casePriceUsdWithTariff': row.casePriceUsdWithTariff,
+      if (row.category != null) 'category': row.category,
+      if (row.specifications != null) 'specifications': row.specifications,
+      if (row.notes != null) 'notes': row.notes,
+      'quoteRequired': row.quoteRequired,
+    };
   }
 
   ProductLanguage? _parseLanguage(String language) {

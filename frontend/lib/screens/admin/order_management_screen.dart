@@ -278,14 +278,13 @@ class _FilterBar extends StatelessWidget {
               ],
             ],
           ),
-          const SizedBox(height: 8),
-          // Filter chips
-          Wrap(
-            spacing: 8,
-            runSpacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              if (showLanguageFilter) ...[
+          if (showLanguageFilter) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
                 const Text('Language:', style: TextStyle(fontSize: 12)),
                 ...ProductLanguage.values.map(
                   (lang) => FilterChip(
@@ -296,8 +295,15 @@ class _FilterBar extends StatelessWidget {
                     visualDensity: VisualDensity.compact,
                   ),
                 ),
-                const SizedBox(width: 8),
               ],
+            ),
+          ],
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
               const Text('Status:', style: TextStyle(fontSize: 12)),
               ...OrderStatus.values.map(
                 (status) => FilterChip(
@@ -511,27 +517,8 @@ class _StatusChip extends StatelessWidget {
   }
 
   List<OrderStatus> _nextStatuses(OrderStatus current) {
-    if (current == OrderStatus.delivered ||
-        current == OrderStatus.cancelled) {
-      return [];
-    }
-
-    const progression = [
-      OrderStatus.submitted,
-      OrderStatus.awaitingQuote,
-      OrderStatus.invoiced,
-      OrderStatus.paymentPending,
-      OrderStatus.paymentReceived,
-      OrderStatus.shipped,
-      OrderStatus.delivered,
-    ];
-
-    final currentIdx = progression.indexOf(current);
-    final forward = currentIdx >= 0
-        ? progression.sublist(currentIdx + 1)
-        : <OrderStatus>[];
-
-    return [...forward, OrderStatus.cancelled];
+    // Admin can move orders to any status (except the current one)
+    return OrderStatus.values.where((s) => s != current).toList();
   }
 }
 

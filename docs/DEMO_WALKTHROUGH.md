@@ -1,5 +1,7 @@
 # WS-Seeker Demo Walkthrough
 
+**App URL:** https://ws-seeker.web.app
+
 Open three browser windows (or incognito tabs) and log into each role simultaneously. The walkthrough is organized feature-by-feature so you can compare what each role sees side by side.
 
 ## Test Accounts
@@ -31,17 +33,21 @@ Open three browser windows (or incognito tabs) and log into each role simultaneo
 Do this first so profile data pre-fills into the order form later.
 
 1. Click the **Profile** tab in the bottom nav (or nav rail on desktop)
-2. Fill in:
+2. Under **Contact Info**, fill in:
    - **Discord Name** — `TestWholesaler`
    - **Phone** — `555-0100`
+3. Under **Payment Info**:
    - **Preferred Payment Method** — pick `Venmo`
-3. Under **Saved Shipping Address**, fill in:
+   - A **Venmo Handle** field appears — enter `@TestWholesaler`
+   - (If you switch to Wise, a Wise Email field appears instead; PayPal shows PayPal Email)
+   - All values persist even if you switch methods
+4. Under **Saved Shipping Address**, fill in:
    - Full Name: `Test Customer`
    - Address: `123 Demo Street`
    - City: `Salt Lake City` / State: `UT`
    - Postal Code: `84101` / Country: `US`
-4. Click **Save Profile**
-5. Confirm the success snackbar
+5. Click **Save Profile**
+6. Confirm the success snackbar
 
 | Role | Access |
 |------|--------|
@@ -253,8 +259,9 @@ Supplier does **not** have access to this screen.
 Supplier does **not** have access to this screen.
 
 ### Generate an invoice
-1. This happens via the API — when an order reaches "Invoiced" status, an invoice is auto-generated
-2. (If you need to manually generate: the admin order screen's status change to "Invoiced" triggers invoice creation)
+Invoice generation is currently a manual step via the API — it is **not** auto-triggered by the status change to "Invoiced". To generate:
+1. Use the order detail or a direct API call: `POST /api/invoices/generate/{orderId}`
+2. The invoice appears in the Invoices list once generated
 
 ### Browse invoices
 1. Click **Invoices** in the admin nav rail

@@ -251,6 +251,8 @@ class _AuditLogTile extends StatelessWidget {
     final theme = Theme.of(context);
     final detailStr = _formatDetails(log.action, log.details);
 
+    final resourceLabel = _resourceLabel(log);
+
     return ListTile(
       leading: _actionIcon(log.action),
       title: Text(_actionLabel(log.action),
@@ -258,7 +260,7 @@ class _AuditLogTile extends StatelessWidget {
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('by ${log.userEmail}'),
+          Text('by ${log.userEmail}${resourceLabel.isNotEmpty ? ' · $resourceLabel' : ''}'),
           if (detailStr.isNotEmpty)
             Text(
               detailStr,
@@ -275,6 +277,19 @@ class _AuditLogTile extends StatelessWidget {
       ),
       isThreeLine: detailStr.isNotEmpty,
     );
+  }
+
+  /// Derive a user-friendly resource label (e.g. "CN1") from audit details.
+  static String _resourceLabel(AuditLog log) {
+    // Order actions: backend stores displayOrderNumber in details
+    final displayNum = log.details?['displayOrderNumber'];
+    if (displayNum != null) return displayNum.toString();
+
+    // Product actions: use product name if available
+    final productName = log.details?['productName'] ?? log.details?['name'];
+    if (productName != null) return productName.toString();
+
+    return '';
   }
 
   static String _actionLabel(String action) {
@@ -329,7 +344,10 @@ class _AuditLogTile extends StatelessWidget {
         case 'productCount':
           parts.add('${entry.value} product${entry.value == 1 ? '' : 's'}');
         case 'commentId':
-          break; // not useful to display
+        case 'displayOrderNumber':
+        case 'productName':
+        case 'name':
+          break; // shown in resource label or not useful
         default:
           parts.add('${entry.key}: ${entry.value}');
       }

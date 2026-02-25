@@ -217,7 +217,7 @@ class _InvoiceCard extends StatelessWidget {
           ],
         ),
         subtitle: Text(
-          'Order: ${invoice.orderId.substring(0, 8)}... '
+          'Order: ${invoice.displayInvoiceNumber != null ? invoice.displayInvoiceNumber!.replaceFirst('INV-', '') : invoice.orderId} '
           '| Total: \$${invoice.total.toStringAsFixed(2)} '
           '| Created: ${_formatDate(invoice.createdAt)}',
         ),

@@ -52,7 +52,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_order != null ? 'Order ${_order!.id}' : 'Order Details'),
+        title: Text(_order != null
+            ? 'Order ${_order!.displayOrderNumber ?? _order!.id}'
+            : 'Order Details'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

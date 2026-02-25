@@ -68,7 +68,22 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
     final authState = context.watch<AuthBloc>().state;
     final user = authState is AuthAuthenticated ? authState.user : null;
 
-    return Scaffold(
+    return BlocListener<OrdersBloc, OrdersState>(
+      listener: (context, state) {
+        if (state is OrderActionSuccess) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
+        } else if (state is OrdersFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Tokens.destructive,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
       appBar: AppBar(
         title: Text(user?.role == UserRole.supplier
             ? 'Japanese Orders'
@@ -146,6 +161,7 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
           ),
         ],
       ),
+    ),
     );
   }
 
@@ -381,8 +397,7 @@ class _OrdersTable extends StatelessWidget {
   }
 
   DataRow _buildRow(BuildContext context, Order order) {
-    final displayId = order.displayOrderNumber ??
-        order.id.substring(0, order.id.length.clamp(0, 8));
+    final displayId = order.displayOrderNumber ?? order.id;
 
     return DataRow(
       cells: [
@@ -526,6 +541,35 @@ class _ActionButtons extends StatelessWidget {
   final Order order;
   const _ActionButtons({required this.order});
 
+  void _confirmDelete(BuildContext context) {
+    final displayId = order.displayOrderNumber ?? order.id;
+    showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Order'),
+        content: Text('Are you sure you want to delete order "$displayId"? '
+            'This action cannot be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: Tokens.destructive),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    ).then((confirmed) {
+      if (confirmed == true && context.mounted) {
+        context.read<OrdersBloc>().add(
+              OrderDeleteRequested(orderId: order.id),
+            );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Row(
@@ -536,6 +580,12 @@ class _ActionButtons extends StatelessWidget {
           tooltip: 'View details',
           visualDensity: VisualDensity.compact,
           onPressed: () => context.push('/orders/${order.id}'),
+        ),
+        IconButton(
+          icon: Icon(Icons.delete_outline, size: 18, color: Tokens.destructive),
+          tooltip: 'Delete order',
+          visualDensity: VisualDensity.compact,
+          onPressed: () => _confirmDelete(context),
         ),
       ],
     );

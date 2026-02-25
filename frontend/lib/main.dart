@@ -8,6 +8,7 @@ import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_event.dart';
 import 'firebase_options.dart';
 import 'repositories/auth_repository.dart';
+import 'repositories/invoice_repository.dart';
 import 'repositories/order_repository.dart';
 import 'repositories/product_repository.dart';
 
@@ -26,6 +27,7 @@ void main() async {
   final authRepository = FirebaseAuthRepository();
   final orderRepository = HttpOrderRepository();
   final productRepository = HttpProductRepository();
+  final invoiceRepository = HttpInvoiceRepository();
 
   // Create AuthBloc immediately so we can pass it to the Router
   final authBloc = AuthBloc(authRepository: authRepository)
@@ -38,6 +40,7 @@ void main() async {
         RepositoryProvider<AuthRepository>.value(value: authRepository),
         RepositoryProvider<OrderRepository>.value(value: orderRepository),
         RepositoryProvider<ProductRepository>.value(value: productRepository),
+        RepositoryProvider<InvoiceRepository>.value(value: invoiceRepository),
       ],
       child: MultiBlocProvider(
         providers: [

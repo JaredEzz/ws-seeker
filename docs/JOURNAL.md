@@ -46,5 +46,22 @@
 - Dashboard nav: admin users see "Admin" tab, wholesalers see "Profile"
 
 ### Step 5: Invoice UI
-**Status:** Starting next
+**Status:** Complete
+
+- Created `HttpInvoiceRepository` with full CRUD (list, get, generate, update status)
+- Created `InvoiceManagementScreen` with CROMA WHOLESALE template:
+  - Header: CROMA WHOLESALE, 527 W State Street, Unit 102, Pleasant Grove UT 84062
+  - Line items table (Description, Qty, Unit Price, Total)
+  - Summary: SUBTOTAL, Markup, AIR SHIPPING + Tariffs, OCEAN SHIPPING + Tariffs, BALANCE TOTAL
+  - Actions: Mark as Sent, Mark as Paid, Void
+  - Status filter (Draft/Sent/Paid/Void)
+  - Status badges with color coding
+- Routed at `/admin/invoices`, integrated with AdminShell (selectedIndex: 2)
+- Registered `InvoiceRepository` in main.dart RepositoryProvider
+
+### Deploys
+- Backend: All commits deploying successfully to Cloud Run
+- Frontend: Initial commit failed (non-exhaustive switch on OrderStatus), fixed in Step 2 commit
+- Step 2 frontend deploy: SUCCESS
+- Step 3+4 frontend deploy: In progress
 

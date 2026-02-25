@@ -122,15 +122,17 @@ PRIMARY spreadsheet replacement:
 - Admin users redirect to /admin/orders on login
 - Reuses existing OrdersBloc (no new BLoC needed)
 
-### Step 5: Invoice UI
-**New file:** `frontend/lib/screens/admin/invoice_builder_screen.dart`
+### Step 5: Invoice UI ✅ COMPLETE
+**New file:** `frontend/lib/screens/admin/invoice_management_screen.dart`
+**New file:** `frontend/lib/repositories/invoice_repository.dart`
 
 CROMA WHOLESALE template:
 - Header: CROMA WHOLESALE, 527 W State Street, Unit 102, Pleasant Grove UT 84062
 - Invoice # (INV-CN34 format), Due Date
 - Line items: Description | Qty | Unit Price | Total
 - Summary: SUBTOTAL | AIR SHIPPING + Tariffs | OCEAN SHIPPING + Tariffs | BALANCE TOTAL
-- Actions: Send, Download, Mark as Paid
+- Actions: Mark as Sent, Mark as Paid, Void
+- HttpInvoiceRepository with full CRUD
 
 ---
 

@@ -10,6 +10,7 @@ import '../screens/orders/order_form_screen.dart';
 import '../screens/orders/order_detail_screen.dart';
 import '../screens/admin/order_management_screen.dart';
 import '../screens/admin/product_management_screen.dart';
+import '../screens/admin/invoice_management_screen.dart';
 import 'go_router_refresh_stream.dart';
 
 class AppRouter {
@@ -82,6 +83,10 @@ class AppRouter {
       GoRoute(
         path: '/admin/products',
         builder: (context, state) => const ProductManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/invoices',
+        builder: (context, state) => const InvoiceManagementScreen(),
       ),
     ],
   );

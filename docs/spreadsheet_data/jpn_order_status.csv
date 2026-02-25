@@ -1,0 +1,2152 @@
+Order #,Timestamp,Discord Name: ,Product Requested ,Shipping Method,Payment Method,Quote,Invoice Status,Status,Tracking provided,Notes
+1,2/19/2025,test,test,FedEx,,d,Sent,Completed,Yes,Yes
+2,2/19/2025,test,test,FedEx,,d,Quoted,Completed,,
+3,2/19/2025,test,test,FedEx,,ytsd,Quoted,Completed,,
+4,2/19/2025,test,test,FedEx,,d,Quoted,Completed,,
+5,2/19/2025,test,test,FedEx,,,Not quoted,Completed,,
+6,2/19/2025,Croma,"Cyber Judge - loose - 30
+Cyber Judge - Case - 2
+Wild Force - Loose - 30",FedEx,,"Cyber Judge Loose - [30 x 4900] - 147,000 
+Cyber Judge Case [2 x 13000] - 26,000 
+Wild Force Loose - [30 x 4700] - 141,000 ",Sent,Completed,,
+7,2/19/2025 11:19:36,Croma,"Terastal Festival - loose - 30 
+Cyber Judge - case - 3
+Wild Force - case 30 
+test - 1 -1-1",FedEx,,"123 my address, new york, new york 123123",Quoted,Completed,,
+8,3/4/2025,Croma,"Cyber Judge - loose - 30
+Cyber Judge - Case - 2
+Wild Force - Loose - 30
+",FedEx,,,Not quoted,Completed,,
+9,3/4/2025,shalehaha,"Cyber Judge - loose - 30
+Cyber Judge - Case - 2
+Wild Force - Loose - 30",FedEx,,"Cyber Judge Loose - [30 x 4900] - 147,000 
+Cyber Judge Case [2 x 13000] - 26,000 
+Wild Force Loose - [30 x 4700] - 141,000 ",Sent,Completed,,
+10,3/4/2025,dsdfs,"Cyber Judge - loose - 30
+Cyber Judge - Case - 2
+Wild Force - Loose - 30",FedEx,,,Not quoted,Completed,,
+11,3/4/2025,dsf,sdfsadf,FedEx,,,Not quoted,Completed,,
+12,3/4/2025,test,"Example:
+Cyber Judge - loose - 30
+Cyber Judge - Case - 2
+Wild Force - Loose - 30
+",FedEx,,this is the test one,Quoted,Completed,Yes,
+13,3/17/2025,Croma,"Terastal - loose - 30
+super electric - Case -4
+Wild Force - sealed- 45",FedEx,,"Terastal - loose - 30 x 12300 = total
+super electric - Case -4
+Wild Force - sealed- 45
+shipping 84,000
+total cost =  1231231544",Sent,Pending Payment,Yes,Yes
+14,3/17/2025,Croma,"terastasl - loose-- 5
+super electric breaker - case -2 
+a
+d
+d
+d - - -",,,"Terastal - loose - 30 x 12300 = total
+super electric - Case -4
+Wild Force - sealed- 45
+shipping 84,000
+total cost =  1231231544",Sent,Pending,Yes,Yes
+15,3/17/2025,Camboyd63,Heat wave - loose - 20,FedEx,,,Not quoted,,,
+16,3/17/2025,Croma,"Terastal festival  - loose - 30
+Super electric - Case - 2
+heat wave - box- 30
+crimson haze - box - 60",FedEx,,"terastal x 30 (5400) = 15,000
+;super elevtic case x2 (113,000) = 1231231
+shipping fedex 23,000 +12,3000
+total = 1245,000 +5% paypal final total = 12312319",Quoted,Completed,yes,yes
+17,3/18/2025,Camboyd63,"Heat wave - loose - 6 
+Heat wave - no shrink - 4
+Snow hazard - loose - 4
+Crimson haze - loose - 4 
+Battle partners - loose - 4",FedEx,,"Total 195,300yen 
+Heatwave arena(13500) - 4 =54,000 
+Heat wave arena no shrink(12000) - 4=48,000 
+Snow hazard(5100) - 4=20,400 
+Crimson haze (6600)- 4=26,400 
+Battle partners (9000)-4=36,000 
+shipping UPS 10500",Sent,Completed,Yes,"Shipped UPS, Fedex would be delayed"
+18,3/24/2025,toxicterryx,"30 no shrink shiny treasures
+30 no shrink terastal festival
+20 no shrink battle partners
+20 no shrink heat wave",FedEx,,Cancelled,Quoted,cancelled,Cancelled,
+19,3/24/2025,Toxicterryx,"20 no shrink shiny treasures
+20 no shrink terastal festival
+20 no shrink battle partners
+20 no shrink heat wave",FedEx,,"Total  730400 yen
+
+7 no shrink shiny treasures(6600)=46200
+20 no shrink terastal festival(12900)=258000
+shipping FedEx 13500
+
+20 no shrink battle partners(8500)=170000
+20 no shrink heat wave(10800)=216000
+
+shipping FedEx 20200+6500",Sent,Completed,Yes,only 7 no shrink shiny left available for immediate ording
+20,3/24/2025,croma,"Cyber Judge - loose - 30
+Cyber Judge - Case - 2
+Wild Force - Loose - 30
+Test teet order",FedEx,,,Not quoted,Completed,,
+21,3/25/2025,Croma,"heat wave arena -no shrink - 5
+heat wave arena - box - 25
+",FedEx,,"Total  378300yen
+
+heat wave arena -no shrink(10800) - 5=54000
+heat wave arena - box (12300)- 25=307500
+
+shipping FedEX  16800",Sent,Completed,Yes,
+22,3/29/2025,Henny2Guapo,Terrestrial Festival - Loose - 20,UPS,,"Total  300200yen
+
+Terrestrial Festival - Loose (14500) x 20=290000
+shipping UPS 10200",Sent,Completed,Yes,
+23,3/30/2025,Camboyd63,Glory of team rocket -case- 1,FedEx,,"Total  331300yen
+
+Glory of team rocket -case- 1=320000
+shipping FedEX 11300",Sent,Completed,Yes,
+24,3/31/2025,Camboyd63,"Heat wave arena - loose- 5
+Heat wave arena - loose no shrink- 6",FedEx,,"Total  145800 yen
+
+Heat wave arena box(12500) x 5=62500
+Heat wave arena  no shrink-(12000) x6=72000
+
+shipping FedEX 11300",Sent,Completed,Yes,
+25,4/1/2025,toxicterryx,2 cases of team rocket,FedEx,,"Total  662600yen
+2 cases of team rocket(320000)=640000
+shipping FedEX 22600",Sent,Completed,Yes,
+26,4/4/2025,Mysticalspark,"Heat Wave Arena with Shrink - Loose - 5
+Heat Wave Arena without Shrink - Loose - 5
+Marnie's Morpeko & Grimmsnarl Ex Box - Loose - 2
+Illustration 2024 Promos (from Heat Wave Arena) - Singles - 5",FedEx,,"Total  136100yen 
+
+Heat Wave Arena with Shrink (12000)- 5=60000
+Heat Wave Arena without Shrink - (11500) - 5=57500
+Illustration 2024 Promos (from Heat Wave Arena) 
+- Singles(800) -10=8000
+shipping FedEX  10600",Sent,Completed,Yes,
+27,4/5/2025,crispystacks_31671,"Heat Wave Arena - no shrink - 4
+Terastal Festival - no shrink - 4
+Shiny Star V - loose - 5
+VSTAR Universe - loose - 5
+JPN 151 - loose - 2",FedEx,,"Total 321600yen 
+Heat Wave Arena - no shrink(11500) - 4=46000
+Terastal Festival - no shrink(12500) - 4=50000
+shipping FedEX  7500
+
+Shiny Star V - (16500) - 5=82500
+shipping FedEX  6500
+
+VSTAR Universe (15000) - 5=75000
+shipping FedEX  6500
+
+JPN 151 - loose -(20800) 2=41600
+shipping FedEX 6000",Sent,Completed,Yes,
+28,4/6/2025,trainerstreasures,"Ancient Roar - loose - 8
+Wild Force - loose - 6
+Violet - loose - 2",UPS,,"Total  107200yen
+
+Ancient Roar (5800) - 8=46400
+Wild Force (6500) - 6=39000
+Violet - loose( 5900)- 2=11800
+shipping UPS 10000",Sent,Completed,Yes,
+29,4/6/2025,Tony Wallock,"Terastal Festival- loose- 1
+Paradise Dragona shrink- loose- 1
+Paradise Dragona no shrink- loose- 1
+Stella Miracle- loose- 2
+Night Wanderer- loose- 2
+Transformation Mask- loose- 1
+Cyber Judge- loose- 2",FedEx,,"Total  76200yen
+
+Terastal Festival(13500)- 1=13500
+Paradise Dragona (8600)- 1=8600
+Paradise Dragona no shrink-(7200)- 1=7200
+Stella Miracle(4800)-2=9600
+Night Wanderer(4900)- 2=9800
+Transformation Mask(5900)- 1=5900
+Cyber Judge(5500)- 2=11000
+shipping FedEX 10600",Sent,Completed,Yes,
+30,4/6/2025,crispystacks_31671,Glory of Team rocket - Case - 1,FedEx,,"Total  331500yen
+
+Glory of Team rocket - Case - 1
+(box 26000 x12box)=312000
+shipping FedEX 6500 x3=19500",Sent,Completed,Yes,
+31,4/6/2025,Camboyd63,"Heat wave arena - loose- 6
+Heat wave arena - no shrink- 4
+Battle partners - loose - 2
+Shiny treasure - no shrink- 2
+Show hazard - loose - 2 
+Jpn 151 - loose - 2 ",FedEx,,"Total  220400yen
+Heat wave arena(12000) -6=72000
+Battle partners (9200)- 2=18400
+Show hazard(5200) - 2 =10400
+shipping FedEX 9800
+
+Heat wave arena - no shrink(11500)- 4=46000
+Shiny treasure - no shrink(7000)- 2=14000
+Jpn 151 (20800) - 2 =41600
+shipping FedEX 8200",Sent,Completed,Yes,
+32,4/7/2025,Croma,"V Star Universe- loose- 10
+151- loose - 5
+Terastal festival- loose - 10 
+Snow hazsard - loose - 5
+Night wanderer - loose - 5 
+Crimson haze - loose - 5 
+Eevee heroes - loose - 1 
+",FedEx,,"Total  588200yen
+
+V Star Universe(15000)- 7=105000
+shipping FedEX 6700
+
+V Star Universe(15000)- 3=45000
+Terastal festivale(13500) -5=67500
+shipping FedEX 6700
+
+151(20800) - 5=104000
+shipping FedEX 6700
+
+Terastal festivale(13500) -5=67500
+Snow hazsard (5200) - 5=26000
+Night wanderer(4900) - 5 =24500
+shipping FedEX 10900
+
+Crimson haze(6800)  - 5 =34000
+shipping FedEX 6700
+
+Eevee heroes (72000) - 1 =72000
+shipping FedEX 5000",Sent,Completed,Yes,
+33,4/13/2025,Tony Wallock,"Terastal Festival-no shrink-1
+Terastal Festival-loose-2
+Shiny Treasure-no shrink-1
+Shiny Treasure-loose-1
+Crimson Haze-loose-1
+Wild Force-loose-1
+Glory of Team rocket-loose-2
+Ancient Roar-loose-1",FedEx,Wise,"Total  135300yen
+
+Terastal Festival-no shrink(12500)-1=12500
+Terastal Festival-(13500)-2=27000
+Shiny Treasure-no shrink(7000)-1=7000
+Shiny Treasure-(8100)-1=8100
+Crimson Haze-(6800)-1=6800
+Wild Force-(6500)-1=6500
+Ancient Roar-(5800)-1=5800
+shipping FedEX 7500
+
+Glory of Team rocket-(23800)-2=47600
+shipping FedEX 6500(4/17/2025 ship)",Sent,Completed,Yes,
+34,4/14/2025,toxicterryx,"terastal festival - no shrink - 20
+heat wave arena - no shrink - 20
+battle partners - no shrink - 15
+shiny treasures v - no shrink/shrink - 20",FedEx,Wise,"Total  828300yen
+
+terastal festival - no shrink (12500)-9=112500
+shipping FedEX 7400
+
+terastal festival - no shrink (12500)-9=112500
+shipping FedEX 7400
+
+terastal festival - no shrink (12500)-2=25000
+battle partners - no shrink (8600) -3=25800
+shipping FedEX 7200
+
+heat wave arena - no shrink (10900)- 10=109000
+shipping FedEX 9800
+
+heat wave arena - no shrink (10900)- 10=109000
+shipping FedEX 9800
+
+battle partners - no shrink (8600)- 12=103200
+shipping FedEX 11300
+
+shiny treasures v -shrink (8100)- 10=81000
+shipping FedEX 8200
+
+shiny treasures v -shrink (8100)- 10=81000
+shipping FedEX 8200",Sent,Completed,Yes,
+35,4/15/2025,Henny2guapo,Glory of Team Rocket - 14 boxes,FedEx,Wise,"Total  350000yen
+Glory of Team Rocket( 23000)- 14 boxes=322000
+shipping Fedex  70000x4=28000",Sent,Completed,Yes,
+36,4/20/2025,Camboyd63 ,"glory of team rocket - loose- 5
+glory of team rocket - no shrink- 4
+heat wave arena - loose- 8
+terastal festival - loose- 3
+stellar miracle - loose - 3
+night wanderer - loose - 3
+crimson haze - loose - 4
+shiny treasures - loose - 5
+snow hazard - loose - 2
+violet - loose- 2",FedEx,Wise,"Total 409100yen
+
+glory of team rocket(15800)x 5=79000
+violet ( 6100) x2=12200
+night wanderer  (4800) x 3=14400
+shipping fedex 9100
+
+glory of team rocket - no shrink(14500)x4=58000
+stellar miracle - (4700)x 3=14100
+terastal festival - (13000)x3=39000
+shipping fedex 8400
+
+heat wave arena - (10000)x 8=80000
+crimson haze - (6800)x4=27200
+shipping fedex 10600
+
+shiny treasures - (8000)x 5=40000
+snow hazard - (5200) x2=10400
+shipping fedex 6700
+",Sent,Completed,Yes,
+37,4/21/2025,Tony Wallock,"Scarlet-loose-1
+Violet-loose-1
+Triple Beat-loose-1
+Snow Hazard-loose-1
+Clay Burst-loose-1
+Jpn 151-loose-1
+Rule of the Black Flame-loose-1
+Raging Surf-loose-1
+Future Flash-loose-1
+Transformation Mask-loose-1
+Paradise Dragona-loose-1
+Super Electric Breaker-loose-1
+Battle Partners-loose-1
+ Terastal Festival-loose-2
+Heat Wave-loose-4
+Heat Wave-no shrink-1",FedEx,Wise,"Total 208300yen
+
+Scarlet-(6800)x1=6800
+Violet-(6100)x1=6100
+Triple Beat-(10500)x1=10500
+Snow Hazard-(5200)x1=5200
+Clay Burst-(9000)x1=9000
+Jpn 151-(20500)x1=20500
+Rule of the Black Flame-(9700)x1=9700
+Raging Surf-(7400)x1=7400
+Future Flash-(5400)x1=5400
+Transformation Mask-(5900)x1=5900
+Paradise Dragona-(7600)x1=7600
+Battle Partners-(8500)x1=8500
+shipping fedex 10600
+
+Super Electric Breaker-(11800)x1=11800
+ Terastal Festival-(13000)x2=26000
+Heat Wave-(10000)x4=40000
+Heat Wave-no shrink(9000)x1=9000
+shipiping fedex 8300",Sent,Completed,Yes,
+38,4/22/2025,Camboyd63,Glory of team rocket - loose- 7,FedEx,Wise,"Total   112,500yen
+
+Team Rocket(15,000)×7=105,000
+shipping FedEx  7500",Sent,Completed,Yes,
+39,4/25/2025,test,test tracking button,FedEx,Paypal,,Not quoted,,Yes,
+40,4/27/2025,toxicterryx,"Terastal Festival - 40 - No shrink 
+Paradigm Trigger - 10 - box
+Paradise Dragona - 20 - no shrink 
+stella miracle - 10 - box
+Team rocket - 10 - no shrink
+OP - 11??? - Box/Cases 
+",FedEx,Wise,"Grand Total  1083900yen
+
+Terastal Festival - 40 - No shrink (12000)=480000
+Paradigm Trigger - 10 - box(11800)=118000
+Paradise Dragona - 20 - no shrink (6800)=136000
+stella miracle - 10 - box(4700)=47000
+Team rocket - 10 - no shrink(14000)=140000
+OP - 11/Cases(77000)=77000
+
+shipping Fedex  Total 85900
+6700x4=26800
+7600x2=15200
+11300x2=22600
+8300
+13000 
+",Sent,Completed,Sent,
+41,4/27/2025,Camboyd63,"Glory of team rocket- loose- 9
+Glory of team rocket - no shrink- 6
+Heat wave arena - loose- 6
+Heat wave arena - no shrink- 4 ",FedEx,Wise,"Total 338300yen
+
+Glory of team rocket- (15600)- 9=140400
+Glory of team rocket - no shrink(14000)- 6=84000
+Heat wave arena - (9300)- 6=55800
+Heat wave arena - no shrink(8500)- 4=34000 
+
+shipping Fedex 
+7500 x2=15000
+9100",Sent,Completed,Sent,
+42,4/30/2025,Tony Wallock,"Glory of Team Rocket - loose - 7
+Heat Wave Arena - loose - 3",FedEx,Wise,"Total  145,200yen
+
+
+Glory of Team Rocket - (15100)- 7=105,700
+Heat Wave Arena - (8700)- 3=26,100
+
+shipping FedEx 
+6700×2",Sent,Completed,Sent,
+43,4/30/2025,Camboyd63,"Glory of team rocket - loose - 9
+Glory of team rocket - no shrink- 4
+Terastal festival - loose - 1",FedEx,Wise,"Total 217700yen
+
+Glory of team rocket - (15100)- 9=135900
+Glory of team rocket - no shrink(13700)- 4=54800
+Terastal festival -  (12000)- 1=12000
+
+shipping fedex 
+7500x2=15000",Sent,Completed,Sent,
+44,5/4/2025,Camboyd63,"Glory of team rocket - loose- 8
+Glory of team rocket - no shrink- 8
+Heat wave arena - loose- 7
+Heat wave arena - no shrink - 5
+Terastal festival - loose - 4
+Stellar miracle - loose- 3
+Snow hazard - loose - 4
+Violet - loose- 2
+",FedEx,Wise,"Total 458500yen
+
+Glory of team rocket (14700)- 8=117600
+Glory of team rocket - no shrink(13700)- 8=109600
+Heat wave arena -(8700)- 7=60900
+Heat wave arena - no shrink(8000) - 5=40000
+Terastal festival - (11800) - 4=47200
+Stellar miracle -(5000) -3=15000
+Snow hazard - (5400) - 4=21600
+Violet - (6100)- 2=12200
+
+shipping fedex
+8300x2=16600
+10600
+10900
+
+discout -3700",Sent,Completed,Sent,
+45,5/4/2025,Tony Wallock,"Glory of Team Rocket - loose - 3
+Heat Wave - loose - 2
+Heat Wave - no shrink - 1
+Terastal Festival - loose - 2
+Super Electric Breaker - loose - 1
+Shiny Treasure - no shrink - 1",FedEx,Wise,"Total 111200yen
+
+Glory of Team Rocket - (14700) - 3=44100
+Heat Wave - (8700)- 2=17400
+Heat Wave - no shrink(8000) - 1=8000
+Terastal Festival - (11800)- 2=23600
+Super Electric Breaker - (9800) - 1=9800
+
+shipping fedex 8300
+
+Shiny Treasure - no shrink - 1(sold out)",Sent,Completed,Sent,
+46,5/10/2025,crispystacks_31671,"Glory of Team Rocket - 1
+Terastal Festival - 1
+Crimson Haze - 1
+Paradise Dragona - no shrink - 1
+Stellar Miracle - 6
+VSTAR Universe - 2
+White Flare - no shrink - 6
+Black Bolt - no shrink - 6",FedEx,Wise,"Total  305600yen
+
+Glory of Team Rocket - 1(13300)
+Terastal Festival - 1(10600)
+Crimson Haze - 1(7500)
+Paradise Dragona - no shrink - 1(7000)
+Stellar Miracle - 6(5100)=30600
+VSTAR Universe - 2(15500)=31000
+shipping fedex 10600
+
+
+White Flare - no shrink - 6(15000)=90000
+Black Bolt - no shrink - 6(15000)=90000
+shipiing fedex 7500 x2=15000",Sent,Completed,Sent,
+47,5/11/2025,Camboyd63,"Glory of team rocket - loose - 12
+Terastal festival - loose - 3
+Violet ex - loose - 2 ",FedEx,Wise,"Total 220200yen
+
+Glory of team rocket - loose - 12x(13300)=159600
+Terastal festival - loose - 3x(10600)=31800
+Violet ex - loose - 2 x(6100)=12200
+
+shipping fedex 8300 x2=16600",Sent,Completed,,
+48,5/18/2025,camboyd63,"stellar miracle - loose - 4
+cyber judge - loose - 3
+terastal festival - loose - 4
+super electric breaker - 2",FedEx,Wise,"Total 109900yen
+
+stellar miracle - (5300) - 4=21200
+cyber judge - (6100) - 3=18300
+terastal festival - (10400)- 4=41600
+super electric breaker(9100) - 2=18200
+
+shipping fedex 10600
+",Sent,Completed,Sent,
+49,5/23/2025,elchingon619,"Glory of Team rocket - sealed - 2
+ Heat Wave Arena - sealed - 1
+Battle Partners - sealed - 1
+ Terastal Festival - sealed - 1
+Jpn 151 - sealed - 1
+VSTAR Universe - sealed - 1
+Crimson Haze - sealed - 1
+Shiny Treasure - sealed - 1",FedEx,Wise,"Total 113800yen
+
+Glory of Team rocket - (13000)- 2=26000
+ Heat Wave Arena - (8300) - 1=8300
+Battle Partners - (7200) - 1=7200
+ Terastal Festival - (9800) - 1=9800
+Jpn 151 - (21500) - 1=21500
+VSTAR Universe - (16100) - 1=16100
+Crimson Haze - (8400)- 1=8400
+Shiny Treasure - (8200) - 1=8200
+
+shipping Fedex 8300",Sent,Completed,Sent,
+50,5/27/2025,egonzalez0126," Terastal Festival-  No Shrink-2
+Shiny Treasure-  NoShrink- 2",FedEx,Wise,"Total  41300yen
+
+Terastal Festival-  No Shrink(9600)-2=19200
+Shiny Treasure-  NoShrink-(7700) 2=15400
+
+shipping fedex 6700",Sent,Completed,Yes,
+51,6/1/2025,brooks0860,"White Flare Deluxe Box - loose - 6
+Black Bolt Deluxe Box - loose - 6
+White Flare Booster Box - loose - 6
+Black Bolt Booster Box - loose - 6
+Terastal Festival - loose - 10",FedEx,Wise,"Total  433700yen
+
+White Flare Deluxe Box - (13300) - 6=79800
+Black Bolt Deluxe Box - (13300) - 6=79800
+White Flare Booster Box - (12000) - 6=72000
+Black Bolt Booster Box - (12000) - 6=72000
+Terastal Festival - (9200) - 10=92000
+
+shipping fedex 
+8300 x2=16600
+7500 x2=15000
+6500",Sent,Completed,Sent,
+52,6/2/2025,Camboyd63,"White flare - case - 3
+Black bolt - case - 3",FedEx,Wise,"Total  959200yen
+
+White flare - case(148800) - 3=446400
+Black bolt - case(148800) - 3=446400
+
+shipping fedex  
+8300x8=66400",Sent,Completed,Sent,
+53,6/5/2025,Mysticalspark,"White Flare Deluxe Box - loose shrink - 10
+Black Bolt Deluxe Box - loose shrink - 10",FedEx,Paypal,"Total  252000yen
+
+White Flare Deluxe Box - noshrink(11300) - 3=33900
+Black Bolt Deluxe Box - no shrink(11300) - 3=33900
+White Flare box(11300)-7=79100
+Black Bolt box(11300)-7=79100
+
+shipping fedex 14000 
+ 
+consultantfee 5%
+",Sent,Completed,Sent,
+54,6/5/2025,Sean “tha gawd” Blake ,Butt stuff,UPS,Paypal,,Not quoted,Completed,,
+55,6/5/2025,brooks0860,"White Flare Booster Box - 4  (11,300 special)
+Black Bolt Booster Box - 5  (11,300 special)",FedEx,Wise,"Total  123600yen
+
+White Flare Deluxe  noshrinkBox - 5 (11,300 )=56500
+Black Bolt Deluxe  noshrinkBox - 5  (11,300 )=56500
+
+shipping fedex 10600",Sent,cancelled,,
+56,6/6/2025,Tony Wallock,"White Flare Booster Box - no shrink - 2
+Black Bolt Booster Box - no shrink - 2
+Ruler of the Black Flame - shrink - 1",FedEx,Wise,"Total  51900yen
+
+White Flare Booster Box - no shrink(8800) - 2=17600
+Black Bolt Booster Box - no shrink(8800) - 2=17600
+Ruler of the Black Flame - shrink - 1=10000  
+
+shipping fedex 6700",Sent,Pending Payment,Sent,
+57,6/8/2025,Camboyd63,"Black bolt - loose - 10
+White flare - loose -10
+Black bolt - no shrink - 8
+White flare - no shrink - 7",FedEx,Wise,"Total  364400yen
+
+Black bolt - loose -(9600) 10=96000
+White flare - loose (9600)-10=96000
+Black bolt - no shrink (8600)- 8=68800
+White flare - no shrink (8600)- 8=68800
+
+shipping fedex 
+9100 x2=18200
+8300 x2=16600",Sent,cancelled,,
+58,6/9/2025,brooks0860,"White Flare Booster Box - Shrink - 9
+Black Bolt Booster Box - Shrink - 9
+White Flare Deluxe Box - Shrink - 9
+Black Bolt Deluxe  Box - Shrink - 9",FedEx,Wise,"Total  433800yen
+
+White Flare Booster Box - Shrink(9600) - 9=86400
+Black Bolt Booster Box - Shrink (9600)- 9=86400
+White Flare Deluxe Box - Shrink (12500)- 9=112500
+Black Bolt Deluxe  Box - Shrink (12500)- 9=112500
+
+shipping fedex 
+9000x4=36000
+",Sent,Completed,Sent,
+59,6/9/2025,elchingon619,"Black Bolt Deluxe  Box - Shrink - 3
+White Flare Deluxe Box - Shrink - 3
+Black Bolt Booster Box - Shrink - 3
+Black Bolt Booster Box - no shrink - 2
+White Flare Booster Box - Shrink - 3
+White Flare Booster Box - no shrink - 2
+",FedEx,Wise,"Total 182800yen
+
+Black Bolt Deluxe  Box - Shrink(12500) - 3=37500
+White Flare Deluxe Box - Shrink (12500)- 3=37500
+Black Bolt Booster Box - Shrink (9600)- 3=28800
+White Flare Booster Box - Shrink (9600)- 3=28800
+Black Bolt Booster Box - no shrink (8600)- 2=17200
+White Flare Booster Box - no shrink (8600)- 2=17200
+
+shippiing fedex 
+6700+9100=15800",Sent,Completed,Sent,
+60,6/9/2025,Camboyd63,"Black bolt - loose- 10
+White flare- loose- 10
+Black bolt - no shrink - 10
+White flare - no shrink - 10 
+Black bolt deluxe - loose - 2
+White flare deluxe - loose - 2",FedEx,Wise,"Total 453400yen
+
+Black bolt - loose- 10(9600)=96000
+White flare- loose- 10(9600)=96000
+Black bolt - no shrink - 10(8600)=86000
+White flare - no shrink - 10 (8600)=86000
+Black bolt deluxe - loose - 2(12500)=25000
+White flare deluxe - loose - 2(12500)=25000
+
+shipping fedex 
+9100x2=18200
+10600x2=21200",Sent,Completed,Sent,
+61,6/10/2025,Camboyd63,"Black bolt - loose - 6
+White flare - loose - 6
+Glory of team rocket - loose - 2
+Terastal festival - loose - 3
+Super electric breaker - loose - 3
+",FedEx,Wise,"Total  225200yen
+
+ Black bolt - loose -(10800) 6=64800
+White flare - loose(10800) - 6=64800
+Glory of team rocket - loose(11500) - 2=23000
+Terastal festival - loose(9500) - 3=28500
+Super electric breaker - loose(8400) - 3=25200
+
+shipping fedex
+10600+8300",Sent,Completed,Sent,
+62,6/13/2025,fbelzy,"White Flare Booster Box - Shrink - 2
+Black Bolt Booster Box - Shrink - 2
+White Flare Booster Box -  no shrink - 2
+Black Bolt Booster Box - no shrink - 2
+Glory of Team rocket - Shrink - 2
+Glory of Team rocket - no shrink - 2
+Battle Partners - no shrink - 1
+Terastal festival - Reservation 8800 shrink - 2
+Super Electric Breaker - no shrink - 2
+Paradise Dragona - no shrink - 2
+Stella Miracle - Shrink - 2
+Night wanderer - Shrink - 2
+Future Flash - Shrink - 2
+Snow Hazard - Shrink - 2",FedEx,Wise,"Total 252200yen
+
+White Flare Booster Box - Shrink(10200) - 2=20400
+Black Bolt Booster Box - Shrink (10200)- 2=20400
+White Flare Booster Box -  no shrink(9200) - 2=18400
+Black Bolt Booster Box - no shrink (9200)- 2=18400
+Glory of Team rocket - Shrink (12000)- 2=24000
+shipping fedex 9100
+
+
+Glory of Team rocket - no shrink (10800)- 2=21600
+Battle Partners - no shrink (6700)- 1=6700
+Super Electric Breaker - no shrink(8600) - 2=17200
+Paradise Dragona - no shrink (7000)- 2=14000
+Stella Miracle - Shrink (5900)- 2=11800
+Night wanderer - Shrink (5900)- 2=11800
+Future Flash - Shrink (6000)- 2=12000
+Snow Hazard - Shrink (5500)- 2=11000
+shipping fedex 11300
+
+Terastal festival - Reservation 9100 shrink - 2=18200
+Shipped at the end of June
+shipping fedex 5900",Sent,Completed,Sent,
+63,6/16/2025,brooks0860,"White Flare Deluxe Box - SHRINK - 9
+Black Bolt Deluxe  Box - SHRINK - 9
+White Flare Booster Box - SHRINK - 10
+Black Bolt Booster Box - SHRINK - 10
+Glory of Team rocket - SHRINK - 10",FedEx,Wise,"Total  598300yen
+
+White Flare Deluxe Box - SHRINK(12800) - 9=115200
+shipping fedex 8300
+
+Black Bolt Deluxe  Box - SHRINK (12800)- 9=115200
+shipping fedex 8300
+
+White Flare Booster Box - SHRINK (10200)- 10=102000
+shipping fedex 9100
+
+Black Bolt Booster Box - SHRINK (10200)- 10=102000
+shipping fedex 9100
+
+Glory of Team rocket - SHRINK (12000)- 10=120000
+shipping fedex 9100",Sent,Completed,Sent,
+64,6/18/2025,DeeFresh,"Black Bolt Booster Box - Shrink - 3
+White Flare Booster Box - Shrink - 3",FedEx,Wise,"Total 68700yen
+
+Black Bolt Booster Box - Shrink(10200) - 3=30600
+White Flare Booster Box - Shrink(10200) - 3=30600
+
+shipping fedex 7500",Sent,Completed,Sent,
+65,6/24/2025,Camboyd63,"Stellar miracle - loose - 4
+Night wanderer - loose- 3
+White flare - loose - 4
+Glory of team rocket - no shrink - 2",FedEx,Wise,"Total 111400yen
+
+Stellar miracle - (5900)- 4=23600
+Night wanderer - (5900)-3=17700
+White flare - (9600) - 4=38400
+Glory of team rocket - no shrink (10500)- 2=21000
+
+shipping fedex 10700",Sent,Completed,Sent,
+66,6/25/2025,troveofcollectibles_43099,"White Flare - no shrink - 3
+Black bolt- no shrink - 3
+White Flare - shrink -2
+Black bolt - shrink - 2
+White Flare Deluxe - no shrink - 1
+Black Bolt Deluxe - no shrink - 1
+Jpn 151 - no shrink - 2 ",FedEx,Wise,"Total 172000yen
+
+White Flare - no shrink(9000) - 3=27000
+Black bolt- no shrink(9000) - 3=27000
+White Flare - (9600) -2=19200
+Black bolt - (9600) - 2=19200
+shipping fedex 9100
+
+White Flare Deluxe - no shrink(13000) - 1=13000
+Black Bolt Deluxe - no shrink (13000)- 1=13000
+Jpn 151 - no shrink(19000) - 2=38000
+shipping fedex 6500",Sent,Completed,Sent,
+67,6/25/2025,DeeFresh,"White Flare Booster Box - shrink - 1
+White Flare Booster Box - no shrink - 1
+Black Bolt Booster Box - shrink - 1
+Black Bolt Booster Box - no shrink - 1
+Shiny Treasure Booster Box - shrink - 2
+Shiny Treasure Booster Box - no shrink - 1
+Crimson Haze Booster Box - Shrink - 3
+",FedEx,Wise,"Total  95500yen
+
+White Flare Booster Box - shrink(9600) - 1=9600
+White Flare Booster Box - no shrink (9000)- 1=9000
+Black Bolt Booster Box - shrink(9600) - 1=9600
+Black Bolt Booster Box - no shrink(9000) - 1=9000
+Shiny Treasure Booster Box - shrink(8400) - 2=16800
+Shiny Treasure Booster Box - no shrink (7700)- 1=7700
+Crimson Haze Booster Box - Shrink (8500)- 3=25500
+shipping fedex 8300",Sent,Completed,Sent,
+68,6/25/2025,Brooks0860,"White Flare Booster Box - Shrink -12
+Black Bolt Booster Box - Shrink - 12
+White Flare Booster Box - No Shrink - 3
+Black Bolt Booster Box - No Shrink- 3
+",FedEx,Wise,"Total  311700yen
+
+White Flare Booster Box - Shrink(9600) -12=115200
+Black Bolt Booster Box - Shrink -(9600) 12=115200
+White Flare Booster Box - No Shrink(9000) - 3=27000
+Black Bolt Booster Box - No Shrink(9000)- 3=27000
+
+shipping fedex 9100x3=27300",Sent,Completed,Sent,
+69,6/26/2025,murdockxx,"white flare booster box -shrink- 6
+black bolt booster box - shrink - 6
+heat wave arena - shrink - 3
+battle partners - shrink - 3
+paradise dragona - shrink - 3
+terestal festival - shrink - 2
+stellar miracle - shrink - 3
+night wanderer - shrink - 3
+wild force - shrink - 3 
+ancient roar - shrink - 3
+snow hazard - shrink - 3
+shiny treasure - shrink - 3",FedEx,Wise,"Total  336800yen
+
+white flare booster box -shrink(9600)- 6=57600
+heat wave arena - shrink (8600)- 3=25800
+battle partners - shrink (8000)- 3=24000
+shipping fedex 9100
+
+black bolt booster box - shrink(9600) - 6=57600
+paradise dragona - shrink(8000) - 3=24000
+terestal festival - shrink (11000)- 2=22000
+shipping fedex 9100
+
+stellar miracle - shrink (5900)- 3=17700
+night wanderer - shrink (5900)- 3=17700
+wild force - shrink (7700)- 3 =23100
+ancient roar - shrink (6400)- 3=19200
+snow hazard - shrink (6200)- 3=18600
+shipping fedex 11300
+
+",Sent,Completed,Sent,
+70,6/29/2025,Camboyd63,"White flare - loose - 10
+Black bolt - loose - 10 
+Glory of team rocket - no shrink - 2",FedEx,Wise,"Total 226200yen
+
+White flare - loose (9200)- 10=92000
+Black bolt - loose (9200)- 10 =92000
+Glory of team rocket - no shrink(10500) - 2=21000
+
+shipping fedex 10600x2",Sent,Completed,Sent,
+71,7/1/2025,Lukecatchum,"White Flare Booster Box - no shrink - 4
+Black Bolt Booster Box - no shrink - 4
+Glory Team Rocket - no shrink - 2
+Battle Partners - no shrink - 2
+Super Electric Breaker - no shrink - 2
+Night Wanderer - shrink- 2
+Stella Miracle - shrink- 2
+Heat Wave - no shrink - 2
+Rule Of Black Flame - shrink - 2
+Crimson Haze - shrink - 2
+
+",UPS,Wise,"Total  221000yen
+
+White Flare Booster Box - no shrink(8900) - 4=35600
+Black Bolt Booster Box - no shrink (8900)- 4=35600
+Glory Team Rocket - no shrink(10500) - 2=21000
+Battle Partners - no shrink(7400) - 2=14800
+shipping UPS 9100
+
+Super Electric Breaker - no shrink(9500) - 2=19000
+Night Wanderer - shrink(5900)- 2=11800
+Stella Miracle - shrink(5900)- 2=11800
+Heat Wave - no shrink(8100) - 2=16200
+Rule Of Black Flame - shrink(10000) - 2=20000
+Crimson Haze - shrink(8500) - 2=17000
+shipping UPS 9100",Sent,Completed,Sent,
+72,7/1/2025,troveofcollectibles_43099,"white flare - no shrink - 5
+Black bolt - no shrink - 5
+heat wave arena - no shrink - 2
+battle partners - no shrink - 2
+terastal festivals - no shrink - 5
+Jpn 151 - no shrink - 4
+",UPS,Wise,"Total  263700yen
+
+white flare - no shrink(8900)- 5=44500
+Black bolt - no shrink(8900) - 5=44500
+heat wave arena - no shrink(8100) - 2=16200
+shipping UPS 9100
+
+battle partners - no shrink (7400)- 2=14800
+terastal festivals - no shrink (9900)- 5=49500
+Jpn 151 - no shrink -(19000) 4=76000
+shipping UPS 9100",Sent,Completed,Sent,
+73,7/6/2025,Camboyd63,"Black bolt - loose - 9
+White flare - loose - 9
+Stellar miracle - 4
+Night wanderer - 3",FedEx,Wise,"Total  228400yen
+
+Black bolt - (9300) - 9=83700
+Stellar miracle (5900)- 4=23600
+shipping fedex 10900
+
+White flare - (9100) - 9=81900
+Night wanderer (5900)- 3=17700
+shipping fedex 10600",Sent,Completed,Sent,
+74,7/7/2025,Brooks0860,"Terastal Festival - Shrink - 8
+Terastal Festival - No Shrink- 2",FedEx,Wise,"Total 112900yen
+
+Terastal Festival - (10700) - 8=85600
+Terastal Festival - No Shrink(9900)- 2=19800
+
+shipping fedex 7500",Sent,Completed,Sent,
+75,7/8/2025,troveofcollectibles_43099,"white flare deluxe box - no shrink - 5
+black bolt deluxe box- no shrink- 5
+white flare box- no shrink - 10
+black bolt box - no shrink - 10
+white flare box - no shrink - 10
+battle partners box - no shrink - 4
+heat wave arena box - no shrink - 4
+terastal festival box - no shrink - 3
+shiny treasure - no shrink - 5
+vstar universe - box - 2
+vmax climax - box - 2
+shiny star v - box- 2",UPS,Wise,"Total 588800yen
+
+white flare deluxe box - no shrink(13000) - 5=65000
+shipping UPS 5900
+
+black bolt deluxe box- no shrink(13000)- 5=65000
+shipping UPS 5900
+
+white flare box- no shrink(8900) - 10=89000
+battle partners box - no shrink (7600)- 2=15200
+shipping UPS 9100
+
+black bolt box - no shrink(8900) - 10=89000
+battle partners box - no shrink (7600)- 2=15200
+shipping UPS 9100
+
+heat wave arena box - no shrink (8400)- 4=33600
+terastal festival box - no shrink (9900)- 3=29700
+shiny treasure - no shrink(7700) - 5=38500
+shipping UPS 7300
+
+
+vstar universe - box (16000)- 2=32000
+vmax climax - box(20800) - 2=41600
+shiny star v - box(16000)- 2=32000
+shipping UPS 5700",Sent,Completed,Sent,
+76,7/9/2025,RussMDC30,"White Flare Deluxe Box - no shrink - 1
+Black Bolt Deluxe  Box - no shrink - 1
+Battle Partners-No Shrink-3
+Super Electric Breaker-No Shrink-1
+Paradise Dragona-No Shrink-1
+Stellar Miracle - shrink -1
+Cyber Judge	-Shrink-1
+Wild Force-Shrink-1
+Future Flash	-Shrink-1
+Ancient Roar-Shrink-1
+Raging Surf	Shrink-1
+Rule of the Black Flame-Shrink-1
+Jpn 151	-No Shrink-1
+Clay Burst--	1
+Snow Hazard-Shrink-1
+Triple Beat-Shrink-1
+Violet-Shrink-1
+Scarlet-Shrink-1
+VSTAR Universe-Shrink-1
+paradigm Trigger-Shrink-1
+Incandescent Arcana	-Shrink-1
+Lost Abyss-Shrink-	1
+Vmax Climax-Shrink-	1
+Shiny Star V	-Shrink-	1",FedEx,Wise,"Total 301000yen
+
+White Flare Deluxe Box - no shrink(13000) - 1=13000
+Black Bolt Deluxe  Box - no shrink (13000)- 1=13000
+Battle Partners-No Shrink(7600)-3=22800
+Super Electric Breaker-No Shrink(9200)-1=9200
+Paradise Dragona-No Shrink(7500)-1=7500
+Stellar Miracle - (5900) -1=5900
+Cyber Judge        -(6400)-1=6400
+Wild Force-(7200)-1=7200
+Future Flash        -(6000)-1=6000
+Ancient Roar-(6400)-1=6400
+Raging Surf        (8300)-1=8300
+shipping fedex 10900
+
+Rule of the Black Flame-(11000)-1=11000
+Jpn 151        -No Shrink(19800)-1=19800
+Clay Burst-(10300)-1=10300
+Snow Hazard-(6000)-1=6000
+Triple Beat-(11000)-1=11000
+Violet-(6300)-1=6300
+Scarlet-(7600)-1=7600
+VSTAR Universe-(16000)-1=16000
+paradigm Trigger-(12200)-1=12200
+Incandescent Arcana  -(7900)-1=7900
+shipping fedex 9100
+
+
+Lost Abyss-(24500) -1=24500
+Vmax Climax-(20800)-1=20800
+Shiny Star V -(16000)-1=16000
+shippping fedex 5900",Sent,Completed,Sent,
+77,7/9/2025,murdockxx,"Lost Abyss - shrink - 2
+V-star Universe - shrink - 2
+Shiny Treasure - No Shrink - 3
+Shiney Treasures - Shrink - 3
+Terastal Festival - No Shrink - 8
+Terastal Festival - Shrink - 3
+White Flare DX Box - Shrink - 2
+Black Bolt DX BOx - Shrink - 2
+Black Bolt - Shrink - 6
+White Flare - Shrink - 6
+Incandescent Arcana - Shrink - 2
+Cyber Judge - Shrink - 2
+Glory of team Rocket - 2
+
+",FedEx,Wise,"Total 295200yen
+
+lost abyss(24500)-2=49000
+vstar universe(16000)-2=32000
+shiny treasure-no shrink(7700) -3=23100
+shipping fedex 6700
+
+terastal festival- no shrink (9900)- 8=79200
+shipping fedex 6700
+
+white flare deluxe- (13200) -2=26400
+black bolt deluxe - (13500) - 2=27000
+black bolt-(9300)-2=18600
+white flare-(9100)-2=18200
+shipping fedex 8300",Sent,Completed,Sent,
+78,7/10/2025,crispystacks_31671,"
+
+Mega Brave / Mega Symphonia - Case - 1
+Black Bolt - Shrink - 3
+White Flare - Shrink - 1
+Heatwave - Shrink - 2
+Battle Partner - Shrink - 1 
+",FedEx,Wise,"Total 383300yen
+
+Mega Brave / Mega Symphonia - Case - 1=288000
+shipping fedex 8300x3=24900
+
+
+Black Bolt - (9400) - 3=28200
+White Flare - (9100) - 1=9100
+Heatwave - (8900)- 2-=17800
+Battle Partner - (7800) - 1 =7800
+shiping fedex 7500",Sent,Completed,Sent,
+79,7/13/2025,murdockxx,"Terastal Festival - Shrink - 5
+Shiny Treasure - Shrink - 5
+Night Wanderer - Shrink - 2
+Steller Miricle - Shrink - 2
+Cyber Judge - Shrink - 2
+Snow Hazard - Shrink - 2
+White Flare - Shrink - 3
+Battle Partners - Shrink - 2
+Black Bolt - Shrink - 3
+Incandescent Arcana - Shrink - 2 
+
+",FedEx,Wise,"Total  239300yen
+
+Terastal Festival - Shrink(11000) - 5=55000
+Shiny Treasure - Shrink(8800) - 5=44000
+Night Wanderer - Shrink (5900)- 2=11800
+shipping fedex 8300
+
+
+Steller Miricle - Shrink (5900)- 2=11800
+Cyber Judge - Shrink(6700) - 2=13400
+Snow Hazard - Shrink(6500) - 2=13000
+White Flare - Shrink(9100) - 3=27300
+Battle Partners - Shrink(7800) - 2=15600
+Black Bolt - Shrink(9400) - 3=28200
+shippping fedex 10900
+
+
+
+",Sent,Completed,Sent,
+80,7/17/2025,troveofcollectibles_43099,"heat wave arena - no shrink - 10
+terestral festival - no shrink - 20
+crimson haze - shrink - 8
+triple beat - shrink - 8
+JPN 151 - no shrink -  15
+mega brave - shrink- 15
+mega symphonia - shrink - 15",UPS,Wise,"Total  1161600yen
+
+heat wave arena - no shrink(8800) - 10=88000
+JPN 151 - no shrink(21000)-1=21000
+shipping UPS 6400
+
+terestral festival - no shrink(10200) - 20=204000
+shipping UPS 5200x2=10400
+
+
+crimson haze - shrink(9100) - 8=72800
+JPN 151 - no shrink(21000)-1=21000
+shipping UPS 6100
+
+triple beat - shrink(11000) - 8=88000
+JPN 151 - no shrink(21000)-1=21000
+shipping UPS 6100
+
+JPN 151 - no shrink(21000) -  12=252000
+shipping UPS 4800x2=9600
+
+●Shipped the day before
+mega brave - shrink（11200）- 15＝168000
+mega symphonia - shrink （11200）- 15＝16800
+sipping fedex 6400x3=19200",Sent,Completed,Sent,
+81,7/17/2025,DeeFresh,"White Flare Booster Box - Shrink - 2
+White Flare Booster Box - No Shrink - 2
+Black Bolt Booster Box - Shrink - 2 
+Black Bolt Booster Box - No Shrink - 2",FedEx,Wise,"Total  76900yen
+
+White Flare Booster Box - Shrink(8900) - 2=17800
+White Flare Booster Box - No Shrink(8600) - 2=17200
+Black Bolt Booster Box - Shrink (9100)- 2 =18200
+Black Bolt Booster Box - No Shrink(8900) - 2=17800
+
+shipping fedex 5900",Sent,Completed,Yes,
+82,7/21/2025,Russmdc30,"Terastal festival no shrink 1
+Shiny treasure no shrink 1
+Vmax Climax shrink 1 
+
+Ship Monday 
+Mega brave no shrink 1
+Mega symphonia no shrink 1",FedEx,Wise,"Total 65200yen
+
+Terastal festival no shrink 1=10000
+Shiny treasure no shrink 1=7800
+Vmax Climax shrink 1 =15800
+shipping fedex 5900
+
+Ship Monday 
+Mega brave no shrink 1=9900
+Mega symphonia no shrink 1=9900
+shippipng fedex 5900",Sent,Completed,Sent,
+83,7/22/2025,Brooks0860,"Black Bolt Deluxe - Shrink- 5
+White Flare Deluxe - Shrink - 5
+White Flare Regular - Shrink - 6
+Vstar Universe - Shrink - 2",FedEx,Wise,"Total  233300yen
+
+Black Bolt Deluxe - Shrink(13600)- 5=68000
+White Flare Regular - Shrink(8300) - 1=8300
+Vstar Universe - Shrink(15800) - 2=31600
+fedex 8300
+
+
+White Flare Deluxe - Shrink (13300)- 5=66500
+White Flare Regular - Shrink(8300) - 5=41500
+fedex 9100",Sent,Completed,Sent,
+84,7/25/2025,jakebailey0680,"Mega brave - case -1 - 2 days before
+Mega symphonia - case - 1 - 2 days before",FedEx,Wise,"Total 352900yen
+
+Mega brave - case -1 - 2 days before=164000
+Mega symphonia - case - 1 - 2 days befor=164000
+shipping fedex 
+8300x3=24900",Sent,cancelled,,
+85,7/25/2025,Camboyd63,"Black bolt - loose - 4
+White flare - loose - 4
+Stellar miracle - loose - 3
+Night wanderer- loose - 3",FedEx,Wise,"Total 112800yen
+
+Black bolt - loose - 4(8800)=35200
+White flare - loose - 4(8200)=32800
+Stellar miracle - loose - 3(5600)=16800
+Night wanderer- loose - 3(5700)=17100
+
+shipping fedex 10900",Sent,Completed,Sent,
+86,7/26/2025,Camboyd63,"Mega brave - case - 2 
+Ship day of release 
+Mega symphonia - case - 2
+Ship day of release ",FedEx,Wise,"Total 582300yen
+
+Mega brave - case - 2 =268800
+Ship day of release 
+Mega symphonia - case - 2=268800
+Ship day of release 
+
+shipping fedex 
+9100x4=36400
+8300",Sent,Completed,Sent,
+87,7/30/2025,Jakebailey0680,"Mega brave - case -1 - day of
+Mega symphonia- case -1 - day of",FedEx,Wise,"Total  295,900yen
+
+⚫︎Shipped on 8/1
+Mega Brave(11300)×12=135,600
+Mega Symphonia(11300)×12=135,600
+
+shipping FedEx
+9100×2=18200
+6500",Sent,cancelled,,
+88,7/30/2025,Camboyd63,"White flare - loose- 4
+Black bolt - loose - 4 
+Stellar miracle - loose - 3
+Night wanderer - loose - 3",FedEx,Wise,"Total 108900yen
+
+White flare - loose-(7600) 4=30400
+Black bolt - loose -(8500) 4 =34000
+Stellar miracle - loose -(5700) 3=17100
+Night wanderer - loose -(5500) 3=16500
+
+shipping fedex 10900",Sent,Completed,Sent,
+89,8/4/2025,Biglisto13,"Mega Symphonia - no shrink - 1
+Mega Brave - no shrink - 1",FedEx,Wise,"Total 23600yen
+
+Mega Symphonia - no shrink(8200) - 1
+Mega Brave - no shrink (9500)- 1
+shipping fedex 5900",Sent,Completed,Sent,
+90,8/4/2025,Camboyd63,"Mega brave - loose - 5 
+Mega brave - no shrink - 14
+Mega symphonia - no shrink - 4",FedEx,Wise,"Total 238000yen
+
+Mega brave - loose(10200) - 5 =51000
+Mega brave - no shrink(9500) - 14=133000
+Mega symphonia - no shrink(8200) - 4=32800
+shipping fedex 10600x2=21200",Sent,Completed,Sent,
+91,8/5/2025,troveofcollectibles_43099,"white flare - no shrink -  10
+black bolt - no shrink - 10
+glory of team rocket - no shrink - 5
+battle partners - no shrink - 8
+v star universe - 5
+mega brave - no shrink - 10
+mega symphonia - no shrink - 10",UPS,Wise,"Total  542000yen
+
+white flare - no shrink(7200) -  10=72000
+black bolt - no shrink(7900) - 10=79000
+glory of team rocket - no shrink(9100) - 5=45500
+battle partners - no shrink (6700)- 8=53600
+v star universe (15300)- 5=76500
+mega brave - no shrink(9500) - 10=95000
+mega symphonia - no shrink(8200) - 10=82000
+
+shippping UPS
+9600x2=19200
+6400x3=19200",Sent,Completed,Sent,
+92,8/6/2025,Jakebailey,"Mega brave - no shrink - 12 
+Mega symphonia - no shrink - 12",FedEx,Wise,"Total 233600yen
+
+Mega brave - no shrink (9500)- 12=114000 
+Mega symphonia - no shrink (8200)- 12=98400
+
+shipping fedex 10600x2=21200",Sent,cancelled,,
+93,8/8/2025,gengar_gottem,"Glory of team rocket -  shrink 1
+mega brave - shrink 3
+mega symphonia - shrink 2",FedEx,Wise,"Total 61200yen
+
+Glory of team rocket -  (9500) 1=9500
+mega brave - (10000) 3=30000
+mega symphonia - (7500) 2=15000
+shipping fedex 6700",Sent,Completed,Sent,
+94,8/9/2025,Camboyd63,"Mega brave - loose - 3
+Mega brave - no shrink - 10
+Mega symphonia - loose - 3
+Mega symphonia - no shrink - 6
+White flare - loose - 3
+Black bolt - loose - 1",FedEx,Wise,"Total 240000yen
+
+Mega brave - (10000) - 3=30000
+Mega brave - no shrink (9300)- 10=93000
+Mega symphonia - (7500)- 3=22500
+Mega symphonia - no shrink(6900) -6=41400
+White flare - (7600)- 3=22800
+Black bolt - (8500) - 1=8500
+
+shipping fedex 10900x2=21800",Sent,Completed,Sent,
+95,8/10/2025,troveofcollectibles_43099,"White flare deluxe - 5
+black bolt deluxe - 5
+white flare - no shrink - 4
+black bolt - no shrink - 4
+heat wave arena - no shrink - 5
+battle partners - no shrink - 5
+terastal festival - no shrink - 30 
+mega brave - no shrink - 5
+mega symphonia - no shrink - 5",UPS,Wise,"Total  682500yen
+
+White flare deluxe (12300)- 5=61500
+mega brave - no shrink(8800) - 5=44000
+shipping UPS 8000
+
+black bolt deluxe (12600)- 5=63000
+heat wave arena - no shrink(8600) - 5=43000
+shipping UPS  8000
+
+
+white flare - no shrink(7000) - 4=28000
+black bolt - no shrink (7700)- 4=30800
+battle partners - no shrink (6700)- 5=33500
+shipping UPS  9500
+
+mega symphonia - no shrink(6800) - 5=34000
+shipping UPS  6000
+
+terastal festival - no shrink (9800)- 30 =294000
+shipping UPS  6400x3=19200
+",Sent,Completed,Sent,
+96,8/11/2025,Lukecatchum,"White Flare Booster Box - no shrink - 4
+Black Bolt Booster Box - no shrink - 4
+Glory of Team Rocket - no shrink - 2
+Mega Brave - no shrink - 4
+Mega Symphonia - no shrink - 4
+Super Electric Breaker - no shrink - 2
+Battle Partners - no shrink - 2
+Stella Miracle- shrink - 2
+Heat Wave Arena - no shrink - 2
+Rule of Black Flame - no shrink - 2
+Crimson Haze - no shrink -2",UPS,Wise,"Total  259400yen
+
+White Flare Booster Box - no shrink(7000) - 4=28000
+Black Bolt Booster Box - no shrink (7700)- 4=30800
+Glory of Team Rocket - no shrink (8700)- 2=17400
+Super Electric Breaker - no shrink(9800) - 2=19600
+shipping UPS 9100
+
+Mega Brave - no shrink (8800)- 4=35200
+Mega Symphonia - no shrink(6800) - 4=27200
+shipping UPS  7300
+
+Stella Miracle- (5900)- 2=11800
+Battle Partners - no shrink(6700) - 2=13400
+Heat Wave Arena - no shrink(8700) - 2=17400
+Rule of Black Flame - no shrink(8800) - 2=17600
+Crimson Haze - (8300) -2=16600
+shipping UPS 8000",Sent,Completed,Sent,
+97,8/11/2025,crispystacks_31671," 
+Quotes are not sourced from all markets and may be delayed up to 20 minutes. Information is provided 'as is' and solely for informational purposes, not for trading purposes or advice.Disclaimer
+ 	
+ Terastal Festival - dented - 2
+Super Electric - dented - 2
+Hot Air - dented - 2
+JPN 151 (no shrink) dented - 3
+Mega Brave - no shrink - 3
+Mega Symphonia - no shrink - 2",FedEx,Wise,"Total  184400yen
+
+Terastal Festival - (10300 )- 2=20600
+JPN 151 (no shrink) (22800) - 3=68400
+Hot Air - (9000) - 2=18000
+shipping fedex 7500
+
+Super Electric - (10600) - 2=21200
+Mega Brave - no shrink(9200) - 3=27600
+Mega Symphonia - no shrink(6800) - 2=13600
+shipping fedex 7500",Sent,cancelled,,
+98,8/16/2025,Camboyd63,"Mega brave - no shrink - 14
+Mega symphonia - no shrink - 14 
+White flare - no shrink - 2 ",FedEx,Wise,"Total  233000yen
+Mega brave - no shrink(9200) - 11=101200
+White flare - no shrink(7200) - 1=7200
+shipping fedex 10900
+
+Mega brave - no shrink(9200) - 1=9200
+Mega symphonia - no shrink(7200) - 12 =86400
+White flare - no shrink(7200) - 1=7200
+shipping fedex 10900
+",Sent,,Yes,
+99,8/19/2025,Brooks0860,"Mega Brave - Shrink- 6
+Mega Brave- No Shrink- 4",FedEx,Wise,"Total 105100yen
+
+Mega Brave - Shrink(9800)- 6=58800
+Mega Brave- No Shrink(9300)- 4=37200
+shipping fedex 9100
+",Sent,cancelled,,
+100,8/19/2025,troveofcollectibles_43099,"white flare - no shrink - 20
+black bolt - no shrink - 20
+stella miracle - 5
+crimson haze - 5
+mega brave - no shrink - 20
+mega symphonia - no shrink - 20",UPS,Wise,"Total  762700yen
+
+white flare - no shrink (7100)- 15=106500
+shipping UPS 9600
+
+black bolt - no shrink(8000) - 13=104000
+shipping UPS 9500
+
+white flare - no shrink (7100)- 5=35500
+black bolt - no shrink(8000) - 7=56000
+shipping UPS 9500
+
+stella miracle(5800) - 5=29000
+crimson haze(8400) - 5=42000
+shipping UPS 8000
+
+mega brave - no shrink (9300)- 10=93000
+shipping UPS 8000
+
+mega brave - no shrink (9300)- 10=93000
+shipping UPS 8000
+
+mega symphonia - no shrink(7300) - 10=73000
+shipping UPS 8000
+
+mega symphonia - no shrink(7300) - 10=73000
+shipping UPS 8000
+
+discount -10900",Sent,Completed,Sent,
+101,8/19/2025,Tony Wallock,"Mega Brave - shrink - 2
+Mega Brave - no shrink - 2
+Mega Symphonia - shrink - 1",FedEx,Wise,"Total  52500yen
+
+Mega Brave - shrink(9800) - 2=19600
+Mega Brave - no shrink (9300)- 2=18600
+Mega Symphonia - shrink (7600)- 1=7600
+shipping fedex 6700",Sent,Completed,Sent,
+102,8/20/2025,fbelzy,"White Flare Booster Box - Shrink - 1
+Black Bolt Booster Box - Shrink - 1
+White Flare Booster Box -  no shrink - 1
+Black Bolt Booster Box - no shrink - 1
+Heat Wave Arena - no shrink - 1
+Mega Brave - Shrink - 2
+Mega Symphonia - Shrink - 2
+Mega Brave - no shrink - 1
+Mega Symphonia - no shrink - 1
+Ancient Roar - Shrink - 1",FedEx,Wise,"Total  110100yen
+
+White Flare Booster Box - Shrink(7800) - 1=7800
+Black Bolt Booster Box - Shrink (9000)- 1=9000
+White Flare Booster Box -  no shrink(7100) - 1=7100
+Black Bolt Booster Box - no shrink (8000)- 1=8000
+Heat Wave Arena - no shrink(9000) - 1=9000
+Mega Brave - Shrink(10100) - 2=20200
+Mega Symphonia - Shrink(7600) - 2=15200
+Mega Brave - no shrink (9500)- 1=9500
+Mega Symphonia - no shrink(7300) - 1=7300
+Ancient Roar - Shrink(6400) - 1=6400
+
+shipping fedex 10600",Sent,Completed,Sent,
+103,8/23/2025,gengar_gottem,"151 - no shrink -1 
+mega brave - shrink - 2
+mega symphony - shrink 1 ",FedEx,Wise,"Total 59500yen
+151 - no shrink(24800) -1 =24800
+mega brave - shrink( 10300)- 2-20600
+mega symphony - shrink (7600)1=7600
+shipping fedex 6500",Sent,Completed,Sent,
+104,8/25/2025,Camboyd63,"White flare - shrink - 5
+Black bolt- shrink - 5
+Crimson haze - shrink - 3
+Mega brave - shrink - 2
+Mega symphonia - shrink - 2
+Glory of team rocket - shrink - 2
+Heat wave arena - shrink - 2
+Stella miracle - shrink - 2
+Night wanderer - shrink - 2 
+",FedEx,Wise,"Total   241900yen
+White flare - shrink(9900) - 5=49500
+Black bolt- shrink(8500) - 5=42500
+shipping fedex  9100
+
+Crimson haze - shrink(9000) - 3=27000
+Mega brave - shrink (10500)- 2=21000
+Mega symphonia - shrink(7800) - 2=15600
+Glory of team rocket - shrink(9500) - 2=19000
+shipping fedex 8300
+
+Heat wave arena - shrink (9700)- 2=19400
+Stella miracle - shrink (5800)- 2=11600
+Night wanderer - shrink(5700) - 2 =11400
+shipping fedex 7500",Sent,cancelled,,
+105,8/27/2025,.hamborghini,"Shiny Treasure - Shrink - 3
+Shiny Treasure - no shrink - 2
+Mega Brave - Shrink - 5
+Mega Symphonia - Shrink - 2",FedEx,Wise,"Total  161936yen
+Shiny Treasure - Shrink(11300) - 3=33900
+Shiny Treasure - no shrink (10800)- 2=21600
+Mega Symphonia - Shrink(7600) - 2=15200
+shipping fedex 7500
+
+Mega Brave - Shrink (10900)- 5=54500
+shipping fedex 6700
+
+tariff  x＝22536",Sent,Completed,Sent,
+106,8/27/2025,Funhouse51,"Mega Brave - shrink - 6
+Mega Symphonia - shrink - 5",FedEx,Wise,"Total 116300yen
+Mega Brave - shrink(11200) - 6=67200
+Mega Symphonia - shrink (8000)- 5=40000
+shipping fedex 9100",Sent,Completed,Sent,
+107,8/27/2025,crispystacks_31671,"Mega Brave - no shrink - 3
+Mega Symphonia - no shrink - 3
+White Flare - no shrink - 3
+Black Bolt - no shrink - 3",FedEx,Wise,,Not quoted,Completed,Sent,
+108,8/31/2025,murdockxx,"Mega Symphonia - Shrink - 6
+Mega Brave - Shrink - 6
+Glory of Team Rocket - Shrink - 3
+White Flare - Shrink - 4
+Black Bolt - Shrink - 3
+Steller Miracle - Shrink - 2
+Night Wanderer - Shrink - 2
+
+ ",FedEx,Wise,"Total 276762yen
+
+Mega Symphonia - Shrink （10600）- 6＝63600
+Mega Brave - Shrink （7600）- 6＝45600
+Glory of Team Rocket - Shrink（9500） - 3＝28500
+White Flare - Shrink（8000） - 4＝32000
+Black Bolt - Shrink （9400）- 3＝28200
+Steller Miracle - Shrink （5800）- 2＝11600
+Night Wanderer - Shrink（5700） - 2＝11400
+shipping fedex 16100
+tariff  x＝39762",Sent,cancelled,,
+109,9/6/2025,troveofcollectibles_43099,"white flare - no shrink - 10
+black bolt - no shrink - 5
+glory of team rocket - no shrink - 3
+shiny treasures - no shrink - 10
+jpn 151 - no shrink - 5
+vstar universe - no shrink - 5
+vmax climax - 5
+shiny star v - 5
+mega brave - no shrink - 20
+mega symphonia - no shrink - 5 ",UPS,Wise,"Total  579422yen 
+
+black bolt - no shrink(9000) - 5=45000
+glory of team rocket - no shrink(8800) - 3=26400
+shiny treasures - no shrink (11200)- 10=112000
+jpn 151 - no shrink(28600) - 2=57200
+vstar universe - no shrink (16000)- 2=32000
+shipping UPS  10600
+
+
+mega brave - no shrink(10300) - 16=164800
+mega symphonia - no shrink (7100)- 5=35500
+shipping UPS 10800 
+
+tariffs=85122
+",Sent,Completed,Sent,
+110,9/8/2025,funhouse51,inferno x - 2 cases,FedEx,Wise,"Total 465680yen
+
+inferno x(188000) - 2 cases=376000
+tariffs=67680
+shipping fedex 11000x2=22000",Sent,cancelled,,
+111,9/10/2025,Zapruss,"Shiny treasure no shrink- 1 
+V star universe no shrink - 2
+V max climax - 1
+Shiny star v - 1 
+Heat wave arena no shrink - 1",FedEx,Wise,"Total  73570yen
+
+Shiny treasure no shrink(11200)- 1 =11200
+V star universe no shrink (16000)- 1=16000
+V max climax (19800)- 1 =19800
+Heat wave arena no shrink(9500) - 1=9500
+tariffs=10170
+shipping fedex 6900",Sent,Completed,Sent,
+112,9/11/2025,.hamborghini,"Inferno X - Case - 1
+Mega Brave - No Shrink - 3
+Mega Symphonia - No Shrink - 1",FedEx,Wise,"Total  283636yen
+Inferno X - Case (188000)- 1=188000
+Mega Brave - No Shrink (10000)- 3=30000
+Mega Symphonia - No Shrink(7200) - 1=7200
+tariffs=40536
+shipping fedex 
+6900
+11000",Sent,Completed,Sent,
+113,9/16/2025,funhouse51,"Inferno X  - case - 2 
+",FedEx,Wise,"Total 442080yen
+Inferno X  - case(178000) - 2 =356000
+tariffs=64080
+shipping fedex 11000x2=22000",Sent,Completed,Sent,
+114,9/16/2025,Lukecatchum,"white flare booster box - no shrink - 6
+black bolt booster bos - no shrink - 6
+Glory of team rocket - no shrink - 6
+Mega Brave - no shrink - 6
+Mega Symphonia - no shrink - 6
+Super Electric Breaker - no shrink - 2
+Battle Partners - no shrink - 2
+Stella Miracle - shrink - 2
+Heat Wave Arena - no shrink - 2
+Rule of Black Flame - no shrink - 2
+Crimson Haze - shrink - 2",FedEx,Wise,"Total 446496yen
+white flare booster box - no shrink(8500) - 6=51000
+black bolt booster bos - no shrink(9700) - 6=58200
+Glory of team rocket - no shrink (9000)- 6=54000
+Mega Brave - no shrink(10000) - 6=60000
+Mega Symphonia - no shrink(7200) - 6=43200
+shipping fedex 16000
+
+Battle Partners - no shrink(7800) - 2=15600
+Stella Miracle - shrink(6500) - 2=13000
+Heat Wave Arena - no shrink(9700) - 2=19400
+Rule of Black Flame - no shrink(12000) - 2=24000
+Crimson Haze - shrink(9400) - 2=18800
+shipping fedex  9000
+
+tariffs=64296
+
+",Sent,Awaiting Quote,Sent,
+115,9/17/2025,Gengar_Gottem,"M1L Mega Brave - No shrink - 1
+M1L Mega Brave - Shrink - 1
+sv11w white flare booster box - no shrink- 1
+sv11b black bolt booster box - no shrink - 1",FedEx,Wise,"Total 52666yen
+M1L Mega Brave - No shrink (10000)- 1
+M1L Mega Brave - Shrink (10500)- 1
+sv11w white flare booster box - no shrink(8500)- 1
+sv11b black bolt booster box - no shrink (9700)- 1
+shipping fedex 7000
+tariffs=6966",Sent,Completed,Sent,
+116,9/21/2025,Sacapuntas26,"Inferno X - no shrink - 1
+Mega Brave - no shrink - 1",UPS,Wise,"Total 35940yen
+Inferno X - no shrink(13000) - 1=13000
+Mega Brave - no shrink(10000) - 1""=10000
+shipping UPS 
+tariffs=4140",Sent,Completed,Yes,
+117,9/22/2025,funhouse51,"
+White Flare Booster Box - no shrink - 1
+Black Bolt Booster Box - no shrink - 1
+Glory of Team rocket - no shrink - 1
+Super Electric Breaker - no shrink - 1
+Paradise Dragona - no shrink - 1
+Stella Miracle - shrink - 1
+Night wanderer - shrink - 1
+TWild Force - shrink - 1
+Shiny Treasure - shrink - 1
+Future Flash - shrink - 1
+Ancient Roar - shrink - 1
+Raging Surf- shrink - 1
+Rule of the Black Flame - no shrink - 1
+transformation Mask - shrink - 1
+Mega Brave - no shrink - 1
+Mega Symphonia - no shrink - 1
+Inferno X - no shrink - 10",FedEx,Wise,"Total  308500yen
+White Flare Booster Box - no shrink(8300) - 1
+Black Bolt Booster Box - no shrink( 9700)- 1
+Glory of Team rocket - no shrink(9000) - 1
+Stella Miracle - shrink (6500)- 1
+Night wanderer - shrink (6500)- 1
+Wild Force - shrink(7400) - 1
+Shiny Treasure - shrink (11400)- 1
+Future Flash - shrink (6700)- 1
+Ancient Roar - shrink (7200)- 1
+Raging Surf- shrink (9800)- 1
+Rule of the Black Flame - no shrink(12300) - 1
+transformation Mask - shrink(8000) - 1
+Mega Brave - no shrink(10000) - 1
+Mega Symphonia - no shrink(7200) - 1
+Inferno X - no shrink(13000) - 10=130000
+
+tariffs=45000
+shipping fedex 13500",Sent,Completed,Sent,
+118,9/23/2025,Brooks0860,Inferno X - Shrink- 16,FedEx,Wise,"Total 261216yen
+
+Inferno X (9/29ship)- Shrink(13200)- 16=211200
+tariffs=38016
+shipping fedex 12000",Sent,cancelled,,
+119,9/23/2025,.hamborghini,Inferno X - Case - 1,FedEx,Wise,"Total 222920yen
+
+Inferno X - Case - 1=179000
+tariffs=32220
+shipping fedex connect plus
+11700",Sent,Completed,Sent,
+120,9/25/2025,Kaige_D4G,"White Flare Booster Box - No Shrink - 1
+Black Bolt Booster Box - No Shrink - 1
+Glory of Team rocket	- No Shrink -1	
+Battle Partners - No Shrink -1
+Mega Sypomium - No Shrink -1
+Mega Brave - No Shrink - 1",FedEx,Wise,"Total  68016yen
+
+White Flare Booster Box - No Shrink(8200) - 1
+Black Bolt Booster Box - No Shrink (9400)- 1
+Glory of Team rocket        - No Shrink (9000)-1        
+Battle Partners - No Shrink(7400) -1
+Mega Sypomium - No Shrink (7200)-1
+Mega Brave - No Shrink (10000)- 1
+tariffs=9216
+shipping fedex connect plus
+7600",Sent,Completed,Sent,
+121,9/26/2025,troveofcollectibles_43099,"white flare - no shrink - 10
+black bolt - no shrink - 10
+glory of team rocket - no shrink - 5
+heat wave arena - no shrink - 5
+battle partners - no shrink - 5
+terastal festival - no shrink - 10
+stella miracle - 5
+inferno x - no shrink - 20",FedEx,Wise,"Total  898090yen
+
+white flare - no shrink(8200) - 10=82000
+black bolt - no shrink (9400)- 10=94000
+glory of team rocket - no shrink(9000) - 5=45000
+heat wave arena - no shrink(9700) - 5=48500
+battle partners - no shrink (7400)- 5=37000
+tariffs=55170
+shipping fedex conect plus 22000
+
+
+terastal festival - no shrink (12500)- 10=125000
+stella miracle(6600) - 5=33000
+tariffs=28440
+shipping fedex conect plus 12400
+
+inferno x - no shrink (12800)- 20=256000
+tariffs=46080
+shipping fedex conect plus 13500",Sent,Completed,Sent,
+122,10/1/2025,Jaylah Sunshine ,"Inferno x-shrink- 1
+Mega brave- no shrink- 1
+Mega symphonia-no shrink- 1 ",FedEx,Wise,"Total 41754yen
+Inferno x-shrink(13200)- 1
+Mega brave- no shrink(9900)- 1
+Mega symphonia-no shrink(7200)- 1 
+tariffs=5454
+shipping fedex 6000",Sent,Completed,Sent,
+123,10/3/2025,troveofcollectibles_43099,"white flare - no shrink - 5
+black bolt - no shrink - 5
+shiny treasure - no shrink - 5
+mega symphonia - no shrink - 10
+inferno x - no shrink - 40
+",FedEx,Paypal,"Total 907370 yen
+
+white flare - no shrink(7200) - 5=36000
+black bolt - no shrink(8400) - 5=42000
+shiny treasure - shrink(11100) - 5=55500
+mega symphonia - no shrink(7000) - 10=70000
+tariffs=36630
+shipping fedex 17200
+
+
+
+inferno x - shrink (13200)- 20=264000
+tariffs=47520
+shipping fedex 13500
+
+
+
+inferno x - shrink (13200)- 20=264000
+tariffs=47520
+shipping fedex 13500
+
+",Sent,Completed,Sent,
+124,10/9/2025,lesbatman,"Inferno X - No Shrink - 3
+Mega Symphonia - No Shrink - 2
+Mega Brave - No Shrink - 1",FedEx,Wise,"Total 89112yen
+""Inferno X - No Shrink(14700) - 3=44100
+Mega Symphonia - No Shrink(7100) - 2=14200
+Mega Brave - No Shrink -(10100) 1""=10100
+tariffs=12312
+shipping fedex 8400",Sent,cancelled,,
+125,10/14/2025,ToxicTerryx,"Inferno X - no shrink - 10
+mega brave - no shrink - 10
+mega symphonia - no shrink - 10
+",FedEx,Wise,"Total 415260yen
+""Inferno X - shrink(15800) - 10=158000
+mega brave - no shrink(10400) - 10=104000
+mega symphonia - no shrink(7500) - 10=75000
+tariffs=60660
+shipping fedex 17600",Sent,Completed,Sent,
+126,10/17/2025,lesbatman,"Black Bolt booster box- shrink - 1
+White Flare booster box- shrink - 1
+Glory of Team Rocket - shrink - 1
+Heat Wave Arena - shrink - 1 (if possible)
+Mega brave - shrink - 2
+Mega Symphonia - shrink - 2
+Inferno x - shrink - 3
+",FedEx,Wise,"Total 145682yen
+Black Bolt booster box- shrink(10000) - 1=10000
+White Flare booster box- shrink (8900)- 1=8900
+Glory of Team Rocket - shrink( 11800)- 1=11800
+Heat Wave Arena - shrink - 1 soldout
+Mega brave - shrink(10000) - 2=20000
+Mega Symphonia - shrink(7800) - 2=15600
+Inferno x - shrink (16200)- 3=48600
+tariffs=20682
+shipping fedex 10100",Sent,Pending Payment,,
+127,10/23/2025,Zapruss,"2 - mega brave no shrink 
+2- mega symphonia no shirk 
+2 - Inferno shrink 
+1 - night wander shrink 
+1- Stellar miracle shrink 
+1 - Future flash shrink ",FedEx,Wise,"Total 114674yen
+2 - mega brave no shrink (10800)=21600
+2- mega symphonia no shirk (7500)=15000
+2 - Inferno shrink (16200)=32400
+1 - night wander shrink(6600) =6600
+1- Stellar miracle shrink(6800) =6800
+1 - Future flash shrink (6900)=6900
+tariffs=16074
+shipping fedex 9300",Sent,Completed,Sent,
+128,10/25/2025,troveofcollectibles_43099,"white flare - no shrink - 6
+black bolt - no shrink - 6
+glory of team rocket - no shrink - 6
+heat wave arena - 4
+battle partners - no shrink - 6
+crimson haze - 3
+mega brave - no shronk - 6
+mega symphonia - no shrink - 3
+inferno x - 10",UPS,Wise,"Total 609760yen
+white flare - no shrink(8300) - 6=49800
+black bolt - no shrink(9600) - 6-57600
+glory of team rocket - no shrink(10800) - 6=64800
+heat wave arena - 4=soldout
+battle partners - no shrink(7000) - 6=42000
+mega brave - (11300) - 6=67800
+mega symphonia - (7800) - 3=23400
+tariffs=54972
+shipping fedex 19200
+
+crimson haze (9200)- 3=27600
+inferno xno shrink(15900) - 10=159000
+tariffs=33588
+shipping fedex 10000",Sent,Completed,Sent,
+129,10/26/2025,Kaige_D4G,"White Flare Booster Box no Shrink - 2
+Black Bolt Booster Box no Shrink -2
+Glory of Team rocket no Shrink- 1 
+Triple Beat no shrink -1
+Heatwave Arena no shrink 1
+
+",FedEx,Wise,"Total 76276yen
+White Flare Booster Box no Shrink(8300) - 2=16600
+Black Bolt Booster Box no Shrink (10800)-2=21600
+Glory of Team rocket no Shrink(10800)- 1 =10800
+Crimson Haze(9200)- 1=9200
+tariffs=10476
+shipping fedex 7600",Sent,Completed,Sent,
+130,11/12/2025,Lukecatchum,"Inferno X - shrink - 7
+Black Flame - no shrink - 8
+White Flare - no shrink - 8
+Glory of Team Rocket - no shrink - 8
+Mega Brave - no shrink - 8
+Mega Symphonia - no shrink - 6
+Battle Partners - no shrink - 5
+Stellar Miracle - no shrink - 4
+Crimson Haze - no shrink - 3
+Ruler of Black Flame - no shrink - 4
+Heat Wave Arena - no shrink - 4",UPS,Wise,"Total  668830yen
+
+Inferno X - shrink(14500) - 7=101500
+Black Flame - no shrink(8800) - 8=70400
+White Flare - no shrink(7900) - 8=63200
+Glory of Team Rocket - no shrink(11600) - 8=92800
+tariffs=59022
+shipping fedex 19200
+
+Mega Brave - no shrink(10300) - 8=82400
+Mega Symphonia - no shrink(7600) - 6=45600
+Battle Partners - no shrink(7000) - 5=35000
+Heat Wave Arena - no shrink(11900) - 4=47600
+tariffs=37908
+shipping fedex 14200
+
+Stellar Miracle - no shrink - 4=soldout
+Crimson Haze - no shrink - 3=soldout
+Ruler of Black Flame - no shrink - 4=soldout
+",Sent,Completed,Sent,
+131,11/13/2025,funhouse51,"White Flare Booster Box - shrink - 2
+ Black Bolt Booster Box - shrink - 2
+Mega Brave - shrink -2
+Mega Symphonia - shrink - 2
+Inferno X - shrink - 4",FedEx,Wise,"Total 164864yen
+White Flare Booster Box - shrink(8200) - 2=16400
+ Black Bolt Booster Box - shrink(9200) - 2=18400
+Mega Brave - shrink(10600) -2=21200
+Mega Symphonia - shrink(7900) - 2=15800
+Inferno X - shrink (14500)- 4=58000
+tariffs=23364
+shipping fedex 11700",Sent,cancelled,,
+132,11/17/2025,funhouse51,"Mega Dream EX - shrink - 10
+mega brave - shrink - 4
+mega symphonia - shrink - 2
+inferno x - shrink - 6
+black bolt - no shrink - 2
+white flare - no shrink - 2",FedEx,Wise,"Total 397324yen
+
+Mega Dream EX - shrink 12/1ship (14500)- 10=145000
+mega brave - shrink(10200) - 4=40800
+mega symphonia - shrink(7700) - 2=15400
+inferno x - shrink(14500) - 6=87000
+black bolt - no shrink(8800) - 2=17600
+white flare - no shrink(8000) - 2=16000
+tariffs=57924
+shipping fedex 17600",Sent,Completed,Sent,
+133,11/22/2025,Toxicterryx,"3 cases mega dreams
+
+please add 5k Yen for nov 28th delivery date",FedEx,Wise,"Total 1415540yen
+20box mega dreams loosbox 11/26ship(17900)=358000
+tariffs=64440
+
+2case mega dreams  11/26ship(395000)=790000
+tariffs=142200
+
+
+shipping fedex 
+18000
+14300x3=42900",Sent,,Sent,
+134,11/28/2025,troveofcollectibles_43099,"mega brave - no shrink - 5
+mega symphonia- no shrink - 5
+inferno x - no shrink - 10
+mega dream ex - 20",FedEx,Wise,"Total 639260yen
+
+mega brave - (8800)- 5=44000
+mega symphonia- no shrink(7000) - 5=35000
+inferno x - no shrink (12000)- 10=120000
+black bolt - (9600) - 5=48000
+tariffs=44460
+shipping fedex  17200
+
+
+mega dream ex (13500)- 20=270000
+tariffs=48600
+shipping fedex 12000",Sent,Completed,Sent,
+135,11/28/2025,troveofcollectibles_43099,"white flare - no shrink - 5
+black bolt - no shrink - 5
+glory of team rocket - no shrink - 5
+heat wave arena - no shrink - 5
+battle partners - no shrink - 5
+terastal festival - no shrink-  8
+crimson haze - no shrink - 5
+shiny treasure - no shrink -5
+",FedEx,Wise,"Total  385410yen
+
+glory of team rocket - no shrink(11600) - 5=58000
+heat wave arena - no shrink(12900) - 5=64500
+battle partners - no shrink(8000) - 5=40000
+terastal festival - no shrink(12000)-  8=96000
+shiny treasure - no shrink(11200) -5=56000
+tariffs=56610
+shipping fedex  14300
+
+white flare - no shrink - 5=soldout
+crimson haze - no shrink - 5=soldout",Sent,Completed,Sent,
+136,12/3/2025,.hamborghini,Mega Dream EX - Shrink -12,FedEx,Wise,"Total 187716yen
+Mega Dream EX - Shrink(12600) -12=151200
+tariffs=27216
+shopping fedex 9300",Sent,Completed,Sent,
+137,12/11/2025,troveofcollectibles_43099,mega dream - no shrink - 25,FedEx,Wise,"Total  349300yen
+mega dream - no shrink(11400) - 25=285000
+tariffs=51300
+shipping fedex 13000",Sent,Completed,Sent,
+138,12/15/2025,funhouse51,Mega Dream EX - 20,FedEx,Wise,"Total 255580yen
+Mega Dream EX(10300) - 20=206000
+tariffs=37080
+shipping fedex 12500",Sent,Completed,Sent,
+139,12/19/2025,Jdev653,"Mega Brave - Shrink - 1
+inferno x - Shrink - 1 
+mega dream ex - shrink -1 ",FedEx Air Connect (3-5 days),Wise,"Total 39908yen
+""Mega Brave - Shrink (8200)- 1
+inferno x - Shrink (12000)- 1 
+mega dream ex - shrink(9600) -1 
+tariffs=3808
+
+shippping fedex 6300",Sent,Completed,Sent,
+140,12/24/2025,funhouse51,"Mega Dream EX - shrink - 20
+oP-14 - case
+prb-02 - 10 ",FedEx,Wise,"Total 330320yen
+
+Mega Dream EX - shrink (9500)- 20=190000
+oP-14 - case=74000
+prb-02 - 10 =sold out
+tariffs=47520
+
+shippping fedex 
+18800
+",Sent,Completed,Yes,
+141,12/31/2025,Djmurman,Op-14 - Case - 1,UPS,Wise,"sold out
+sorry.....",Sent,cancelled,,
+142,12/31/2025,LukeCatchum,"Battle Partners - no shrink - 3
+Ruler of the Black Flame - no shrink - 4
+Heatwave Arena - no shrink - 4
+Mega Brave - no shrink - 4
+Mega Symphonia - no shrink - 4
+Black Bolt Booster Box - no shrink -5 
+White Flare Booster Box - no shrink - 5
+Glory of Team Rocket - no shrink - 5
+Inferno X - no shrink - 6
+Mega Dream EX - shrink - 6",UPS,Wise,"Total 359050yen
+Battle Partners - no shrink(7900) - 3=23700
+Ruler of the Black Flame - no shrink (12000)- 4=48000
+Heatwave Arena - no shrink (12300)- 1=12300
+Mega Symphonia - no shrink(7400) - 4=29600
+Black Bolt Booster Box - no shrink(10400) -1=10400
+Glory of Team Rocket - no shrink (11200)- 3=33600
+Inferno X - no shrink(11300)- 6=67800
+Mega Dream EX - shrink(10600) - 6=63600
+tariffs=52020
+shipping fedex 18000
+
+
+Mega Brave - no shrink(sold out) - 4
+White Flare Booster Box - no shrink (soldout)- 2",Sent,cancelled,,
+143,1/8/2026,troveofcollectibles_43099,"white flare - no shrink - 5
+black bolt - no shrink - 5
+glory of team rocket - no shrink - 5
+battle partners - no shrink - 5
+terastal festivals - no shrink - 5
+mega brave - no shrink - 10
+mega symphonia - no shrink - 10
+inferno x - no shrink - 10
+mega dream - no shrink - 20",FedEx,Wise,"Total 589810yen
+battle partners - no shrink(8000) - 5=40000
+terastal festivals - no shrink(13300) - 5=66500
+mega symphonia - no shrink (7400)- 10=74000
+inferno x - no shrink (10200)- 10=102000
+
+mega dream - no shrink (9600)- 20=192000
+tariffs=85410
+shipping fedex 17600+12300
+
+
+white flare - no shrink (soldout)- 5
+black bolt - no shrink(soldout) - 5
+glory of team rocket - no shrink(soldout) - 5
+mega brave - no shrink(souldout) - 10",Sent,Completed,Sent,
+144,1/11/2026,Camboyd63,"Mega dream ex - no shrink - 20
+Inferno x - no shrink - 15",FedEx,Wise,"Total  405,500yen
+Mega dream ex - no shrink (8600)- 20=172,000
+Inferno x - no shrink(10200) - 15=153,000
+tariff=58,500
+shipping FedEx 22000",Sent,Completed,Processing...,
+145,1/19/2026,Ricandude,Nihil Zero - Case - 3,FedEx Air Connect (3-5 days),Wise,"Total 503800yen
+Nihil Zero - Case1/22ship (135000)- 3=405000
+tariff=72900
+shipping fedex 
+14200
+11700",Sent,cancelled,,
+146,1/20/2026,don_ish12,Mega Dream EX - No Shrink- 3,FedEx (2-3days),Wise,"Total 42330yen
+Mega Dream EX - No Shrink(9500)- 3=28500
+tariff=5130
+shipping fedex priority 8700
+",Sent,Completed,Sent,
+147,1/21/2026,Lukecatchum,"black bolt - no shrink - 9
+white flare - no shrink - 6
+Heat Wave Arena - no shrink - 3
+Team Rocket - no shrink - 4
+ruler of black flame - no shrink -4
+Mega Brave - no shrink - 3
+Mega Symphonia - no shrink - 3
+inferno X - no shrink - 6
+Mega Dream - shrink - 6
+Mega Dream - no shrink - 2",FedEx (2-3days),Wise,"Total 270912yen
+Heat Wave Arena - no shrink(12900) - 3=38700
+Mega Symphonia - no shrink(8300) - 3=24900
+inferno X - no shrink(11800) - 6=70800
+Mega Dream - shrink(10000) - 6=60000
+Mega Dream - no shrink(9500) - 2=19000
+tariff=38412
+shipping fedex priority 19100
+
+(sold out)
+black bolt - no shrink - 9
+white flare - no shrink - 6
+Team Rocket - no shrink - 4
+ruler of black flame - no shrink -4
+Mega Brave - no shrink - 3",Sent,Completed,Sent,
+148,1/21/2026,Camboyd63,Mega dream ex - no shrink- 10,FedEx (2-3days),Wise,"
+Total  123100yen
+Mega dream ex - no shrink(9500)- 10=95000
+tariff=17100
+shipping fedex 11000",Sent,Completed,Sent,
+149,1/21/2026,Lukecatchum,Nihil Zero - case - 1,FedEx (2-3days),Wise,"Total  169,770 yen
+
+Nihil Zero - case - 1
+Shipping and customs duties included",Sent,Completed,Sent,
+150,1/22/2026,funhouse51,"OP-09 - case - 1
+OP10 - case - 1
+prb-02 - case - 1
+EB-02 - case - 1
+op-11 - case - 1
+op-12 - case - 1
+oP-14 - case - 1",FedEx (2-3days),Wise,"Total 558460yen
+OP-09 - case - 1=160000
+OP10 - case - 1=78000
+tariff=42840
+shipping fedex priority28200
+
+prb-02 - case - 1=106000
+op-12 - case - 1=83000
+tariff=34020
+shipping fedex priority 26400
+
+(soldout)
+EB-02 - case - 1
+op-11 - case - 1
+oP-14 - case - 1=101000",Sent,cancelled,,
+151,1/22/2026,troveofcollectibles_43099,"battle partners - no shrink - 5
+terastal festivals - no shrink - 10
+mega brave - no shrink - 8
+mega symphonia - no shrink - 5
+inferno x - no shrink - 5
+mega dream - no shrink - 10
+nihil zero - 1",FedEx (2-3days),Wise,"Total 740486yen
+battle partners - no shrink(9000) - 5=45000
+terastal festivals - no shrink (15800)- 10=158000
+mega brave - no shrink(9900) - 8=79200
+
+mega symphonia - no shrink (8600)- 5=43000
+inferno x - no shrink(11900) - 5=59500
+mega dream - no shrink(9500) - 10=95000
+nihil zero - 1case(108000)=108000
+
+tariff=105786
+shipping fedex priority 
+21200
+25800",Sent,Completed,Sent,
+152,1/25/2026,Ricandude2,NIHIL ZERO - Box - 60,FedEx Air Connect (3-5 days),Wise,"Total 666920yen
+NIHIL ZERO - Box(8900) - 60=534000
+tariff=96120
+shipping fedex 
+18400x2=36800",Sent,cancelled,,
+153,1/27/2026,Camboyd63,Nihil zero - 12- no shrink ,FedEx (2-3days),Wise,"Total 125166yen
+Nihil zero - 12- no shrink 
+7600x12=91200
+tariff=16416
+shipping fedex  priority
+17550",Sent,Completed,Sent,
+154,1/29/2026,thegeneralatm,"Nihil Zero - no shrink- 3
+Mega Dream EX- no shrink - 2",FedEx Air Connect (3-5 days),Wise,"Total 62588yen
+Nihil Zero - no shrink-(7200) 3=21600
+Mega Dream EX- no shrink(12500) - 2=25000
+tariff=8388
+shipping fedex  7600
+",Sent,cancelled,,
+155,2/1/2026,Camboyd63,"Nihil zero - no shrink - 10
+Mega dream - no shrink - 10 
+Mega brave - shrink - 5 ",FedEx Air Connect (3-5 days),Wise,"Total 260030yen
+Nihil zero - no shrink(7000) - 10=70000
+Mega dream - no shrink(9000) - 10 =90000
+Mega brave - shrink(9700) - 5 =48500
+tariff=37530
+shipping fedex  14000",Sent,Completed,Sent,
+156,2/2/2026,FUNHOUSE51,"OP-09 - CASE - 1
+prb-02 - CASE - 1
+EB-02 - CASE - 1
+oP-14 - CASE - 1
+Nihil Zero - CASE - 2
+Mega Dream EX - CASE - 1
+",FedEx Air Connect (3-5 days),Wise,"Total 513710yen
+Nihil Zero - CASE (98000)- 2=196000
+Mega Dream EX - CASE - 1=218500
+tariff=74610
+shipping fedex  
+13200
+11400",Sent,Completed,Sent,
+157,2/5/2026,troveofcollectibles_43099,"terastal festival - no shrink - 10
+infeno x - no shrink - 10
+mega dream - no shrink - 20
+nihil zero - no shrink - 30",FedEx (2-3days),Wise,"Total 663040yen
+infeno x - no shrink (12400)- 10=124000
+mega dream - no shrink (9200)- 20=184000
+nihil zero - no shrink(7000) - 30=210000
+
+terastal festival - no shrink - 10=soldout
+
+tariff=93240
+shipping fedex  priority
+25500
+26300",Sent,Completed,Sent,
+158,2/5/2026,Don_Ish12,"Mega Dream EX- no Shrink- 2
+Terastal Festival - No Shrink - 2
+Glory of team rocket -no Shrink- 2
+White Flare-no shrink-1
+",FedEx (2-3days),Wise,"Total 64254yen
+Mega Dream EX- no Shrink(9200)- 2=18400
+Terastal Festival - No Shrink - 2=soldout
+Glory of team rocket -no Shrink- 1=14900
+White Flare-no shrink-1=12000
+
+tariff=8154
+shipping fedex  priority
+10800",Sent,cancelled,,
+159,2/6/2026,don_ish12,"Shiny treasure ex- shrink- 3
+
+",FedEx (2-3days),Wise,"Total 58260yen
+
+Shiny treasure ex- shrink(14000)- 3=42000
+
+tariff=7560
+shipping fedex  priority
+8700
+
+
+
+",Sent,cancelled,,
+160,2/10/2026,jfain189,"12 Battle Partners - no shrink
+20 Mega Dream EX - no shrink
+OP-09 whole stock
+OP10 whole stock
+prb-02 whole stock
+EB-02 whole stock
+op-11 whole stock
+op-12 whole stock
+oP-14 whole stock",FedEx Air Connect (3-5 days),Wise,"Total  345940yen
+OP-10(6700)×40=268000
+tariff=48240
+shipping FedEx 29700",Sent,Completed,Sent,
+161,2/13/2026,fbelzy,"Nihil Zero - no shrink box - 3
+Mega Brave - no shrink box -1
+Mega Symphonia - no shrink box - 1
+Battle Partners - no shrink box - 1
+Night wanderer - box - 1
+Cyber Judge - box - 1
+Ancient Roar - box - 1",FedEx Air Connect (3-5 days),Wise,"Total 88714yen
+Nihil Zero - no shrink box(7000) - 3=21000
+Mega Brave - no shrink box(9700) -1=9700
+Mega Symphonia - no shrink box(8700) - 1=8700
+Night wanderer - box(9300) - 1=9300
+Cyber Judge - box(9300) - 1=9300
+Ancient Roar - box(9700) - 1=9300
+tariff=12114
+shipping fedex
+9300",Sent,Completed,Sent,
+162,2/17/2026,funhouse51,"Mega Dream EX - case - 2
+Nihil Zero - case - 1
+Mega Brave - no shrink - 4
+Mega Symphonia - no shrink - 2
+Inferno X - no shrink - 2 
+Battle Partners - no shrink 2",FedEx (2-3days),Wise,"Total 762974yen
+Mega Dream EX - case(222000) - 2=444000
+Nihil Zero - case (86300)- 1=-86300
+Mega Brave - no shrink(9900) - 4=39600
+Mega Symphonia - no shrink(8700) - 2=17400
+Inferno X - no shrink (13500)- 2 =27000
+tariff=110574
+shipping fedex
+12300x2=24600
+13500",Sent,cancelled,,

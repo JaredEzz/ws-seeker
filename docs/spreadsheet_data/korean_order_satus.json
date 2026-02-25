@@ -1,0 +1,112 @@
+{
+  "range": "'Korean Order Satus'!A1:Y1000",
+  "majorDimension": "ROWS",
+  "values": [
+    [
+      "Order #",
+      "Timestamp",
+      "Product Requested",
+      "Quote",
+      "Invoice Status",
+      "Payment Status",
+      "Tracking Provided"
+    ],
+    [
+      "KR1",
+      "9/8/2025",
+      "#1 Gemstone 2 case x10\n#2  151 Surprise x 5",
+      "",
+      "",
+      "Pending Payment",
+      "Sent"
+    ],
+    [
+      "KR2",
+      "9/8/2025",
+      "test",
+      "",
+      "",
+      "Completed",
+      "Sent"
+    ],
+    [
+      "KR3",
+      "9/8/2025",
+      "test",
+      "test",
+      "Created",
+      "Completed",
+      "Sent"
+    ],
+    [
+      "kr4",
+      "9/9/2025",
+      "test",
+      "test: $22.00 x 3 = $66.00\nSUBTOTAL = $66.00\nAIR SHIPPING = $500.00\nOCEAN SHIPPING = $300.00\nBALANCE TOTAL = $866.00",
+      "Created",
+      "Completed",
+      "Sent"
+    ],
+    [
+      "KR5",
+      "10/6/2025",
+      "Battle Partners Booster Box w/o promo x 3\nTerastal Festival EX Booster Box  sv8a\" x 3\nSuper Electric Breaker Booster Box sv8\" x 1\nRuler of the Black Flame Booster Box sv3\" x 2\nEevee Heroes Booster Box s6a\" x 2\nGlory of Team Rocket\" x 2\nHeat wave Arena x 2\nExpansion Pack Black Bolt Booster box x 2\nExpansion Pack White Flare Booster Box sv11W x 2\nPikachu Present Box x3",
+      "Battle Partners Booster Box w/o promo x 3: $40.00 x 3 = $120.00\nTerastal Festival EX Booster Box  sv8a\" x 3: $53.00 x 3 = $159.00\nSuper Electric Breaker Booster Box sv8\" x 1: $40.00 x 1 = $40.00\nRuler of the Black Flame Booster Box sv3\" x 2: $31.00 x 2 = $62.00\nEevee Heroes Booster Box s6a\" x 2: $99.00 x 2 = $198.00\nGlory of Team Rocket\" x 2: $40.00 x 2 = $80.00\nHeat wave Arena x 2: $31.00 x 2 = $62.00\nExpansion Pack Black Bolt Booster box x 2: $31.00 x 2 = $62.00\nExpansion Pack White Flare Booster Box sv11W x 2: $31.00 x 2 = $62.00\nPikachu Present Box x3: $31.00 x 3 = $93.00\nSUBTOTAL = $938.00\nAIR SHIPPING = $100.00\nOCEAN SHIPPING = $0.00\nBALANCE TOTAL = $1038.00",
+      "Created",
+      "Paid - pending Tracking"
+    ],
+    [
+      "KR6",
+      "10/9/2025",
+      "#3 151 Booster Box SV2a x 2\n#37 Terastal Festival EX Booster Box sv8a x 1\n#31 Mystery Booster Box Special Set x 1",
+      "#3 151 Booster Box SV2a: $62.00 x 2 = $124.00\n#37 Terastal Festival EX Booster Box sv8a: $53.00 x 1 = $53.00\n#31 Mystery Booster Box Special Set: $39.00 x 1 = $39.00\nSUBTOTAL = $216.00\nAIR SHIPPING = $34.00\nOCEAN SHIPPING = $0.00\nBALANCE TOTAL = $250.00",
+      "Created",
+      "Paid - pending Tracking"
+    ],
+    [
+      "KR7",
+      "11/13/2025 15:09:08",
+      "Eif Baby 1.0 - 1 case\nelf baby 2.0 -  1 case\n\"Mewtwo VSTAR Gift Box\n+ Charizard VSTAR Gift Box\" - 1 case\nEevee Evolution Gift Box Set - 1 case\n",
+      "",
+      "Created"
+    ],
+    [
+      "KR8",
+      "11/17/2025",
+      "#35 VSTAR Universe Booster Box s12a\" x 2\n#37 Terastal Festival EX Booster Box  sv8a\" x2\n#27 Terastal Festival EX Booster Box  sv8a\" x2\n#61 White Flare Booster Box sv11W x2\n",
+      "#35 VSTAR Universe Booster Box s12a\": $55.00 x 2 = $110.00\n#37 Terastal Festival EX Booster Box  sv8a\" x2: $55.00 x 2 = $110.00\n#27 Terastal Festival EX Booster Box  sv8a\" x2: $55.00 x 2 = $110.00\n#61 White Flare Booster Box sv11W x2: $57.00 x 2 = $114.00\nSUBTOTAL = $444.00\nAIR SHIPPING = $34.00\nOCEAN SHIPPING = $0.00\nBALANCE TOTAL = $478.00",
+      "Created"
+    ],
+    [
+      "KR9",
+      "1/8/2026 15:43:26",
+      "#1    inferno X x 2\n#2\tmega brave x 2\n#4\t\"black bolt x 1\n5\twhite repair x 1\n#6 Team Rocket's Glory x 2\n#39\tPokémon Card 151 x 2\n#21\tVSTAR Universe x 2",
+      "#1    inferno X: $39.21 x 2 = $78.42\n#2\tmega brave: $39.21 x 2 = $78.42\n#4\t\"black bolt: $37.86 x 1 = $37.86\n5  white Flare: $36.51 x 1 = $36.51\n#6 Team Rocket's Glory: $41.91 x 2 = $83.82\n#39\tPokémon Card 151: $68.96 x 2 = $137.92\n#21\tVSTAR Universe: $66.25 x 2 = $132.50\nSUBTOTAL = $585.45\nAIR SHIPPING = $56.00\nOCEAN SHIPPING = $0.00\nBALANCE TOTAL = $641.45",
+      "Created"
+    ],
+    [
+      "KR10",
+      "1/26/2026 18:43:06",
+      "\nBlack bolt X 3 \nWhite flare X 3 \nGlory of team rocket X3\nHeat wave arena X3\nCrimson haze X4 \nTerasral festival X2\nPokemon 151 X2\n",
+      "Black bolt X 3: $38.83 x 3 = $116.49\nWhite flare X 3: $36.53 x 3 = $109.59\nGlory of team rocket X3: $38.83 x 3 = $116.49\nHeat wave arena X3: $34.22 x 3 = $102.66\nCrimson haze X4: $25.03 x 4 = $100.12\nTerasral festival X2: $57.22 x 2 = $114.44\nPokemon 151 X2: $66.41 x 2 = $132.82\nDream EX x4: $44.83 x 4 = $179.32\nSUBTOTAL = $971.93\nAIR SHIPPING = $0.00\nOCEAN SHIPPING = $135.00\nBALANCE TOTAL = $1106.93",
+      "Created",
+      "Completed - Delivered",
+      "Yes"
+    ],
+    [
+      "KR11",
+      "1/29/2026 12:41:46",
+      "Dream Ex x4",
+      "Pay and Pickup Croma Lehi"
+    ],
+    [
+      "KR12",
+      "2/8/2026 20:56:35",
+      "Black bolt X 3\nWhite flare X 3 \nGlory of team rocket X 4\nTerastal festival X 3\nSuper electric breaker X 3 \nBattle partners X 2 \nCrimson haze X 2 \nMega dream X 3",
+      "Black bolt X 3: $41.00 x 3 = $123.00\nWhite flare X 3: $36.00 x 3 = $108.00\nGlory of team rocket X 4: $38.00 x 4 = $152.00\nTerastal festival X 3: $57.00 x 3 = $171.00\nSuper electric breaker X 3: $36.00 x 3 = $108.00\nBattle partners X 2: $25.01 x 2 = $50.02\nCrimson haze X 2: $25.50 x 2 = $51.00\nMega dream X 3: $44.51 x 3 = $133.53\n23 Boxes Total: $0.00 x 0 = $0.00\nSUBTOTAL = $896.55\nAIR SHIPPING = $100.90\nOCEAN SHIPPING = $0.00\nBALANCE TOTAL = $997.45",
+      "Created",
+      "Completed",
+      "Yes"
+    ]
+  ]
+}

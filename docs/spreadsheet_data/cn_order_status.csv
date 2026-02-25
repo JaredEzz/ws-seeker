@@ -1,0 +1,246 @@
+Order #,Timestamp,First and Last Name,Shipping Method,Quote,Invoice Status,Payment Status,Tracking Provided,Notes
+CN1,8/14/2025,Croma,,test quote,Sent,Pending Payment,Sent,
+CN2,8/15/2025,Croma test run,,"origin 3.0 - case - 2 x$360  = $720
+151 surprise - case 2 x $2200 = $400
+gemstone 2 - box - 10 x 48 = $480
+
+Shipping = $360 USD",Sent,Completed,Sent,
+CN3,8/18/2025,Croma ,,"Pokémon Gem Vol. 2 - Loose Box - 20
+20 * 45.5 = $910
+Shipping = $60",Sent,Completed,Sent,
+CN4,8/20/2025,Camboyd63,,"Pokémon Gem Vol. 2 - Loose Box - 5
+5 * 45.5 = $227.5
+Shipping = $32
+Total = 259.5",Sent,Completed,Sent,
+CN5,9/2/2025,test,,"product: ABC
+qty: 3
+price: 55
+product: DEF
+qty: 2
+price: 33
+shipping: 45
+total: 333",Quoted,,,
+CN6,9/3/2025,test test,,"Gemstone 2 - Box -10: $2.00 x 2 = $4.00
+151 Surprise - Case - 2: $2.00 x 2 = $4.00
+SUBTOTAL = $8.00
+AIR SHIPPING = $200.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $208.00",Quoted,,Sent,
+CN7,9/5/2025 1:53:35,Skyler Stephens,,"product: #19 Eevee Evolution Gift Card Box Set
+qty:1
+Price: $130
+
+product: #23 pikachu v-union gift box
+qty: 1
+Price: $105
+
+product: #39/40 Mewtwo/Charizard VSTAR Gift Box
+qty: 1
+Price: $589
+
+product: #41 Origin Lens Card 2.0
+qty:1
+Price: $220
+
+product: #44 Pokemon Avatar Magnet 3.0
+qty: 1
+Price: $153
+
+product: #45 Eif baby 1.0
+qty: 1
+Price: $283
+
+product: #48 ZAstudio Polaroid 5.O
+qty: 1
+Price: $173
+
+
+product: #49 Quicksand tickets
+qty: 1
+Price: $283
+
+product: #71 ZAstudio art board 4.0 
+qty: 1
+Price: $185
+
+Subtotal:$2121
+Air: $468
+Ocean: 255
+Total: $2844.35",Quoted,Completed,Sent,
+CN8,9/8/2025,Kenny Truong,Mix,,Not quoted,,,
+CN9,9/8/2025,Gustavo Ayala,Air,"product: #24 Card Display Sleeve Gift Box Eevee 
+qty: 1
+Price: 523
+AIR SHIPPING: 126.00
+ TOTAL : 649.00",Quoted,Completed,Sent,
+CN10,9/8/2025,David Taylor ,Air,"product: #28 Eevee evolution gift box set case
+qty: 1
+price: 250
+Product: #30 Card Display Sleeve Gift Box Gengar Case
+qty:1
+price:820
+Product: #30 Pokémon Return of the Dragon Collection Box case
+qty:1
+price:306
+",Quoted,Completed,Sent,
+CN11,9/10/2025,test bao,Air,"# 3  Pokermon CS3A + CS3B Primalordial Arts: $3.00 x 1 = $3.00
+#10  Pokémon Gem Vol.2 Loose Box: $3.00 x 15 = $45.00
+# 9 Pokémon Gem Vol.2 Sealed Case: $3.00 x 5 = $15.00
+SUBTOTAL = $63.00
+AIR SHIPPING = $200.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $263.00",Created,Completed,Sent,
+CN12,9/11/2025,Test order,Mix,"#1 151 surprise : $299.00 x 1 = $299.00
+# 9 Pokémon Gem Vol.2 Sealed Case: $399.00 x 1 = $399.00
+SUBTOTAL = $698.00
+AIR SHIPPING = $200.00
+OCEAN SHIPPING = $300.00
+BALANCE TOTAL = $1198.00",Created,Completed,Sent,
+CN13,9/22/2025,David Taylor,Air,"Eevee Evolution Gift Box Set - case - 1: $248.00 x 1 = $248.00
+Card Display Sleeve Gift Box Eevee - case - 1: $517.00 x 1 = $517.00
+Card Display Sleeve Gift Box Charizard - case - 1: $517.00 x 1 = $517.00
+""Mewtwo VSTAR Gift Box + Charizard VSTAR Gift Box"" - case - 1: $609.00 x 1 = $609.00
+SUBTOTAL = $1891.00
+AIR SHIPPING = $0.00
+OCEAN SHIPPING = $288.00
+BALANCE TOTAL = $2179.00",Created,cancelled,,
+CN14,9/29/2025,Murray Keller,Air,"eif baby = $285
+eevee gift box = $238
+Air express = $415
+Total = $ 938
+Ocean shipping = $174
+Total = $697",Created,Completed,Sent,
+CN15,9/29/2025,Murray Keller,Air,,Created,cancelled,,
+CN16,10/4/2025,David Taylor,Air,"Pokémon Gem Vol.3 case: $1465.00 x 2 = $2930.00
+Eevee Evolution Gift Box case : $241.00 x 1 = $241.00
+SUBTOTAL = $3171.00
+AIR SHIPPING = $215.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $3386.00",,Completed,,
+CN17,10/9/2025,Kaige James,Air,"#37 Mewtwo V Star Gift Box & Charizard V Star Gift Box Case: $609.00 x 1 = $609.00
+SUBTOTAL = $609.00
+AIR SHIPPING = $318.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $927.00",,cancelled,,
+CN18,10/22/2025,Marc Ching,Ocean,"CSV5C case x 2: $500.00 x 2 = $1000.00
+CSV4C case x 2: $617.00 x 2 = $1234.00
+CS6A case x 2: $0.00 x 0 = $0.00
+CS5.5 case x 2: $580.00 x 2 = $1160.00
+CS3.5 case x 2: $0.00 x 0 = $0.00
+CS6.5 case x 2: $0.00 x 0 = $0.00
+CS4.5 case x 2: $0.00 x 0 = $0.00
+Energy Gift Box:  Fire case x 2: $569.00 x 2 = $1138.00
+Energy Gift Box: Dark case x 2: $569.00 x 2 = $1138.00
+Energy Gift Box: Fighting case x 2: $569.00 x 2 = $1138.00
+Energy Gift Box: Steel case x 2: $733.00 x 2 = $1466.00
+Energy Gift Box: Grass case x 2: $733.00 x 2 = $1466.00
+Energy Gift Box: Thunder case x 2: $733.00 x 2 = $1466.00
+Energy Gift Box: Mewtwo VStar Gift case x 2: $609.00 x 2 = $1218.00
+SUBTOTAL = $12424.00
+AIR SHIPPING = $0.00
+OCEAN SHIPPING = $576.00
+BALANCE TOTAL = $13000.00",Created,,,
+CN19,11/6/2025,Russell Martin Del Campo,Air,"#90 handheld game consoles magnets x1: $201.00 x 1 = $201.00
+#97 lens card 3.0 x1: $184.00 x 1 = $184.00
+#124 quicksand magnet 2.0 x1: $172.00 x 1 = $172.00
+SUBTOTAL = $557.00
+AIR SHIPPING = $226.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $783.00",Created,Paid - Pending Tracking,Sent,
+CN20,11/14/2025,Skyler Stephens,Ocean,"#29 Eevee Evolution Gift box set: $276.00 x 1 = $276.00
+#32 Card Display sleeve gift box Eevee x1: $574.00 x 1 = $574.00
+#34 Pikachu V-union gift box: $253.00 x 2 = $506.00
+SUBTOTAL = $1356.00
+AIR SHIPPING = $0.00
+OCEAN SHIPPING = $228.00
+BALANCE TOTAL = $1584.00",Created,,,
+CN21,11/18/2025,David Taylor,Air,"""Eif Baby 1.0 - 1 case: $287.00 x 1 = $287.00
+elf baby 2.0 -  1 case: $287.00 x 1 = $287.00
+""""Mewtwo VSTAR Gift Box: $609.00 x 1 = $609.00
++ Charizard VSTAR Gift Box"""" - 1 case: $0.00 x 0 = $0.00
+Eevee Evolution Gift Box Set - 1 case: $276.00 x 1 = $276.00
+SUBTOTAL = $1459.00
+AIR SHIPPING = $0.00
+OCEAN SHIPPING = $342.00
+BALANCE TOTAL = $1801.00",Created,,,
+CN22,11/19/2025,Murray Keller,Air,"#20 Eevee Evolution Gift Box Set x2: $259.00 x 2 = $518.00
+#41 Origin 4.0 Case x3: $339.00 x 3 = $1017.00
+#89 Eif Baby 1.0 x2: $287.00 x 2 = $574.00
+SUBTOTAL = $2109.00
+AIR SHIPPING = $1414.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $3523.00",Created,,,
+CN23,12/17/2025,Murray Keller,Ocean,"#20 Eevee Evolution Gift Set x2: $229.89 x 2 = $459.78
+#89 Eif Baby 1.0 Case x2: $287.36 x 2 = $574.72
+SUBTOTAL = $1034.50
+AIR SHIPPING = $0.00
+OCEAN SHIPPING = $248.00
+BALANCE TOTAL = $1282.50",Created,,,
+CN24,1/6/2026,Russell Martin Del Campo,Air,,F,Completed,,
+CN25,1/16/2026,Matthew Roman ,Air,"#43 151 Puzzle Magnet Set: $152.55 x 5 = $762.75
+#8 Pokémon Gem Vol.1: $904.00 x 1 = $904.00
+#9 Pokémon Gem Vol.2  x1: $1062.20 x 1 = $1062.20
+#10 Pokémon Gem Vol.3  x1: $806.82 x 1 = $806.82
+SUBTOTAL = $3535.77
+AIR SHIPPING = $179.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $3714.77",Created,Completed,Yes,Delievered
+CN26,1/21/2026,Skyler Stephens,Mix,"#3 Plush Blind Boxes -4 boxes: $20.11 x 4 = $80.44
+#5 Dreamy Painted Figure - 4 boxes: $15.52 x 4 = $62.08
+#9 pokemon Gem 2 - 1 case: $1080.46 x 1 = $1080.46
+#10 pokemon Gem 3- 1 case: $820.69 x 1 = $820.69
+#24 eevee Evolution gift box - 1 case: $229.89 x 1 = $229.89
+#29 pikachu v-union gift box - 2 cases: $132.89 x 2 = $265.78
+#103 Eif baby 1.0 - 1 case SOLD OUT: $0.00 x 0 = $0.00
+SUBTOTAL = $2539.34
+AIR SHIPPING = $458.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $2997.34",Created,cancelled,,Cancelled
+CN27,1/21/2026,testing dont mind me ,Mix,,,,,
+CN28,1/23/2026,Skyler Stephens,Mix,"#3 Plush blind boxes - 4 cases : $459.77 x 4 = $1839.08
+#5 Dreamy Painted Figure - 1 cases : $735.63 x 1 = $735.63
+#9 Pokemon Gem 2 - 1 case : $1080.46 x 1 = $1080.46
+#10 Pokemon Gem 3 - 1 case : $816.09 x 1 = $816.09
+#24 Eevee Evolution gift box - 1 case: $229.89 x 1 = $229.89
+#29 Pikachu v- union gift box -2 cases : $132.18 x 2 = $264.36
+#103 Eif baby 3.0 - 3 case : $287.36 x 3 = $862.08
+#       Gem Pack bundle w/promo and coin - 1case : $1051.72 x 1 = $1051.72
+SUBTOTAL = $6879.31
+AIR SHIPPING = $368.00
+OCEAN SHIPPING = $398.00
+BALANCE TOTAL = $7645.31",Created,Completed,Yes,Shipping
+CN29,1/23/2026,Apisai Tatafu,Air,"#10 Pokemon Gem Vol.3 Case: $816.09 x 2 = $1632.18
+SUBTOTAL = $1632.18
+AIR SHIPPING = $135.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $1767.18",Created,Completed,Yes,Delievered
+CN30,1/27/2026,Matthew Roman,Air,"Pokémon 151 Vol.3 Case x 2: $816.09 x 2 = $1632.18
+Gem badge set Case x 2: $1051.72 x 2 = $2103.44
+SUBTOTAL = $3735.62
+AIR SHIPPING = $296.00
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $4031.62",Created,cancelled,,Cancelled
+CN31,2/5/2026,Matthew Roman,Air,"Gem Box V4 - 5 Cases: $747.13 x 5 = $3735.65
+SUBTOTAL = $3735.65
+AIR SHIPPING = $322.99
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $4058.64",Created,Completed,Yes,3/3 Shipments Delivered
+CN32,2/7/2026,Apisai Tatafu,Air,"Gem Box V4 - 2 Cases: $706.90 x 2 = $1413.80
+SUBTOTAL = $1413.80
+AIR SHIPPING = $124.14
+OCEAN SHIPPING = $0.00
+BALANCE TOTAL = $1537.94",Created,Completed,Yes,Delievered
+CN33,2/10/2026,Jeremy Fain,Air,"6 Charizard EX Card Deck Air: $63.22 x 6 = $379.32
+3 Miraidon EX Card Deck Air: $63.22 x 3 = $189.66
+6 Gardevoir EX Card Deck Air: $63.22 x 6 = $379.32
+12 2026 New Year Gift Box Air: $21.26 x 12 = $255.12
+1 case riftbound Vol.2 Jumbo Air: $666.67 x 1 = $666.67
+2 cases GEM 4 Air: $706.90 x 2 = $1413.80
+1 case Pokémon Return of the Dragon Collection Box Air: $264.37 x 1 = $264.37
+2 cases Eevee Evolution Gift Box Ocean: $229.89 x 2 = $459.78
+2 case Mewtwo VSTAR Gift Box // Charizard VSTAR Gift Box Ocean: $609.20 x 2 = $1218.40
+SUBTOTAL = $5226.44
+AIR SHIPPING = $497.70
+OCEAN SHIPPING = $364.37
+BALANCE TOTAL = $6088.51",Created,Paid - Pending Tracking,,
+CN34,2/23/2026,Matthew Roman,Air,,,Awaiting Quote,,

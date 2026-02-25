@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../repositories/user_repository.dart';
 
@@ -98,23 +99,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
             : _phoneController.text.trim(),
       );
 
-      await context.read<UserRepository>().updateProfile(
-            discordName: _discordNameController.text.trim(),
-            phone: _phoneController.text.trim(),
-            preferredPaymentMethod: _preferredPaymentMethod,
-            wiseEmail: _wiseEmailController.text.trim().isEmpty
-                ? null
-                : _wiseEmailController.text.trim(),
-            venmoHandle: _venmoHandleController.text.trim().isEmpty
-                ? null
-                : _venmoHandleController.text.trim(),
-            paypalEmail: _paypalEmailController.text.trim().isEmpty
-                ? null
-                : _paypalEmailController.text.trim(),
-            savedAddress: address,
-          );
+      final updatedUser =
+          await context.read<UserRepository>().updateProfile(
+                discordName: _discordNameController.text.trim(),
+                phone: _phoneController.text.trim(),
+                preferredPaymentMethod: _preferredPaymentMethod,
+                wiseEmail: _wiseEmailController.text.trim().isEmpty
+                    ? null
+                    : _wiseEmailController.text.trim(),
+                venmoHandle: _venmoHandleController.text.trim().isEmpty
+                    ? null
+                    : _venmoHandleController.text.trim(),
+                paypalEmail: _paypalEmailController.text.trim().isEmpty
+                    ? null
+                    : _paypalEmailController.text.trim(),
+                savedAddress: address,
+              );
 
       if (mounted) {
+        // Update the AuthBloc so the new profile persists across screens
+        context.read<AuthBloc>().add(AuthUserChanged(updatedUser));
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Profile saved')),
         );

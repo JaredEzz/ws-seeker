@@ -44,7 +44,7 @@ abstract final class AppConstants {
   /// API Base URL
   static const String apiBaseUrl = String.fromEnvironment(
     'BACKEND_URL',
-    defaultValue: 'http://localhost:8080',
+    defaultValue: 'https://ws-seeker-backend-oilyxc6kdq-uc.a.run.app',
   );
 }
 

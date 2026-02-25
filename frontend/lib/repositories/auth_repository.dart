@@ -126,7 +126,12 @@ class FirebaseAuthRepository implements AuthRepository {
         phone: data['phone'] as String?,
         preferredPaymentMethod: data['preferredPaymentMethod'] as String?,
         wiseEmail: data['wiseEmail'] as String?,
+        venmoHandle: data['venmoHandle'] as String?,
+        paypalEmail: data['paypalEmail'] as String?,
         createdAt: user.metadata.creationTime ?? DateTime.now(),
+        updatedAt: data['updatedAt'] != null
+            ? DateTime.tryParse(data['updatedAt'] as String? ?? '')
+            : null,
       );
     } catch (e) {
       print('Verification failed: $e');
@@ -162,6 +167,9 @@ class FirebaseAuthRepository implements AuthRepository {
     String? phone;
     String? preferredPaymentMethod;
     String? wiseEmail;
+    String? venmoHandle;
+    String? paypalEmail;
+    DateTime? updatedAt;
 
     try {
       final doc = await _firestore.collection('users').doc(user.uid).get();
@@ -177,6 +185,10 @@ class FirebaseAuthRepository implements AuthRepository {
         phone = data['phone'] as String?;
         preferredPaymentMethod = data['preferredPaymentMethod'] as String?;
         wiseEmail = data['wiseEmail'] as String?;
+        venmoHandle = data['venmoHandle'] as String?;
+        paypalEmail = data['paypalEmail'] as String?;
+        final ts = data['updatedAt'];
+        if (ts is Timestamp) updatedAt = ts.toDate();
       }
     } catch (e) {
       print('Failed to fetch user profile from Firestore: $e');
@@ -191,7 +203,10 @@ class FirebaseAuthRepository implements AuthRepository {
       phone: phone,
       preferredPaymentMethod: preferredPaymentMethod,
       wiseEmail: wiseEmail,
+      venmoHandle: venmoHandle,
+      paypalEmail: paypalEmail,
       createdAt: user.metadata.creationTime ?? DateTime.now(),
+      updatedAt: updatedAt,
     );
   }
 

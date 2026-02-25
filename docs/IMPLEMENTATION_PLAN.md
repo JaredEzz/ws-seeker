@@ -70,7 +70,7 @@ Run build_runner in shared/ and frontend/.
 - Frontend: New `HttpUserRepository` for profile CRUD
 - Ran build_runner in shared/ (18 outputs) and frontend/ (0 outputs, uses shared)
 
-### Step 2: Enhance Order Form + Profile Pre-fill
+### Step 2: Enhance Order Form + Profile Pre-fill ✅ COMPLETE
 **Files:** `frontend/lib/screens/orders/order_form_screen.dart`, `frontend/lib/blocs/orders/order_form_bloc.dart`, `frontend/lib/widgets/forms/address_form.dart`
 
 > Per meeting: "same information is saved so they don't have to input... They just have to change the products requested."
@@ -105,22 +105,22 @@ Per meeting: "The only thing is just uploading the screenshots and stuff."
 - Admin/supplier sees proof inline when reviewing order
 - This is the main payment-related feature Jared asked for
 
-### Step 3: Admin Navigation Shell
+### Step 3: Admin Navigation Shell ✅ COMPLETE
 **New file:** `frontend/lib/widgets/navigation/admin_shell.dart`
 **Update:** `frontend/lib/app/router.dart`
 
-NavigationRail with: Dashboard, Orders, Products, Invoices
+NavigationRail with: Orders, Products, Invoices + back to Dashboard
 
-### Step 4: Order Management Screen
+### Step 4: Order Management Screen ✅ COMPLETE
 **New file:** `frontend/lib/screens/admin/order_management_screen.dart`
-**New file:** `frontend/lib/blocs/admin_orders/admin_orders_bloc.dart`
 
 PRIMARY spreadsheet replacement:
-- Filterable DataTable (language, status, date range, search)
-- Status dropdown (forward progression + cancel)
-- Tracking number input, admin notes, supplier ref
-- Quick actions: Generate Invoice, Add Tracking
-- Display language-prefixed order numbers
+- Filterable DataTable (language, status, search by name/discord/order#/product)
+- Status dropdown with forward-progression + cancel (PopupMenuButton)
+- Language badges, status chips with color coding
+- Columns: Order #, Language, Customer, Discord, Items, Total, Status, Shipping, Tracking, Date, Actions
+- Admin users redirect to /admin/orders on login
+- Reuses existing OrdersBloc (no new BLoC needed)
 
 ### Step 5: Invoice UI
 **New file:** `frontend/lib/screens/admin/invoice_builder_screen.dart`

@@ -26,23 +26,33 @@ class DashboardScreen extends StatelessWidget {
         selectedIndex: 0,
         onDestinationSelected: (index) {
           if (index == 1) context.push('/place-order');
+          if (index == 2 && (user?.role == UserRole.superUser || user?.role == UserRole.supplier)) {
+            context.go('/admin/orders');
+          }
         },
-        destinations: const [
-          NavigationDestination(
+        destinations: [
+          const NavigationDestination(
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard),
             label: 'Dashboard',
           ),
-          NavigationDestination(
+          const NavigationDestination(
             icon: Icon(Icons.add_shopping_cart_outlined),
             selectedIcon: Icon(Icons.add_shopping_cart),
             label: 'New Order',
           ),
-          NavigationDestination(
-            icon: Icon(Icons.message_outlined),
-            selectedIcon: Icon(Icons.message),
-            label: 'Messages',
-          ),
+          if (user?.role == UserRole.superUser || user?.role == UserRole.supplier)
+            const NavigationDestination(
+              icon: Icon(Icons.admin_panel_settings_outlined),
+              selectedIcon: Icon(Icons.admin_panel_settings),
+              label: 'Admin',
+            )
+          else
+            const NavigationDestination(
+              icon: Icon(Icons.person_outlined),
+              selectedIcon: Icon(Icons.person),
+              label: 'Profile',
+            ),
         ],
         child: Scaffold(
           appBar: AppBar(

@@ -4,6 +4,7 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/products/products_bloc.dart';
 import '../../repositories/product_repository.dart';
+import '../../widgets/navigation/admin_shell.dart';
 import 'product_form_dialog.dart';
 import 'product_import_dialog.dart';
 
@@ -16,7 +17,10 @@ class ProductManagementScreen extends StatelessWidget {
       create: (context) => ProductsBloc(
         productRepository: context.read<ProductRepository>(),
       )..add(const ProductsFetchRequested(language: ProductLanguage.japanese)),
-      child: const _ProductManagementContent(),
+      child: const AdminShell(
+        selectedIndex: 1,
+        child: _ProductManagementContent(),
+      ),
     );
   }
 }

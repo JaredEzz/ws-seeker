@@ -23,5 +23,28 @@
 - Ran build_runner in shared/ and frontend/
 
 ### Step 2: Enhance Order Form + Profile Pre-fill
+**Status:** Complete
+
+- Pre-fill address, discord name, phone from user profile via `OrderFormProfileLoaded` event
+- Added shipping method selector (JPN: FedEx options, CN: Air/Ocean/Mix)
+- Added order summary with line-item pricing and 13% markup estimate
+- Added language-dependent payment instructions card (informational)
+- Made phone number required in address form
+- Fixed design_tokens exhaustive switch for awaitingQuote/cancelled
+
+### Step 3: Admin Navigation Shell + Step 4: Order Management Screen
+**Status:** Complete
+
+- Created `AdminShell` widget with NavigationRail (Orders, Products, Invoices)
+- Created `OrderManagementScreen` — PRIMARY spreadsheet replacement
+  - Filterable DataTable: language, status, search (by name/discord/order#/product)
+  - Status dropdown with forward-progression + cancel
+  - Language badges (JPN red, CN amber, KR blue)
+  - Columns: Order #, Language, Customer, Discord, Items, Total, Status, Shipping, Tracking, Date, Actions
+- Updated router: `/admin/orders`, admin users redirect to admin on login
+- Wrapped ProductManagementScreen with AdminShell (selectedIndex: 1)
+- Dashboard nav: admin users see "Admin" tab, wholesalers see "Profile"
+
+### Step 5: Invoice UI
 **Status:** Starting next
 

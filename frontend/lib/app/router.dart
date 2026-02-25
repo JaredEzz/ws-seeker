@@ -8,6 +8,7 @@ import '../screens/auth/auth_callback_screen.dart';
 import '../screens/dashboard/dashboard_screen.dart';
 import '../screens/orders/order_form_screen.dart';
 import '../screens/orders/order_detail_screen.dart';
+import '../screens/admin/order_management_screen.dart';
 import '../screens/admin/product_management_screen.dart';
 import 'go_router_refresh_stream.dart';
 
@@ -40,6 +41,11 @@ class AppRouter {
 
       // Authenticated -> Go to Dashboard if on Login
       if (loggingIn) {
+        // Admin users go straight to admin orders
+        if (authState.user.role == UserRole.superUser ||
+            authState.user.role == UserRole.supplier) {
+          return '/admin/orders';
+        }
         return '/dashboard';
       }
 
@@ -67,6 +73,11 @@ class AppRouter {
         builder: (context, state) => OrderDetailScreen(
           orderId: state.pathParameters['id']!,
         ),
+      ),
+      // Admin routes
+      GoRoute(
+        path: '/admin/orders',
+        builder: (context, state) => const OrderManagementScreen(),
       ),
       GoRoute(
         path: '/admin/products',

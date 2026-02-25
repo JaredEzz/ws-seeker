@@ -58,9 +58,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
   ) async {
     emit(const CommentsLoading());
     try {
-      final comments = await _orderRepository
-          .watchComments(event.orderId)
-          .first;
+      final comments = await _orderRepository.fetchComments(event.orderId);
       emit(CommentsLoaded(comments: comments));
     } catch (e) {
       emit(CommentsFailure(message: e.toString()));
@@ -73,8 +71,9 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
   ) async {
     try {
       await _orderRepository.addComment(event.orderId, event.content);
-      // Re-fetch comments after sending
-      add(CommentsFetchRequested(orderId: event.orderId));
+      // Fetch comments directly instead of re-dispatching event
+      final comments = await _orderRepository.fetchComments(event.orderId);
+      emit(CommentsLoaded(comments: comments));
     } catch (e) {
       emit(CommentsFailure(message: e.toString()));
     }

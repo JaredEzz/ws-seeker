@@ -9,6 +9,7 @@ abstract interface class OrderRepository {
   Future<Order> getOrderById(String id);
   Future<Order> createOrder(CreateOrderRequest request);
   Future<void> updateOrder(String id, UpdateOrderRequest request);
+  Future<List<OrderComment>> fetchComments(String orderId);
   Stream<List<OrderComment>> watchComments(String orderId);
   Future<void> addComment(String orderId, String content);
 }
@@ -106,10 +107,17 @@ class HttpOrderRepository implements OrderRepository {
   }
 
   @override
+  Future<List<OrderComment>> fetchComments(String orderId) => _fetchComments(orderId);
+
+  @override
   Stream<List<OrderComment>> watchComments(String orderId) {
-    // Poll-based implementation since we're using HTTP, not Firestore streams
-    return Stream.periodic(const Duration(seconds: 10))
+    // Emit immediately, then poll every 10 seconds
+    return Stream.value(null)
         .asyncMap((_) => _fetchComments(orderId))
+        .followedBy(
+          Stream.periodic(const Duration(seconds: 10))
+              .asyncMap((_) => _fetchComments(orderId)),
+        )
         .distinct();
   }
 
@@ -337,6 +345,21 @@ class MockOrderRepository implements OrderRepository {
         updatedAt: DateTime.now(),
       );
     }
+  }
+
+  @override
+  Future<List<OrderComment>> fetchComments(String orderId) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return [
+      OrderComment(
+        id: 'c1',
+        orderId: orderId,
+        userId: 'system',
+        userName: 'System',
+        content: 'Order created',
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      ),
+    ];
   }
 
   @override

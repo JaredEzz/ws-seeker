@@ -237,12 +237,12 @@ class OrdersHandler {
   }
 
   OrderStatus? _parseStatus(String status) {
-    return switch (status.toLowerCase()) {
+    return switch (status) {
       'submitted' => OrderStatus.submitted,
-      'awaiting_quote' => OrderStatus.awaitingQuote,
+      'awaitingQuote' || 'awaiting_quote' => OrderStatus.awaitingQuote,
       'invoiced' => OrderStatus.invoiced,
-      'payment_pending' => OrderStatus.paymentPending,
-      'payment_received' => OrderStatus.paymentReceived,
+      'paymentPending' || 'payment_pending' => OrderStatus.paymentPending,
+      'paymentReceived' || 'payment_received' => OrderStatus.paymentReceived,
       'shipped' => OrderStatus.shipped,
       'delivered' => OrderStatus.delivered,
       'cancelled' => OrderStatus.cancelled,

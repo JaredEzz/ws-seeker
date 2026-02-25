@@ -21,13 +21,13 @@ enum ProductLanguage {
 enum OrderStatus {
   @JsonValue('submitted')
   submitted,
-  @JsonValue('awaiting_quote')
+  @JsonValue('awaitingQuote')
   awaitingQuote,
   @JsonValue('invoiced')
   invoiced,
-  @JsonValue('payment_pending')
+  @JsonValue('paymentPending')
   paymentPending,
-  @JsonValue('payment_received')
+  @JsonValue('paymentReceived')
   paymentReceived,
   @JsonValue('shipped')
   shipped,

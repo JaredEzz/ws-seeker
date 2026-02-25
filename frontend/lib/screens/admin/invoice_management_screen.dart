@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:web/web.dart' as web;
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../repositories/invoice_repository.dart';
 import '../../widgets/navigation/admin_shell.dart';
@@ -292,7 +293,17 @@ class _InvoiceCard extends StatelessWidget {
                 // Actions
                 Wrap(
                   spacing: 8,
+                  runSpacing: 8,
                   children: [
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        final pdfUrl =
+                            '${AppConstants.apiBaseUrl}${ApiRoutes.invoices}/${invoice.id}/pdf';
+                        web.window.open(pdfUrl, '_blank');
+                      },
+                      icon: const Icon(Icons.picture_as_pdf, size: 18),
+                      label: const Text('Download PDF'),
+                    ),
                     if (invoice.status == InvoiceStatus.draft)
                       FilledButton.icon(
                         onPressed: () =>

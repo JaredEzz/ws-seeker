@@ -9,12 +9,17 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 import '../middleware/auth_middleware.dart';
 import '../services/invoice_service.dart';
+import '../services/pdf_service.dart';
 
 class InvoicesHandler {
   final InvoiceService _invoiceService;
+  final PdfService _pdfService;
 
-  InvoicesHandler({required InvoiceService invoiceService})
-      : _invoiceService = invoiceService;
+  InvoicesHandler({
+    required InvoiceService invoiceService,
+    PdfService? pdfService,
+  })  : _invoiceService = invoiceService,
+        _pdfService = pdfService ?? PdfService();
 
   Router get router {
     final router = Router();
@@ -30,6 +35,9 @@ class InvoicesHandler {
 
     // PATCH /api/invoices/<id>/status - Update invoice status
     router.patch('/<id>/status', _updateStatus);
+
+    // GET /api/invoices/<id>/pdf - Download invoice as PDF
+    router.get('/<id>/pdf', _downloadPdf);
 
     return router;
   }
@@ -114,6 +122,43 @@ class InvoicesHandler {
     } catch (e) {
       return Response.internalServerError(
           body: jsonEncode({'error': 'Failed to fetch invoices: $e'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+  }
+
+  /// GET /api/invoices/<id>/pdf
+  /// Returns the invoice as a downloadable PDF
+  Future<Response> _downloadPdf(Request request, String id) async {
+    final userId = request.context[AuthContext.userId] as String?;
+    if (userId == null) {
+      return Response(401,
+          body: jsonEncode({'error': 'Unauthorized'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    try {
+      final invoice = await _invoiceService.getInvoiceById(id);
+      if (invoice == null) {
+        return Response(404,
+            body: jsonEncode({'error': 'Invoice not found'}),
+            headers: {'Content-Type': 'application/json'});
+      }
+
+      final pdfBytes = await _pdfService.generateInvoicePdf(invoice);
+      final filename =
+          'Invoice_${invoice['displayInvoiceNumber'] ?? id}.pdf';
+
+      return Response.ok(
+        pdfBytes,
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': 'attachment; filename="$filename"',
+          'Content-Length': '${pdfBytes.length}',
+        },
+      );
+    } catch (e) {
+      return Response.internalServerError(
+          body: jsonEncode({'error': 'Failed to generate PDF: $e'}),
           headers: {'Content-Type': 'application/json'});
     }
   }

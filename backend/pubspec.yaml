@@ -28,6 +28,9 @@ dependencies:
   # Email
   mailer: ^6.1.2
 
+  # PDF generation
+  pdf: ^3.11.1
+
 dev_dependencies:
   test: ^1.25.7
   mocktail: ^1.0.3

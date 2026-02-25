@@ -104,17 +104,16 @@ class AuthService {
 
     final result = <String, dynamic>{'token': customToken};
 
-    // Check if user is an admin (superUser/supplier) — they bypass segment check
-    var isAdmin = false;
+    // Check if user already exists in Firestore — existing users bypass Shopify check
+    var existingUser = false;
     try {
       final userDoc = await _firestore
           .collection('users')
           .doc(userRecord.uid)
           .get();
       if (userDoc.exists) {
+        existingUser = true;
         final userData = userDoc.data()!;
-        final role = userData['role'] as String?;
-        isAdmin = role == 'super_user' || role == 'supplier';
         if (userData['role'] != null) {
           result['role'] = userData['role'];
         }
@@ -126,8 +125,9 @@ class AuthService {
       print('Firestore user lookup failed (non-blocking): $e');
     }
 
-    // Validate Shopify segment membership (skip for admins)
-    if (!isAdmin &&
+    // Validate Shopify segment membership
+    // Skip for admins and users already provisioned in Firestore
+    if (!existingUser &&
         _shopifyService != null &&
         _shopifyService.isConfigured) {
       final inSegment =
@@ -139,9 +139,9 @@ class AuthService {
     }
 
     // Try Shopify sync (non-blocking - failure must not prevent login)
-    // Skip for admins so Shopify doesn't overwrite their elevated role.
+    // Skip for existing users so Shopify doesn't overwrite manually set roles.
     try {
-      if (!isAdmin &&
+      if (!existingUser &&
           _shopifyService != null &&
           _userService != null &&
           _shopifyService.isConfigured) {

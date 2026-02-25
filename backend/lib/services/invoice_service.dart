@@ -48,13 +48,23 @@ class InvoiceService {
     }).toList();
 
     final now = DateTime.now().toUtc();
+    final airShipping =
+        (orderData['airShippingCost'] as num?)?.toDouble() ?? 0;
+    final oceanShipping =
+        (orderData['oceanShippingCost'] as num?)?.toDouble() ?? 0;
+    final displayOrderNumber = orderData['displayOrderNumber'] as String?;
+
     final invoiceData = {
       'orderId': orderId,
       'lineItems': lineItems,
       'subtotal': (orderData['subtotal'] as num).toDouble(),
       'markup': (orderData['markup'] as num).toDouble(),
       'tariff': (orderData['estimatedTariff'] as num).toDouble(),
+      if (airShipping > 0) 'airShippingCost': airShipping,
+      if (oceanShipping > 0) 'oceanShippingCost': oceanShipping,
       'total': (orderData['totalAmount'] as num).toDouble(),
+      if (displayOrderNumber != null)
+        'displayInvoiceNumber': 'INV-$displayOrderNumber',
       'status': 'draft',
       'createdAt': FieldValue.serverTimestamp,
     };

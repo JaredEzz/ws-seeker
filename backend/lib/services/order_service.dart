@@ -30,17 +30,11 @@ class OrderService {
   /// Atomically increment and return the next order number for a language.
   ///
   /// Uses a per-language counter document in `counters/orders_{language}`.
-  /// FieldValue.increment is atomic on the server side.
+  /// `set` with `FieldValue.increment` is atomic — creates the doc with
+  /// count=1 if missing, or increments if it exists.
   Future<int> _nextOrderNumber(ProductLanguage language) async {
     final docRef = _countersRef.doc('orders_${language.name}');
-
-    try {
-      await docRef.update({'count': const FieldValue.increment(1)});
-    } catch (_) {
-      // Document doesn't exist yet — initialize it
-      await docRef.set({'count': 1});
-    }
-
+    await docRef.set({'count': const FieldValue.increment(1)});
     final doc = await docRef.get();
     return (doc.data()!['count'] as num).toInt();
   }
@@ -232,9 +226,7 @@ class OrderService {
     // Validate and apply status transition
     if (request.status != null) {
       final currentStatus = _parseOrderStatus(currentData['status'] as String);
-      if (currentStatus != null) {
-        _validateStatusTransition(currentStatus, request.status!);
-      }
+      _validateStatusTransition(currentStatus, request.status!);
       updates['status'] = request.status!.name;
     }
 
@@ -333,17 +325,17 @@ class OrderService {
     return (productData['basePrice'] as num).toDouble();
   }
 
-  OrderStatus? _parseOrderStatus(String status) {
+  OrderStatus _parseOrderStatus(String status) {
     return switch (status) {
       'submitted' => OrderStatus.submitted,
-      'awaiting_quote' => OrderStatus.awaitingQuote,
+      'awaitingQuote' => OrderStatus.awaitingQuote,
       'invoiced' => OrderStatus.invoiced,
-      'payment_pending' => OrderStatus.paymentPending,
-      'payment_received' => OrderStatus.paymentReceived,
+      'paymentPending' => OrderStatus.paymentPending,
+      'paymentReceived' => OrderStatus.paymentReceived,
       'shipped' => OrderStatus.shipped,
       'delivered' => OrderStatus.delivered,
       'cancelled' => OrderStatus.cancelled,
-      _ => null,
+      _ => throw StateError('Unknown order status: $status'),
     };
   }
 }

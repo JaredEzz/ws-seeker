@@ -1,6 +1,8 @@
 import 'package:dart_firebase_admin/firestore.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
+import '../utils/firestore_helpers.dart';
+
 class UserService {
   final Firestore _firestore;
 
@@ -13,7 +15,7 @@ class UserService {
   Future<Map<String, dynamic>?> getUser(String userId) async {
     final doc = await _usersRef.doc(userId).get();
     if (!doc.exists) return null;
-    final data = doc.data()!;
+    final data = sanitizeDoc(doc.data()!);
     data['id'] = doc.id;
     return data;
   }

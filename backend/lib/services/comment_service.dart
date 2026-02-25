@@ -3,6 +3,8 @@ library;
 
 import 'package:dart_firebase_admin/firestore.dart';
 
+import '../utils/firestore_helpers.dart';
+
 class CommentService {
   final Firestore _firestore;
 
@@ -56,7 +58,7 @@ class CommentService {
         .get();
 
     return snapshot.docs.map((doc) {
-      final data = doc.data();
+      final data = sanitizeDoc(doc.data());
       data['id'] = doc.id;
       return data;
     }).toList();

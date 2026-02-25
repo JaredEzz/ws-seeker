@@ -14,6 +14,19 @@ The product catalog is stored in Firestore and organized into separate language-
 | `imageUrl` | String? | Link to product image |
 | `isActive` | Boolean | Whether product is visible to users |
 | `updatedAt` | Timestamp | Last modified time |
+| `boxPriceJpy` | Number? | JPN: Box price in JPY |
+| `noShrinkPriceJpy` | Number? | JPN: No-shrink price in JPY |
+| `casePriceJpy` | Number? | JPN: Case price in JPY |
+| `boxPriceUsd` | Number? | JPN: Box price in USD |
+| `boxPriceUsdWithTariff` | Number? | JPN: Box price in USD with tariff |
+| `noShrinkPriceUsd` | Number? | JPN: No-shrink price in USD |
+| `noShrinkPriceUsdWithTariff` | Number? | JPN: No-shrink + tariff USD |
+| `casePriceUsd` | Number? | JPN: Case price in USD |
+| `casePriceUsdWithTariff` | Number? | JPN: Case price + tariff USD |
+| `category` | String? | CN: "official" or "fan_art" |
+| `specifications` | String? | Pack hierarchy (e.g. "1 Case = 20 Boxes") |
+| `notes` | String? | Availability remarks |
+| `quoteRequired` | Boolean | True when price is "ask" (default: false) |
 
 ## CSV Import
 The fastest way to populate products is via CSV import.
@@ -87,14 +100,27 @@ Used for Excel/CSV ingestion. If a product with the same SKU and language exists
 - `DELETE /:id`: Soft-delete product (sets `isActive: false`).
 
 ## Implementation Details
-- **Frontend Repository**: `FirestoreProductRepository` implements the `ProductRepository` interface.
-- **Backend Service**: `ProductService` handles Firestore operations using `dart_firebase_admin`.
-- **Security**: Controlled via `firestore.rules`. `read` is allowed for authenticated users; `write` requires the `superUser` role.
+- **Frontend Repository**: `HttpProductRepository` implements the `ProductRepository` interface (calls backend API with Firebase Auth tokens).
+- **Frontend State**: `ProductsBloc` handles fetch/create/update/delete events with auto-reload.
+- **Backend Service**: `ProductService` handles Firestore operations using `dart_firebase_admin`. Supports name+language fallback dedup for products without SKU.
+- **Seed Script**: `backend/bin/seed_products.dart` — imports 292 products from `docs/spreadsheet_data/*.json`.
+- **Security**: Backend middleware enforces roles. `read` allowed for authenticated users; `write` requires `superUser` or `supplier` role.
 
 ## Admin UI Features
-- **Language Filter**: Switch between Japanese, Chinese, and Korean catalogs
-- **CSV Import**: Upload CSV files with drag-and-drop or file picker
-- **Import Preview**: Review parsed products before uploading
-- **Import Summary**: See how many products were created/updated/failed
-- **Product List**: View all active products with SKU and price
+- **Language Filter**: SegmentedButton to switch between Japanese, Chinese, and Korean catalogs
+- **Rich Product Cards**: Language-specific pricing display (JPN: box/case/no-shrink USD prices with tariff; CN: category badges; KR: simple box price)
+- **Quote Required Badge**: "Ask for Quote" indicator for products without fixed prices
+- **Category Badges**: Official / Fan Art chips for Chinese products
+- **Create/Edit Dialog**: Language-adaptive form fields (JPN: multi-price grids; CN: category + specs)
+- **CSV Import**: Upload, preview, bulk import via repository
+- **CRUD Actions**: PopupMenuButton per product for Edit/Delete
+
+## Seeded Product Counts
+| Language | Source | Count |
+|----------|--------|-------|
+| Japanese | `jpn_price_sheet.json` | 47 |
+| Chinese (Official) | `cn_official_product.json` | 55 |
+| Chinese (Fan Art) | `cn_fan_art_product.json` | 136 |
+| Korean | `kr_price_sheet.json` | 55 |
+| **Total** | | **292** (+ ~115 from CN Price Sheet in Spreadsheet 2, partially overlapping)
 

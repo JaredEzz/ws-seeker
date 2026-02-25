@@ -1,7 +1,11 @@
 # CromaTCG Product & Order Data Schema
 
-**Source:** [Google Sheet — CromaTCG Order Status & Price Sheet](https://docs.google.com/spreadsheets/d/1oOuv-7unlDgXOzm73w5VNtk2ItRocb3UE4ow6uVzeZs)
+**Source 1 — Product Catalogs & Historical Orders:**
+[Google Sheet](https://docs.google.com/spreadsheets/d/1oOuv-7unlDgXOzm73w5VNtk2ItRocb3UE4ow6uVzeZs)
 **Raw data:** `docs/spreadsheet_data/` (JSON + CSV exports)
+
+**Source 2 — Live Order Tracking & Invoicing:**
+[Google Sheet](https://docs.google.com/spreadsheets/d/1uIQXWX564-YHj9nfxUZdDsiORE-JJVtvMcJgGd2nbVE)
 
 ---
 
@@ -150,12 +154,82 @@
 
 ---
 
+## Spreadsheet 2 — Live Order Tracking
+
+### Chinese Orders (CN1–CN34)
+
+| Column | Description | App Mapping |
+|--------|-------------|-------------|
+| Order # | CN-prefixed sequential (CN1, CN34) | `displayOrderNumber` (gap — needs implementation) |
+| Timestamp | Date placed | `order.createdAt` |
+| Email Address | Customer email | `user.email` via auth |
+| First and Last Name | Customer name | `shippingAddress.fullName` |
+| Discord Name | Discord handle | `discordName` (gap — needs field) |
+| Shipping Address | Full address | `order.shippingAddress` |
+| Phone Number | Contact phone | `shippingAddress.phone` |
+| Payment Method | Venmo, ACH Bank Transfer, PayPal | `paymentMethod` (gap — needs field) |
+| Shipping Method | Air, Ocean, Mix | `shippingMethod` (gap — needs field) |
+| Product Requested | Free-text product list | `order.items[]` (structured) |
+| Quote | Line-item pricing (product: $X × qty = $total + shipping) | Quote workflow (gap — not implemented) |
+| Invoice Status | Sent, etc. | `invoice.status` |
+| Payment Status | Pending Payment, Completed, Awaiting Quote, Cancelled | `order.status` (partial — missing awaitingQuote, cancelled) |
+| Tracking Provided | Sent / Yes / No | Tracking notification (gap) |
+| Tracking | Tracking number(s) | `order.trackingNumber` |
+| Notes | Internal notes | `adminNotes` (gap — needs field) |
+| Alibaba # | CN supplier shipment reference | `alibabaNumber` (gap — CN-specific) |
+
+### Korean Orders (KR1–KR12)
+Same structure as Chinese orders minus Alibaba # and Discord Name columns.
+
+### Invoice Template (CROMA WHOLESALE)
+```
+CROMA WHOLESALE
+527 W State Street, Unit 102
+Pleasant Grove UT 84062
+
+Invoice #: [INV-CN34]    Due Date: [date]
+
+Item Description          Qty    Unit Price    Total
+─────────────────────────────────────────────────────
+Product A                  2      $50.00       $100.00
+Product B                  1      $75.00       $75.00
+
+                                  SUBTOTAL     $175.00
+                    AIR SHIPPING + Tariffs      $25.00
+                  OCEAN SHIPPING + Tariffs       $0.00
+                           BALANCE TOTAL       $200.00
+```
+
+### CN Price Sheet (~115 products)
+Overlaps with CN Official/Fan Art imports from Spreadsheet 1. Contains:
+- Product images (column, but image data not exportable)
+- Product Name, Specifications, Price (USD), Remarks
+- ~115 products including booster boxes, display sets, gift boxes, magnets, art boards, metal cards
+
+### Taylor Tracking
+Subset of CN+KR orders managed by Taylor (superUser). Contains same columns as main order tabs. Replaced by role-filtered Order Management Screen.
+
+---
+
+## Import Status
+
+| Data | Imported | Method |
+|------|----------|--------|
+| JPN products (47) | Yes | Seed script from JSON |
+| CN Official products (55) | Yes | Seed script from JSON |
+| CN Fan Art products (136) | Yes | Seed script from JSON |
+| KR products (55) | Yes | Seed script from JSON |
+| CN Price Sheet (~115) | Partial | Overlaps existing; needs reconciliation |
+| Historical orders (JPN/CN/KR) | No | Reference only |
+| Active orders (CN1-34, KR1-12) | No | Will be created through app UI going forward |
+
 ## Import Considerations
 
-1. **Japanese products** have dual pricing (JPY + USD) with tariff variants — need to store both
-2. **Chinese products** are split into Official and Fan Art — may want a category/subcategory field
-3. **Korean products** use a 2-column layout — need custom parsing
-4. **"ask" prices** should be handled as quote-required (null price, flag for manual quote)
-5. **Specifications** field contains pack hierarchy info — useful for display but complex to parse
-6. **No product IDs** in the sheets — will need to generate stable IDs from name+language
-7. **Duplicate sheets** ("Copy of CN...") should be ignored — they appear to be backups
+1. **Japanese products** have dual pricing (JPY + USD) with tariff variants — **implemented** (stored as separate fields)
+2. **Chinese products** are split into Official and Fan Art — **implemented** (category field)
+3. **Korean products** use a 2-column layout — **implemented** (custom parser in seed script)
+4. **"ask" prices** handled as `quoteRequired: true` — **implemented**
+5. **Specifications** field stored as-is — **implemented**
+6. **No product IDs** in the sheets — **solved** via name+language dedup in seed script
+7. **Duplicate sheets** ("Copy of CN...") — ignored
+8. **CN Price Sheet** from Spreadsheet 2 needs reconciliation with existing CN imports — **TODO**

@@ -39,6 +39,29 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
   ProductLanguage? _languageFilter;
   OrderStatus? _statusFilter;
   String _searchQuery = '';
+  int? _sortColumnIndex;
+  bool _sortAscending = true;
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  bool get _hasActiveFilters =>
+      _languageFilter != null ||
+      _statusFilter != null ||
+      _searchQuery.isNotEmpty;
+
+  void _clearAllFilters() {
+    setState(() {
+      _languageFilter = null;
+      _statusFilter = null;
+      _searchQuery = '';
+      _searchController.clear();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,14 +99,16 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
           _FilterBar(
             languageFilter: _languageFilter,
             statusFilter: _statusFilter,
-            searchQuery: _searchQuery,
+            searchController: _searchController,
             showLanguageFilter: user?.role != UserRole.supplier,
+            hasActiveFilters: _hasActiveFilters,
             onLanguageChanged: (lang) =>
                 setState(() => _languageFilter = lang),
             onStatusChanged: (status) =>
                 setState(() => _statusFilter = status),
             onSearchChanged: (query) =>
                 setState(() => _searchQuery = query),
+            onClearAll: _clearAllFilters,
           ),
           const Divider(height: 1),
           // Orders table
@@ -97,13 +122,22 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
                   return Center(child: Text('Error: ${state.message}'));
                 }
                 if (state is OrdersLoaded) {
-                  final filtered = _applyFilters(state.orders);
+                  var filtered = _applyFilters(state.orders);
+                  filtered = _sortOrders(filtered);
                   if (filtered.isEmpty) {
                     return const Center(child: Text('No orders match filters'));
                   }
                   return _OrdersTable(
                     orders: filtered,
                     currentUserRole: user?.role,
+                    sortColumnIndex: _sortColumnIndex,
+                    sortAscending: _sortAscending,
+                    onSort: (colIdx, asc) {
+                      setState(() {
+                        _sortColumnIndex = colIdx;
+                        _sortAscending = asc;
+                      });
+                    },
                   );
                 }
                 return const SizedBox.shrink();
@@ -136,80 +170,147 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
     }
     return result;
   }
+
+  List<Order> _sortOrders(List<Order> orders) {
+    if (_sortColumnIndex == null) return orders;
+
+    final sorted = List<Order>.of(orders);
+    Comparable Function(Order) keyOf;
+
+    switch (_sortColumnIndex!) {
+      case 0:
+        keyOf = (o) => o.displayOrderNumber ?? o.id;
+      case 1:
+        keyOf = (o) => o.language.name;
+      case 2:
+        keyOf = (o) => o.shippingAddress.fullName;
+      case 3:
+        keyOf = (o) => o.discordName ?? '';
+      case 4:
+        keyOf = (o) => o.items.length;
+      case 5:
+        keyOf = (o) => o.totalAmount;
+      case 6:
+        keyOf = (o) => o.status.index;
+      case 7:
+        keyOf = (o) => o.shippingMethod ?? '';
+      case 8:
+        keyOf = (o) => o.trackingNumber ?? '';
+      case 9:
+        keyOf = (o) => o.createdAt;
+      default:
+        return orders;
+    }
+
+    sorted.sort((a, b) {
+      final cmp = keyOf(a).compareTo(keyOf(b));
+      return _sortAscending ? cmp : -cmp;
+    });
+    return sorted;
+  }
 }
 
 class _FilterBar extends StatelessWidget {
   final ProductLanguage? languageFilter;
   final OrderStatus? statusFilter;
-  final String searchQuery;
+  final TextEditingController searchController;
   final bool showLanguageFilter;
+  final bool hasActiveFilters;
   final ValueChanged<ProductLanguage?> onLanguageChanged;
   final ValueChanged<OrderStatus?> onStatusChanged;
   final ValueChanged<String> onSearchChanged;
+  final VoidCallback onClearAll;
 
   const _FilterBar({
     required this.languageFilter,
     required this.statusFilter,
-    required this.searchQuery,
+    required this.searchController,
     this.showLanguageFilter = true,
+    required this.hasActiveFilters,
     required this.onLanguageChanged,
     required this.onStatusChanged,
     required this.onSearchChanged,
+    required this.onClearAll,
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12),
-      child: Wrap(
-        spacing: 12,
-        runSpacing: 8,
-        crossAxisAlignment: WrapCrossAlignment.center,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 200,
-            child: TextField(
-              decoration: const InputDecoration(
-                hintText: 'Search orders...',
-                prefixIcon: Icon(Icons.search, size: 20),
-                border: OutlineInputBorder(),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                isDense: true,
-              ),
-              onChanged: onSearchChanged,
-            ),
-          ),
-          if (showLanguageFilter)
-            DropdownButton<ProductLanguage?>(
-              value: languageFilter,
-              hint: const Text('All Languages'),
-              underline: const SizedBox.shrink(),
-              items: [
-                const DropdownMenuItem(value: null, child: Text('All Languages')),
-                ...ProductLanguage.values.map(
-                  (l) => DropdownMenuItem(
-                    value: l,
-                    child: Text(l.name.toUpperCase()),
+          // Search row
+          Row(
+            children: [
+              SizedBox(
+                width: 240,
+                child: TextField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search orders...',
+                    prefixIcon: const Icon(Icons.search, size: 20),
+                    suffixIcon: searchController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            tooltip: 'Clear search',
+                            onPressed: () {
+                              searchController.clear();
+                              onSearchChanged('');
+                            },
+                          )
+                        : null,
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 8),
+                    isDense: true,
                   ),
+                  onChanged: onSearchChanged,
+                ),
+              ),
+              if (hasActiveFilters) ...[
+                const SizedBox(width: 12),
+                TextButton.icon(
+                  icon: const Icon(Icons.clear_all, size: 18),
+                  label: const Text('Clear filters'),
+                  onPressed: onClearAll,
                 ),
               ],
-              onChanged: onLanguageChanged,
-            ),
-          DropdownButton<OrderStatus?>(
-            value: statusFilter,
-            hint: const Text('All Statuses'),
-            underline: const SizedBox.shrink(),
-            items: [
-              const DropdownMenuItem(value: null, child: Text('All Statuses')),
+            ],
+          ),
+          const SizedBox(height: 8),
+          // Filter chips
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              if (showLanguageFilter) ...[
+                const Text('Language:', style: TextStyle(fontSize: 12)),
+                ...ProductLanguage.values.map(
+                  (lang) => FilterChip(
+                    label: Text(lang.name.toUpperCase()),
+                    selected: languageFilter == lang,
+                    onSelected: (selected) =>
+                        onLanguageChanged(selected ? lang : null),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
+                const SizedBox(width: 8),
+              ],
+              const Text('Status:', style: TextStyle(fontSize: 12)),
               ...OrderStatus.values.map(
-                (s) => DropdownMenuItem(
-                  value: s,
-                  child: Text(Tokens.statusLabel(s)),
+                (status) => FilterChip(
+                  label: Text(Tokens.statusLabel(status)),
+                  selected: statusFilter == status,
+                  selectedColor:
+                      Tokens.statusColor(status).withValues(alpha: 0.25),
+                  onSelected: (selected) =>
+                      onStatusChanged(selected ? status : null),
+                  visualDensity: VisualDensity.compact,
                 ),
               ),
             ],
-            onChanged: onStatusChanged,
           ),
         ],
       ),
@@ -220,36 +321,52 @@ class _FilterBar extends StatelessWidget {
 class _OrdersTable extends StatelessWidget {
   final List<Order> orders;
   final UserRole? currentUserRole;
+  final int? sortColumnIndex;
+  final bool sortAscending;
+  final void Function(int columnIndex, bool ascending) onSort;
 
   const _OrdersTable({
     required this.orders,
     this.currentUserRole,
+    required this.sortColumnIndex,
+    required this.sortAscending,
+    required this.onSort,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    DataColumn _sortableColumn(String label, {bool numeric = false}) {
+      return DataColumn(
+        label: Text(label),
+        numeric: numeric,
+        onSort: onSort,
+      );
+    }
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SingleChildScrollView(
         child: DataTable(
           columnSpacing: 16,
+          sortColumnIndex: sortColumnIndex,
+          sortAscending: sortAscending,
           headingRowColor: WidgetStateProperty.all(
             theme.colorScheme.surfaceContainerHighest,
           ),
-          columns: const [
-            DataColumn(label: Text('Order #')),
-            DataColumn(label: Text('Language')),
-            DataColumn(label: Text('Customer')),
-            DataColumn(label: Text('Discord')),
-            DataColumn(label: Text('Items')),
-            DataColumn(label: Text('Total'), numeric: true),
-            DataColumn(label: Text('Status')),
-            DataColumn(label: Text('Shipping')),
-            DataColumn(label: Text('Tracking')),
-            DataColumn(label: Text('Date')),
-            DataColumn(label: Text('Actions')),
+          columns: [
+            _sortableColumn('Order #'),
+            _sortableColumn('Language'),
+            _sortableColumn('Customer'),
+            _sortableColumn('Discord'),
+            _sortableColumn('Items'),
+            _sortableColumn('Total', numeric: true),
+            _sortableColumn('Status'),
+            _sortableColumn('Shipping'),
+            _sortableColumn('Tracking'),
+            _sortableColumn('Date'),
+            const DataColumn(label: Text('Actions')),
           ],
           rows: orders.map((order) => _buildRow(context, order)).toList(),
         ),

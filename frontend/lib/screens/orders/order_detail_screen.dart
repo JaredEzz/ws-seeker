@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
@@ -5,6 +6,7 @@ import '../../app/design_tokens.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../repositories/order_repository.dart';
+import '../../services/storage_service.dart';
 import '../../widgets/orders/comment_section.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -410,13 +412,46 @@ class _ProofOfPaymentCard extends StatefulWidget {
 }
 
 class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
-  final _urlController = TextEditingController();
-  bool _submitting = false;
+  bool _uploading = false;
+  String? _uploadedFileName;
 
-  @override
-  void dispose() {
-    _urlController.dispose();
-    super.dispose();
+  Future<void> _pickAndUpload() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'gif', 'webp', 'pdf'],
+      withData: true,
+    );
+
+    if (result == null || result.files.isEmpty) return;
+    final file = result.files.first;
+    if (file.bytes == null) return;
+
+    setState(() {
+      _uploading = true;
+      _uploadedFileName = file.name;
+    });
+
+    try {
+      final storageService = StorageService();
+      final downloadUrl = await storageService.uploadProofOfPayment(
+        orderId: widget.order.id,
+        filename: file.name,
+        bytes: file.bytes!,
+      );
+      await widget.onUploaded(downloadUrl);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Payment proof uploaded')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload failed: $e')),
+        );
+      }
+    }
+    if (mounted) setState(() => _uploading = false);
   }
 
   @override
@@ -430,13 +465,13 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Proof of Payment',
-                style: theme.textTheme.titleMedium),
+            Text('Proof of Payment', style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             if (hasProof) ...[
               Row(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  const Icon(Icons.check_circle,
+                      color: Colors.green, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -448,72 +483,55 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                 ],
               ),
               const SizedBox(height: 8),
-              Text(
-                widget.order.proofOfPaymentUrl!,
-                style: theme.textTheme.bodySmall,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
+              // Show as clickable link if it's a URL
+              InkWell(
+                onTap: () {
+                  // Could open in new tab — for now just show the URL
+                },
+                child: Text(
+                  widget.order.proofOfPaymentUrl!,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(height: 12),
+              // Allow re-upload
+              OutlinedButton.icon(
+                onPressed: _uploading ? null : _pickAndUpload,
+                icon: const Icon(Icons.upload_file, size: 18),
+                label: const Text('Upload New'),
               ),
             ] else ...[
               Text(
-                'Upload a screenshot or link to your payment proof.',
+                'Upload a screenshot of your payment confirmation.',
                 style: theme.textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _urlController,
-                      decoration: const InputDecoration(
-                        hintText: 'Paste image URL or payment reference...',
-                        border: OutlineInputBorder(),
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        isDense: true,
-                      ),
+              if (_uploading) ...[
+                Row(
+                  children: [
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  FilledButton(
-                    onPressed: _submitting
-                        ? null
-                        : () async {
-                            final url = _urlController.text.trim();
-                            if (url.isEmpty) return;
-                            setState(() => _submitting = true);
-                            try {
-                              await widget.onUploaded(url);
-                              _urlController.clear();
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Payment proof submitted')),
-                                );
-                              }
-                            } catch (e) {
-                              if (mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error: $e')),
-                                );
-                              }
-                            }
-                            if (mounted) {
-                              setState(() => _submitting = false);
-                            }
-                          },
-                    child: _submitting
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child:
-                                CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text('Submit'),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Uploading ${_uploadedFileName ?? "file"}...',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+              ] else
+                FilledButton.icon(
+                  onPressed: _pickAndUpload,
+                  icon: const Icon(Icons.upload_file),
+                  label: const Text('Upload Screenshot'),
+                ),
             ],
           ],
         ),

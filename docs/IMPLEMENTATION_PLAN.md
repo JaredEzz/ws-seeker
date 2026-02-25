@@ -5,8 +5,8 @@
 **Phase 0 (Product Import & Admin UI) — COMPLETE**
 All product catalog tabs from both spreadsheets are imported and manageable via the admin UI.
 
-**Phase 1 (Critical — Order Model + Form + Admin) — IN PROGRESS**
-This is the next implementation phase. It replaces the Google Forms (order intake) and live order tracking spreadsheet (order management).
+**Phase 1 (Critical — Order Model + Form + Admin) — COMPLETE**
+All Google Forms replaced with order form (profile pre-fill, shipping method, payment info). Admin order management screen replaces live tracking spreadsheet. Invoice UI with CROMA WHOLESALE template. Proof of payment upload.
 
 ---
 

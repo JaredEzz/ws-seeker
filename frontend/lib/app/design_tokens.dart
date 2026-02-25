@@ -37,28 +37,34 @@ abstract final class Tokens {
   // Semantic status (gem-toned)
   // ---------------------------------------------------------------------------
   static const statusSubmitted       = Color(0xFF3b82f6); // Sapphire
+  static const statusAwaitingQuote   = Color(0xFF6366f1); // Indigo
   static const statusInvoiced        = Color(0xFFf59e0b); // Amber
   static const statusPaymentPending  = Color(0xFFeab308); // Citrine
   static const statusPaymentReceived = Color(0xFF14b8a6); // Teal
   static const statusShipped         = Color(0xFF8b5cf6); // Amethyst
   static const statusDelivered       = Color(0xFF10b981); // Emerald
+  static const statusCancelled       = Color(0xFF6b7280); // Gray
 
   static Color statusColor(OrderStatus status) => switch (status) {
     OrderStatus.submitted       => statusSubmitted,
+    OrderStatus.awaitingQuote   => statusAwaitingQuote,
     OrderStatus.invoiced        => statusInvoiced,
     OrderStatus.paymentPending  => statusPaymentPending,
     OrderStatus.paymentReceived => statusPaymentReceived,
     OrderStatus.shipped         => statusShipped,
     OrderStatus.delivered       => statusDelivered,
+    OrderStatus.cancelled       => statusCancelled,
   };
 
   static String statusLabel(OrderStatus status) => switch (status) {
     OrderStatus.submitted       => 'Submitted',
+    OrderStatus.awaitingQuote   => 'Awaiting Quote',
     OrderStatus.invoiced        => 'Invoice Sent',
     OrderStatus.paymentPending  => 'Payment Pending',
     OrderStatus.paymentReceived => 'Payment Received',
     OrderStatus.shipped         => 'Shipped',
     OrderStatus.delivered       => 'Delivered',
+    OrderStatus.cancelled       => 'Cancelled',
   };
 
   // ---------------------------------------------------------------------------

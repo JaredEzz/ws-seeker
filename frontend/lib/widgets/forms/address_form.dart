@@ -98,7 +98,7 @@ class _AddressFormState extends State<AddressForm> {
           ],
         ),
         const SizedBox(height: 12),
-        _buildField(_phoneController, 'Phone (optional)'),
+        _buildField(_phoneController, 'Phone', required: true),
       ],
     );
   }

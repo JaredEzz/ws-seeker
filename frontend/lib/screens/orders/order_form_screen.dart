@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/order_form_bloc.dart';
 import '../../repositories/order_repository.dart';
 import '../../repositories/product_repository.dart';
@@ -13,10 +15,18 @@ class OrderFormScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => OrderFormBloc(
-        productRepository: context.read<ProductRepository>(),
-        orderRepository: context.read<OrderRepository>(),
-      ),
+      create: (context) {
+        final bloc = OrderFormBloc(
+          productRepository: context.read<ProductRepository>(),
+          orderRepository: context.read<OrderRepository>(),
+        );
+        // Pre-fill from user profile
+        final authState = context.read<AuthBloc>().state;
+        if (authState is AuthAuthenticated) {
+          bloc.add(OrderFormProfileLoaded(authState.user));
+        }
+        return bloc;
+      },
       child: const _OrderFormContent(),
     );
   }
@@ -32,6 +42,7 @@ class _OrderFormContent extends StatefulWidget {
 class _OrderFormContentState extends State<_OrderFormContent> {
   int _currentStep = 0;
   ShippingAddress? _shippingAddress;
+  bool _addressInitialized = false;
 
   @override
   Widget build(BuildContext context) {
@@ -50,32 +61,16 @@ class _OrderFormContentState extends State<_OrderFormContent> {
               SnackBar(content: Text('Error: ${state.errorMessage}')),
             );
           }
+          // Initialize address from profile once
+          if (!_addressInitialized && state.prefillAddress != null) {
+            _shippingAddress = state.prefillAddress;
+            _addressInitialized = true;
+          }
         },
         builder: (context, state) {
           return Stepper(
             currentStep: _currentStep,
-            onStepContinue: () {
-              if (_currentStep == 0 && state.language == null) return;
-              if (_currentStep == 1 && state.itemRequests.isEmpty) return;
-              
-              if (_currentStep < 2) {
-                setState(() => _currentStep++);
-              } else {
-                // Validate address before submitting
-                if (_shippingAddress == null ||
-                    _shippingAddress!.fullName.isEmpty ||
-                    _shippingAddress!.addressLine1.isEmpty ||
-                    _shippingAddress!.city.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please fill in the shipping address')),
-                  );
-                  return;
-                }
-                context.read<OrderFormBloc>().add(
-                      OrderFormSubmitted(_shippingAddress!),
-                    );
-              }
-            },
+            onStepContinue: () => _onStepContinue(context, state),
             onStepCancel: () {
               if (_currentStep > 0) {
                 setState(() => _currentStep--);
@@ -83,19 +78,46 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                 Navigator.of(context).pop();
               }
             },
+            controlsBuilder: (context, details) {
+              final isLastStep = _currentStep == 2;
+              return Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  children: [
+                    FilledButton(
+                      onPressed: state.status == OrderFormStatus.loading
+                          ? null
+                          : details.onStepContinue,
+                      child: Text(isLastStep ? 'Place Order' : 'Continue'),
+                    ),
+                    const SizedBox(width: 8),
+                    OutlinedButton(
+                      onPressed: details.onStepCancel,
+                      child: Text(_currentStep == 0 ? 'Cancel' : 'Back'),
+                    ),
+                  ],
+                ),
+              );
+            },
             steps: [
               Step(
                 title: const Text('Select Origin'),
                 content: _LanguageSelector(state: state),
                 isActive: _currentStep >= 0,
+                state: state.language != null
+                    ? StepState.complete
+                    : StepState.indexed,
               ),
               Step(
                 title: const Text('Select Products'),
                 content: _ProductSelector(state: state),
                 isActive: _currentStep >= 1,
+                state: state.itemRequests.isNotEmpty
+                    ? StepState.complete
+                    : StepState.indexed,
               ),
               Step(
-                title: const Text('Review & Address'),
+                title: const Text('Review & Submit'),
                 content: _ReviewStep(
                   state: state,
                   initialAddress: _shippingAddress,
@@ -109,6 +131,42 @@ class _OrderFormContentState extends State<_OrderFormContent> {
       ),
     );
   }
+
+  void _onStepContinue(BuildContext context, OrderFormState state) {
+    if (_currentStep == 0 && state.language == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select an origin')),
+      );
+      return;
+    }
+    if (_currentStep == 1 && state.itemRequests.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one product')),
+      );
+      return;
+    }
+
+    if (_currentStep < 2) {
+      setState(() => _currentStep++);
+    } else {
+      // Validate address before submitting
+      if (_shippingAddress == null ||
+          _shippingAddress!.fullName.isEmpty ||
+          _shippingAddress!.addressLine1.isEmpty ||
+          _shippingAddress!.city.isEmpty ||
+          (_shippingAddress!.phone == null ||
+              _shippingAddress!.phone!.isEmpty)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Please fill in all required address fields')),
+        );
+        return;
+      }
+      context.read<OrderFormBloc>().add(
+            OrderFormSubmitted(_shippingAddress!),
+          );
+    }
+  }
 }
 
 class _LanguageSelector extends StatelessWidget {
@@ -118,18 +176,30 @@ class _LanguageSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: ProductLanguage.values.map((lang) {
-        return RadioListTile<ProductLanguage>(
-          title: Text(lang.name.toUpperCase()),
-          value: lang,
-          groupValue: state.language,
-          onChanged: (val) {
-            if (val != null) {
-              context.read<OrderFormBloc>().add(OrderFormLanguageSelected(val));
-            }
-          },
-        );
-      }).toList(),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Which region are you ordering from?'),
+        const SizedBox(height: 8),
+        ...ProductLanguage.values.map((lang) {
+          final displayName = switch (lang) {
+            ProductLanguage.japanese => 'Japanese (JPN)',
+            ProductLanguage.chinese => 'Chinese (CN)',
+            ProductLanguage.korean => 'Korean (KR)',
+          };
+          return RadioListTile<ProductLanguage>(
+            title: Text(displayName),
+            value: lang,
+            groupValue: state.language,
+            onChanged: (val) {
+              if (val != null) {
+                context
+                    .read<OrderFormBloc>()
+                    .add(OrderFormLanguageSelected(val));
+              }
+            },
+          );
+        }),
+      ],
     );
   }
 }
@@ -143,43 +213,75 @@ class _ProductSelector extends StatelessWidget {
     if (state.status == OrderFormStatus.loading) {
       return const Center(child: CircularProgressIndicator());
     }
+
+    final selectedCount =
+        state.selectedItems.values.where((q) => q > 0).length;
+
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (state.availableProducts.isEmpty)
-          const Text('No products available for this origin.'),
-        ...state.availableProducts.map((p) {
-          final qty = state.selectedItems[p.id] ?? 0;
-          return ListTile(
-            title: Text(p.name),
-            subtitle: Text('\$${p.basePrice}'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.remove),
-                  onPressed: qty > 0
-                      ? () => context
-                          .read<OrderFormBloc>()
-                          .add(OrderFormItemAdded(p, qty - 1))
-                      : null,
-                ),
-                Text('$qty'),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: () => context
-                      .read<OrderFormBloc>()
-                      .add(OrderFormItemAdded(p, qty + 1)),
-                ),
-              ],
+          const Padding(
+            padding: EdgeInsets.all(16),
+            child: Text('No products available for this origin.'),
+          ),
+        if (state.availableProducts.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Text(
+              '$selectedCount product${selectedCount == 1 ? '' : 's'} selected'
+              '${state.estimatedSubtotal > 0 ? ' — Subtotal: \$${state.estimatedSubtotal.toStringAsFixed(2)}' : ''}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
-          );
-        }),
+          ),
+          ...state.availableProducts.map((p) {
+            final qty = state.selectedItems[p.id] ?? 0;
+            return Card(
+              child: ListTile(
+                title: Text(p.name),
+                subtitle: Text(
+                  '\$${p.basePrice.toStringAsFixed(2)}'
+                  '${p.sku != null ? ' — ${p.sku}' : ''}',
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove_circle_outline),
+                      onPressed: qty > 0
+                          ? () => context
+                              .read<OrderFormBloc>()
+                              .add(OrderFormItemAdded(p, qty - 1))
+                          : null,
+                    ),
+                    SizedBox(
+                      width: 40,
+                      child: Text(
+                        '$qty',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add_circle_outline),
+                      onPressed: () => context
+                          .read<OrderFormBloc>()
+                          .add(OrderFormItemAdded(p, qty + 1)),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
       ],
     );
   }
 }
 
-class _ReviewStep extends StatelessWidget {
+class _ReviewStep extends StatefulWidget {
   final OrderFormState state;
   final ShippingAddress? initialAddress;
   final ValueChanged<ShippingAddress> onAddressChanged;
@@ -191,22 +293,226 @@ class _ReviewStep extends StatelessWidget {
   });
 
   @override
+  State<_ReviewStep> createState() => _ReviewStepState();
+}
+
+class _ReviewStepState extends State<_ReviewStep> {
+  late TextEditingController _discordController;
+
+  @override
+  void initState() {
+    super.initState();
+    _discordController =
+        TextEditingController(text: widget.state.discordName ?? '');
+  }
+
+  @override
+  void dispose() {
+    _discordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = widget.state;
+    final theme = Theme.of(context);
+    final shippingMethods =
+        OrderFormState.shippingMethodsFor(state.language);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Origin: ${state.language?.name.toUpperCase()}'),
+        // Order Summary
+        Text('Order Summary', style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
-        Text('Items: ${state.itemRequests.length}'),
-        const Divider(),
-        AddressForm(
-          initialAddress: initialAddress,
-          onChanged: onAddressChanged,
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Origin:', style: theme.textTheme.bodyMedium),
+                    Text(
+                      state.language?.name.toUpperCase() ?? '',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                const Divider(),
+                ...state.selectedItems.entries
+                    .where((e) => e.value > 0)
+                    .map((entry) {
+                  final product = state.availableProducts
+                      .where((p) => p.id == entry.key)
+                      .firstOrNull;
+                  if (product == null) return const SizedBox.shrink();
+                  final lineTotal = product.basePrice * entry.value;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '${product.name} x${entry.value}',
+                            style: theme.textTheme.bodySmall,
+                          ),
+                        ),
+                        Text(
+                          '\$${lineTotal.toStringAsFixed(2)}',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                const Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Subtotal:',
+                        style: theme.textTheme.bodyMedium
+                            ?.copyWith(fontWeight: FontWeight.bold)),
+                    Text(
+                      '\$${state.estimatedSubtotal.toStringAsFixed(2)}',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+                if (state.language != ProductLanguage.japanese) ...[
+                  const SizedBox(height: 4),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Markup (13%):',
+                          style: theme.textTheme.bodySmall),
+                      Text(
+                        '\$${(state.estimatedSubtotal * 0.13).toStringAsFixed(2)}',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
         ),
+        const SizedBox(height: 16),
+
+        // Discord Name
+        Text('Contact Info', style: theme.textTheme.titleMedium),
+        const SizedBox(height: 8),
+        TextFormField(
+          controller: _discordController,
+          decoration: const InputDecoration(
+            labelText: 'Discord Name',
+            border: OutlineInputBorder(),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          ),
+          onChanged: (val) {
+            context
+                .read<OrderFormBloc>()
+                .add(OrderFormDiscordNameChanged(val));
+          },
+        ),
+        const SizedBox(height: 16),
+
+        // Shipping Method (language-dependent)
+        if (shippingMethods.isNotEmpty) ...[
+          Text('Shipping Method', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          DropdownButtonFormField<String>(
+            value: state.shippingMethod,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            ),
+            hint: const Text('Select shipping method'),
+            items: shippingMethods
+                .map((m) => DropdownMenuItem(value: m, child: Text(m)))
+                .toList(),
+            onChanged: (val) {
+              context
+                  .read<OrderFormBloc>()
+                  .add(OrderFormShippingMethodChanged(val));
+            },
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // Shipping Address
+        AddressForm(
+          initialAddress: widget.initialAddress,
+          onChanged: widget.onAddressChanged,
+        ),
+        const SizedBox(height: 16),
+
+        // Payment Instructions (informational)
+        _PaymentInfo(language: state.language),
+
         const SizedBox(height: 16),
         if (state.status == OrderFormStatus.loading)
           const LinearProgressIndicator(),
       ],
+    );
+  }
+}
+
+class _PaymentInfo extends StatelessWidget {
+  final ProductLanguage? language;
+  const _PaymentInfo({this.language});
+
+  @override
+  Widget build(BuildContext context) {
+    if (language == null) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+
+    final (title, instructions) = switch (language!) {
+      ProductLanguage.japanese => (
+          'Payment via Wise',
+          'After your order is invoiced, send payment via Wise to the email provided in your invoice.',
+        ),
+      ProductLanguage.chinese || ProductLanguage.korean => (
+          'Payment Options',
+          'After your order is invoiced, you can pay via:\n'
+              '  Venmo: @cromatcg\n'
+              '  PayPal: @Croma01\n'
+              '  ACH: Croma Collectibles\n'
+              '    Acct: 400116376098\n'
+              '    Routing: 124303243',
+        ),
+    };
+
+    return Card(
+      color: theme.colorScheme.secondaryContainer,
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.info_outline,
+                    size: 18, color: theme.colorScheme.onSecondaryContainer),
+                const SizedBox(width: 8),
+                Text(title,
+                    style: theme.textTheme.titleSmall?.copyWith(
+                        color: theme.colorScheme.onSecondaryContainer)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(instructions,
+                style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer)),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,56 +1,52 @@
 /// Currency conversion service
-/// 
-/// TODO(jules): Implement live currency conversion for Japanese Yen
+///
+/// Provides JPY→USD conversion with configurable rates.
+/// Uses a fallback rate when no live rate is available.
 library;
 
 /// Currency conversion interface
 abstract interface class CurrencyConverter {
   /// Convert amount from source currency to USD
-  Future<double> convertToUsd(double amount, String sourceCurrency);
-  
-  /// Get current exchange rate
-  Future<double> getExchangeRate(String sourceCurrency, String targetCurrency);
-  
-  /// Get cached/last known rate (for offline/fallback)
-  double getCachedRate(String sourceCurrency, String targetCurrency);
+  double convertToUsd(double amount, String sourceCurrency);
+
+  /// Get current exchange rate to USD
+  double getRate(String sourceCurrency);
+
+  /// Update the exchange rate for a currency
+  void setRate(String sourceCurrency, double rateToUsd);
 }
 
-/// Placeholder currency converter
-/// 
-/// TODO(jules): Implement with live exchange rate API
-class PlaceholderCurrencyConverter implements CurrencyConverter {
-  const PlaceholderCurrencyConverter();
+/// Configurable currency converter with fallback rates.
+///
+/// Rates can be updated at runtime (e.g., from an admin setting
+/// or periodic API fetch). Falls back to reasonable defaults.
+class ConfigurableCurrencyConverter implements CurrencyConverter {
+  ConfigurableCurrencyConverter({
+    Map<String, double>? initialRates,
+  }) : _rates = Map.from(initialRates ?? _defaultRates);
 
-  // Fallback rates (should be updated by Jules with live API)
-  static const Map<String, double> _fallbackRatesToUsd = {
+  /// Default fallback rates (1 unit → USD)
+  static const _defaultRates = {
     'JPY': 0.0067, // ~150 JPY = 1 USD
-    'CNY': 0.14,   // ~7 CNY = 1 USD
-    'KRW': 0.00075, // ~1300 KRW = 1 USD
+    'CNY': 0.14, // ~7 CNY = 1 USD
+    'KRW': 0.00075, // ~1330 KRW = 1 USD
   };
 
+  final Map<String, double> _rates;
+
   @override
-  Future<double> convertToUsd(double amount, String sourceCurrency) async {
-    final rate = await getExchangeRate(sourceCurrency, 'USD');
-    return amount * rate;
+  double convertToUsd(double amount, String sourceCurrency) {
+    if (sourceCurrency == 'USD') return amount;
+    return amount * getRate(sourceCurrency);
   }
 
   @override
-  Future<double> getExchangeRate(
-    String sourceCurrency,
-    String targetCurrency,
-  ) async {
-    // TODO(jules): Implement live exchange rate fetching
-    if (targetCurrency == 'USD') {
-      return _fallbackRatesToUsd[sourceCurrency] ?? 1.0;
-    }
-    return 1.0;
+  double getRate(String sourceCurrency) {
+    return _rates[sourceCurrency.toUpperCase()] ?? 1.0;
   }
 
   @override
-  double getCachedRate(String sourceCurrency, String targetCurrency) {
-    if (targetCurrency == 'USD') {
-      return _fallbackRatesToUsd[sourceCurrency] ?? 1.0;
-    }
-    return 1.0;
+  void setRate(String sourceCurrency, double rateToUsd) {
+    _rates[sourceCurrency.toUpperCase()] = rateToUsd;
   }
 }

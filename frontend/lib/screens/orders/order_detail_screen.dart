@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_state.dart';
 import '../../repositories/order_repository.dart';
 import '../../widgets/orders/comment_section.dart';
 
@@ -80,6 +82,11 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
     }
 
     final order = _order!;
+    final authState = context.read<AuthBloc>().state;
+    final isAdmin = authState is AuthAuthenticated &&
+        (authState.user.role == UserRole.superUser ||
+            authState.user.role == UserRole.supplier);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -92,13 +99,48 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           _PricingCard(order: order),
           const SizedBox(height: 16),
           _ShippingCard(order: order),
+          if (order.shippingMethod != null) ...[
+            const SizedBox(height: 16),
+            _InfoCard(
+              title: 'Shipping Method',
+              icon: Icons.local_shipping,
+              value: order.shippingMethod!,
+            ),
+          ],
+          if (order.discordName != null) ...[
+            const SizedBox(height: 16),
+            _InfoCard(
+              title: 'Discord',
+              icon: Icons.chat,
+              value: order.discordName!,
+            ),
+          ],
+          const SizedBox(height: 16),
+          _ProofOfPaymentCard(
+            order: order,
+            onUploaded: (url) async {
+              await context.read<OrderRepository>().updateOrder(
+                    order.id,
+                    UpdateOrderRequest(proofOfPaymentUrl: url),
+                  );
+              _loadOrder();
+            },
+          ),
           if (order.trackingNumber != null) ...[
             const SizedBox(height: 16),
             _TrackingCard(order: order),
           ],
-          if (order.invoiceUrl != null) ...[
+          if (order.invoiceId != null) ...[
             const SizedBox(height: 16),
             _InvoiceCard(order: order),
+          ],
+          if (isAdmin && order.adminNotes != null) ...[
+            const SizedBox(height: 16),
+            _InfoCard(
+              title: 'Admin Notes',
+              icon: Icons.note,
+              value: order.adminNotes!,
+            ),
           ],
           const SizedBox(height: 16),
           CommentSection(orderId: order.id),
@@ -345,6 +387,167 @@ class _InvoiceCard extends StatelessWidget {
                 const Icon(Icons.receipt_long, size: 20),
                 const SizedBox(width: 8),
                 Text('Invoice #${order.invoiceId}'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProofOfPaymentCard extends StatefulWidget {
+  final Order order;
+  final Future<void> Function(String url) onUploaded;
+
+  const _ProofOfPaymentCard({
+    required this.order,
+    required this.onUploaded,
+  });
+
+  @override
+  State<_ProofOfPaymentCard> createState() => _ProofOfPaymentCardState();
+}
+
+class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
+  final _urlController = TextEditingController();
+  bool _submitting = false;
+
+  @override
+  void dispose() {
+    _urlController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final hasProof = widget.order.proofOfPaymentUrl != null;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Proof of Payment',
+                style: theme.textTheme.titleMedium),
+            const SizedBox(height: 12),
+            if (hasProof) ...[
+              Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.green, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'Payment proof submitted',
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: Colors.green),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                widget.order.proofOfPaymentUrl!,
+                style: theme.textTheme.bodySmall,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ] else ...[
+              Text(
+                'Upload a screenshot or link to your payment proof.',
+                style: theme.textTheme.bodySmall,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _urlController,
+                      decoration: const InputDecoration(
+                        hintText: 'Paste image URL or payment reference...',
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        isDense: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  FilledButton(
+                    onPressed: _submitting
+                        ? null
+                        : () async {
+                            final url = _urlController.text.trim();
+                            if (url.isEmpty) return;
+                            setState(() => _submitting = true);
+                            try {
+                              await widget.onUploaded(url);
+                              _urlController.clear();
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text(
+                                          'Payment proof submitted')),
+                                );
+                              }
+                            } catch (e) {
+                              if (mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error: $e')),
+                                );
+                              }
+                            }
+                            if (mounted) {
+                              setState(() => _submitting = false);
+                            }
+                          },
+                    child: _submitting
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child:
+                                CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Text('Submit'),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _InfoCard extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final String value;
+
+  const _InfoCard({
+    required this.title,
+    required this.icon,
+    required this.value,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title, style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Icon(icon, size: 20),
+                const SizedBox(width: 8),
+                Text(value),
               ],
             ),
           ],

@@ -59,6 +59,16 @@
 - Routed at `/admin/invoices`, integrated with AdminShell (selectedIndex: 2)
 - Registered `InvoiceRepository` in main.dart RepositoryProvider
 
+### Step 2b: Proof of Payment Upload
+**Status:** Complete
+
+- Added `_ProofOfPaymentCard` to order detail screen
+  - Shows submitted proof if exists (green checkmark)
+  - URL input + submit button for new proof
+  - Calls `OrderRepository.updateOrder` with proofOfPaymentUrl
+- Added `_InfoCard` reusable widget for shipping method, discord, admin notes
+- Order detail now shows: shipping method, discord name, admin notes (admin only)
+
 ### Deploys
 - Backend: All commits deploying successfully to Cloud Run
 - Frontend: Initial commit failed (non-exhaustive switch on OrderStatus), fixed in Step 2 commit

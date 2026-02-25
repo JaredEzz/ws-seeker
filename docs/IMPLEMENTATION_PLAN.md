@@ -96,14 +96,14 @@ Run build_runner in shared/ and frontend/.
 - Show order summary with line-item pricing before submit
 - Show payment instructions based on language (informational, not stored)
 
-### Step 2b: Proof of Payment Upload (meeting priority)
-**Files:** Order detail screen, Cloud Storage integration
+### Step 2b: Proof of Payment Upload ✅ COMPLETE
+**Files:** `frontend/lib/screens/orders/order_detail_screen.dart`
 
 Per meeting: "The only thing is just uploading the screenshots and stuff."
-- Add file upload widget to order detail screen (customer side)
-- Upload to Cloud Storage, store URL in `order.proofOfPaymentUrl`
+- ProofOfPaymentCard in order detail: URL input + submit, or green checkmark if submitted
+- Stores URL in `order.proofOfPaymentUrl` via UpdateOrderRequest
 - Admin/supplier sees proof inline when reviewing order
-- This is the main payment-related feature Jared asked for
+- Also shows shipping method, discord name, admin notes on order detail
 
 ### Step 3: Admin Navigation Shell ✅ COMPLETE
 **New file:** `frontend/lib/widgets/navigation/admin_shell.dart`

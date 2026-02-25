@@ -26,8 +26,12 @@ class DashboardScreen extends StatelessWidget {
         selectedIndex: 0,
         onDestinationSelected: (index) {
           if (index == 1) context.push('/place-order');
-          if (index == 2 && (user?.role == UserRole.superUser || user?.role == UserRole.supplier)) {
-            context.go('/admin/orders');
+          if (index == 2) {
+            if (user?.role == UserRole.superUser || user?.role == UserRole.supplier) {
+              context.go('/admin/orders');
+            } else {
+              context.push('/profile');
+            }
           }
         },
         destinations: [

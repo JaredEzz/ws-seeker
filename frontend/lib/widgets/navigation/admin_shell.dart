@@ -34,6 +34,12 @@ class AdminShell extends StatelessWidget {
       label: 'Invoices',
       path: '/admin/invoices',
     ),
+    _AdminDestination(
+      icon: Icons.history_outlined,
+      selectedIcon: Icons.history,
+      label: 'Audit Logs',
+      path: '/admin/audit-logs',
+    ),
   ];
 
   @override

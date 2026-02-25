@@ -8,13 +8,18 @@ import 'package:shelf_router/shelf_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 import '../middleware/auth_middleware.dart';
+import '../services/audit_service.dart';
 import '../services/product_service.dart';
 
 class ProductHandler {
   final ProductService _productService;
+  final AuditService? _auditService;
 
-  ProductHandler({required ProductService productService})
-      : _productService = productService;
+  ProductHandler({
+    required ProductService productService,
+    AuditService? auditService,
+  })  : _productService = productService,
+        _auditService = auditService;
 
   Router get router {
     final router = Router();
@@ -128,6 +133,16 @@ class ProductHandler {
         quoteRequired: data['quoteRequired'] as bool? ?? false,
       );
 
+      // Audit log
+      _auditService?.log(
+        userId: request.context[AuthContext.userId] as String? ?? '',
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'product.created',
+        resourceType: 'product',
+        resourceId: productId,
+        details: {'name': name, 'language': languageStr},
+      );
+
       return Response(201,
           body: jsonEncode({'id': productId, 'message': 'Product created'}),
           headers: {'Content-Type': 'application/json'});
@@ -181,6 +196,16 @@ class ProductHandler {
 
       final result = await _productService.importProducts(rows);
 
+      // Audit log
+      _auditService?.log(
+        userId: request.context[AuthContext.userId] as String? ?? '',
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'product.imported',
+        resourceType: 'product',
+        resourceId: 'bulk',
+        details: result.toJson(),
+      );
+
       return Response.ok(
         jsonEncode(result.toJson()),
         headers: {'Content-Type': 'application/json'},
@@ -224,6 +249,15 @@ class ProductHandler {
         quoteRequired: data['quoteRequired'] as bool?,
       );
 
+      // Audit log
+      _auditService?.log(
+        userId: request.context[AuthContext.userId] as String? ?? '',
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'product.updated',
+        resourceType: 'product',
+        resourceId: id,
+      );
+
       return Response.ok(
         jsonEncode({'message': 'Product updated'}),
         headers: {'Content-Type': 'application/json'},
@@ -242,6 +276,16 @@ class ProductHandler {
     if (denied != null) return denied;
     try {
       await _productService.deleteProduct(id);
+
+      // Audit log
+      _auditService?.log(
+        userId: request.context[AuthContext.userId] as String? ?? '',
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'product.deleted',
+        resourceType: 'product',
+        resourceId: id,
+      );
+
       return Response.ok(
         jsonEncode({'message': 'Product deleted'}),
         headers: {'Content-Type': 'application/json'},

@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:web/web.dart' as web;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
@@ -454,6 +455,99 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
     if (mounted) setState(() => _uploading = false);
   }
 
+  bool _isImageUrl(String url) {
+    // Firebase Storage URLs encode the filename in the path, e.g.:
+    // /v0/b/bucket/o/proof_of_payment%2ForderId%2Fphoto.jpg?alt=media&token=...
+    // Decode the URL to extract the actual filename extension.
+    final decoded = Uri.decodeFull(url).toLowerCase();
+    final path = Uri.tryParse(decoded)?.path ?? decoded;
+    return path.endsWith('.png') ||
+        path.endsWith('.jpg') ||
+        path.endsWith('.jpeg') ||
+        path.endsWith('.gif') ||
+        path.endsWith('.webp');
+  }
+
+  Widget _buildProofViewer(ThemeData theme, String url) {
+    if (_isImageUrl(url)) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 300),
+          child: Image.network(
+            url,
+            fit: BoxFit.contain,
+            loadingBuilder: (context, child, progress) {
+              if (progress == null) return child;
+              return SizedBox(
+                height: 150,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    value: progress.expectedTotalBytes != null
+                        ? progress.cumulativeBytesLoaded /
+                            progress.expectedTotalBytes!
+                        : null,
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stack) {
+              return Container(
+                height: 100,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.broken_image,
+                          color: theme.colorScheme.onErrorContainer),
+                      const SizedBox(height: 4),
+                      Text('Could not load image',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                              color: theme.colorScheme.onErrorContainer)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    }
+
+    // PDF or other file type — show an icon card
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.picture_as_pdf,
+              size: 40, color: theme.colorScheme.error),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('PDF Document',
+                    style: theme.textTheme.titleSmall),
+                const SizedBox(height: 2),
+                Text('Tap "Open / Download" to view',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurfaceVariant)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -482,28 +576,28 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              // Show as clickable link if it's a URL
-              InkWell(
-                onTap: () {
-                  // Could open in new tab — for now just show the URL
-                },
-                child: Text(
-                  widget.order.proofOfPaymentUrl!,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.primary,
-                    decoration: TextDecoration.underline,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
               const SizedBox(height: 12),
-              // Allow re-upload
-              OutlinedButton.icon(
-                onPressed: _uploading ? null : _pickAndUpload,
-                icon: const Icon(Icons.upload_file, size: 18),
-                label: const Text('Upload New'),
+              // Inline viewer for images, icon for PDFs
+              _buildProofViewer(theme, widget.order.proofOfPaymentUrl!),
+              const SizedBox(height: 12),
+              // Action buttons
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  FilledButton.icon(
+                    onPressed: () {
+                      web.window.open(widget.order.proofOfPaymentUrl!, '_blank');
+                    },
+                    icon: const Icon(Icons.open_in_new, size: 18),
+                    label: const Text('Open / Download'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _uploading ? null : _pickAndUpload,
+                    icon: const Icon(Icons.upload_file, size: 18),
+                    label: const Text('Upload New'),
+                  ),
+                ],
               ),
             ] else ...[
               Text(

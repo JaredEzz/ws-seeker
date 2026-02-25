@@ -10,6 +10,7 @@ export 'src/models/order.dart';
 export 'src/models/product.dart';
 export 'src/models/comment.dart';
 export 'src/models/invoice.dart';
+export 'src/models/audit_log.dart';
 
 // Requests
 export 'src/requests/create_order_request.dart';

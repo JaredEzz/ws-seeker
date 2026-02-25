@@ -9,17 +9,21 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 import '../middleware/auth_middleware.dart';
 import '../services/invoice_service.dart';
+import '../services/audit_service.dart';
 import '../services/pdf_service.dart';
 
 class InvoicesHandler {
   final InvoiceService _invoiceService;
   final PdfService _pdfService;
+  final AuditService? _auditService;
 
   InvoicesHandler({
     required InvoiceService invoiceService,
     PdfService? pdfService,
+    AuditService? auditService,
   })  : _invoiceService = invoiceService,
-        _pdfService = pdfService ?? PdfService();
+        _pdfService = pdfService ?? PdfService(),
+        _auditService = auditService;
 
   Router get router {
     final router = Router();
@@ -55,6 +59,16 @@ class InvoicesHandler {
 
     try {
       final invoice = await _invoiceService.generateInvoice(orderId);
+
+      // Audit log
+      _auditService?.log(
+        userId: request.context[AuthContext.userId] as String? ?? '',
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'invoice.generated',
+        resourceType: 'invoice',
+        resourceId: invoice['id'] as String? ?? orderId,
+        details: {'orderId': orderId},
+      );
 
       return Response(201,
           body: jsonEncode({'invoice': invoice}),
@@ -186,6 +200,16 @@ class InvoicesHandler {
       }
 
       await _invoiceService.updateInvoiceStatus(id, status);
+
+      // Audit log
+      _auditService?.log(
+        userId: request.context[AuthContext.userId] as String? ?? '',
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'invoice.statusUpdated',
+        resourceType: 'invoice',
+        resourceId: id,
+        details: {'newStatus': status},
+      );
 
       return Response.ok(
           jsonEncode({'message': 'Invoice status updated'}),

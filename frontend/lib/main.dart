@@ -11,6 +11,7 @@ import 'repositories/auth_repository.dart';
 import 'repositories/invoice_repository.dart';
 import 'repositories/order_repository.dart';
 import 'repositories/product_repository.dart';
+import 'repositories/audit_log_repository.dart';
 import 'repositories/user_repository.dart';
 
 void main() async {
@@ -30,6 +31,7 @@ void main() async {
   final productRepository = HttpProductRepository();
   final invoiceRepository = HttpInvoiceRepository();
   final userRepository = HttpUserRepository();
+  final auditLogRepository = HttpAuditLogRepository();
 
   // Create AuthBloc immediately so we can pass it to the Router
   final authBloc = AuthBloc(authRepository: authRepository)
@@ -44,6 +46,7 @@ void main() async {
         RepositoryProvider<ProductRepository>.value(value: productRepository),
         RepositoryProvider<InvoiceRepository>.value(value: invoiceRepository),
         RepositoryProvider<UserRepository>.value(value: userRepository),
+        RepositoryProvider<AuditLogRepository>.value(value: auditLogRepository),
       ],
       child: MultiBlocProvider(
         providers: [

@@ -1,12 +1,15 @@
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
+import '../services/audit_service.dart';
 import '../services/auth_service.dart';
 
 class AuthHandler {
   final AuthService _authService;
+  final AuditService? _auditService;
 
-  AuthHandler(this._authService);
+  AuthHandler(this._authService, {AuditService? auditService})
+      : _auditService = auditService;
 
   Router get router {
     final router = Router();
@@ -54,6 +57,15 @@ class AuthHandler {
         }
 
         final result = await _authService.verifyMagicLink(token, email);
+
+        // Audit log
+        _auditService?.log(
+          userId: result['uid'] as String? ?? '',
+          userEmail: email,
+          action: 'auth.login',
+          resourceType: 'user',
+          resourceId: result['uid'] as String? ?? '',
+        );
 
         return Response.ok(
           jsonEncode(result),

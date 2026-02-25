@@ -7,13 +7,18 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
 import '../middleware/auth_middleware.dart';
+import '../services/audit_service.dart';
 import '../services/user_service.dart';
 
 class UsersHandler {
   final UserService _userService;
+  final AuditService? _auditService;
 
-  UsersHandler({required UserService userService})
-      : _userService = userService;
+  UsersHandler({
+    required UserService userService,
+    AuditService? auditService,
+  })  : _userService = userService,
+        _auditService = auditService;
 
   Router get router {
     final router = Router();
@@ -69,6 +74,16 @@ class UsersHandler {
       final data = jsonDecode(body) as Map<String, dynamic>;
 
       await _userService.updateProfile(userId, data);
+
+      // Audit log
+      _auditService?.log(
+        userId: userId,
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'user.profileUpdated',
+        resourceType: 'user',
+        resourceId: userId,
+        details: {'fieldsUpdated': data.keys.toList()},
+      );
 
       // Return updated profile
       final user = await _userService.getUser(userId);

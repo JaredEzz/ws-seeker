@@ -11,6 +11,7 @@ import '../middleware/auth_middleware.dart';
 import '../services/order_service.dart';
 import '../services/comment_service.dart';
 import '../services/email_service.dart';
+import '../services/audit_service.dart';
 import '../services/user_service.dart';
 
 class OrdersHandler {
@@ -18,16 +19,19 @@ class OrdersHandler {
   final CommentService _commentService;
   final EmailService? _emailService;
   final UserService? _userService;
+  final AuditService? _auditService;
 
   OrdersHandler({
     required OrderService orderService,
     required CommentService commentService,
     EmailService? emailService,
     UserService? userService,
+    AuditService? auditService,
   })  : _orderService = orderService,
         _commentService = commentService,
         _emailService = emailService,
-        _userService = userService;
+        _userService = userService,
+        _auditService = auditService;
 
   Router get router {
     final router = Router();
@@ -72,6 +76,20 @@ class OrdersHandler {
 
       // Send order confirmation email (fire-and-forget)
       _sendOrderConfirmationEmail(userId, order);
+
+      // Audit log
+      _auditService?.log(
+        userId: userId,
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'order.created',
+        resourceType: 'order',
+        resourceId: order['id'] as String,
+        details: {
+          'language': createRequest.language.name,
+          'itemCount': createRequest.items.length,
+          'displayOrderNumber': order['displayOrderNumber'],
+        },
+      );
 
       return Response(201,
           body: jsonEncode({'order': order}),
@@ -218,6 +236,23 @@ class OrdersHandler {
         _sendStatusChangeEmail(order, updateRequest);
       }
 
+      // Audit log
+      _auditService?.log(
+        userId: userId,
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'order.updated',
+        resourceType: 'order',
+        resourceId: id,
+        details: {
+          if (updateRequest.status != null)
+            'statusChange': '${order['status']} -> ${updateRequest.status!.name}',
+          if (updateRequest.trackingNumber != null)
+            'trackingNumber': updateRequest.trackingNumber,
+          if (updateRequest.proofOfPaymentUrl != null)
+            'proofOfPaymentUploaded': true,
+        },
+      );
+
       return Response.ok(
           jsonEncode({'message': 'Order updated'}),
           headers: {'Content-Type': 'application/json'});
@@ -279,6 +314,16 @@ class OrdersHandler {
         userName: userEmail ?? 'Unknown',
         content: content,
         isInternal: data['isInternal'] as bool? ?? false,
+      );
+
+      // Audit log
+      _auditService?.log(
+        userId: userId,
+        userEmail: userEmail ?? '',
+        action: 'comment.created',
+        resourceType: 'order',
+        resourceId: orderId,
+        details: {'commentId': comment['id']},
       );
 
       return Response(201,

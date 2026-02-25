@@ -26,7 +26,9 @@ import 'package:ws_seeker_backend/services/invoice_service.dart';
 import 'package:ws_seeker_backend/services/email_service.dart';
 import 'package:ws_seeker_backend/handlers/invoices_handler.dart';
 import 'package:ws_seeker_backend/handlers/users_handler.dart';
+import 'package:ws_seeker_backend/handlers/audit_handler.dart';
 import 'package:ws_seeker_backend/middleware/auth_middleware.dart';
+import 'package:ws_seeker_backend/services/audit_service.dart';
 
 void main() async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -55,6 +57,10 @@ void main() async {
   // Initialize Firebase Auth
   final auth = Auth(admin);
 
+  // Initialize Audit Logging (Postgres via Neon)
+  final auditDatabaseUrl = Platform.environment['AUDIT_DATABASE_URL'];
+  final auditService = await AuditService.create(auditDatabaseUrl);
+
   // Initialize Services
   final shopifyService = ShopifyService();
   final userService = UserService(firestore);
@@ -82,16 +88,29 @@ void main() async {
     shopifyService: shopifyService, 
     userService: userService,
   );
-  final productHandler = ProductHandler(productService: productService);
+  final productHandler = ProductHandler(
+    productService: productService,
+    auditService: auditService,
+  );
   final ordersHandler = OrdersHandler(
     orderService: orderService,
     commentService: commentService,
     emailService: emailService,
     userService: userService,
+    auditService: auditService,
   );
-  final invoicesHandler = InvoicesHandler(invoiceService: invoiceService);
-  final usersHandler = UsersHandler(userService: userService);
-  final authHandler = AuthHandler(authService);
+  final invoicesHandler = InvoicesHandler(
+    invoiceService: invoiceService,
+    auditService: auditService,
+  );
+  final usersHandler = UsersHandler(
+    userService: userService,
+    auditService: auditService,
+  );
+  final authHandler = AuthHandler(authService, auditService: auditService);
+  final auditHandler = auditService != null
+      ? AuditHandler(auditService: auditService)
+      : null;
 
   final router = Router();
 
@@ -130,6 +149,12 @@ void main() async {
       .addHandler(usersHandler.router.call);
   router.mount('/api/users', protectedUsers);
 
+  if (auditHandler != null) {
+    final protectedAuditLogs = const Pipeline()
+        .addMiddleware(authMw)
+        .addHandler(auditHandler.router.call);
+    router.mount('/api/audit-logs', protectedAuditLogs);
+  }
 
   // Apply middleware
   final handler = const Pipeline()
@@ -138,8 +163,16 @@ void main() async {
       .addHandler(router.call);
 
   final server = await shelf_io.serve(handler, InternetAddress.anyIPv4, port);
-  
+
   print('Server running on http://${server.address.host}:${server.port}');
+
+  // Graceful shutdown
+  ProcessSignal.sigterm.watch().listen((_) async {
+    print('SIGTERM received, shutting down...');
+    await server.close();
+    await auditService?.close();
+    exit(0);
+  });
 }
 
 /// CORS middleware for development

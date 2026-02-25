@@ -164,7 +164,7 @@ class _OrderList extends StatelessWidget {
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            title: Text('Order ${order.id.length > 8 ? order.id.substring(0, 8) : order.id} - ${order.language.name.toUpperCase()}'),
+            title: Text('Order ${order.displayOrderNumber ?? (order.id.length > 8 ? order.id.substring(0, 8) : order.id)} - ${order.language.name.toUpperCase()}'),
             subtitle: Text('${Tokens.statusLabel(order.status)} • \$${order.totalAmount.toStringAsFixed(2)}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,

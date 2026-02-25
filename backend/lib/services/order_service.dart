@@ -17,6 +17,34 @@ class OrderService {
   CollectionReference<Map<String, dynamic>> get _productsRef =>
       _firestore.collection('products');
 
+  CollectionReference<Map<String, dynamic>> get _countersRef =>
+      _firestore.collection('counters');
+
+  /// Language prefix for display order numbers
+  static String _languagePrefix(ProductLanguage language) => switch (language) {
+        ProductLanguage.japanese => 'JPN',
+        ProductLanguage.chinese => 'CN',
+        ProductLanguage.korean => 'KR',
+      };
+
+  /// Atomically increment and return the next order number for a language.
+  ///
+  /// Uses a per-language counter document in `counters/orders_{language}`.
+  /// FieldValue.increment is atomic on the server side.
+  Future<int> _nextOrderNumber(ProductLanguage language) async {
+    final docRef = _countersRef.doc('orders_${language.name}');
+
+    try {
+      await docRef.update({'count': const FieldValue.increment(1)});
+    } catch (_) {
+      // Document doesn't exist yet — initialize it
+      await docRef.set({'count': 1});
+    }
+
+    final doc = await docRef.get();
+    return (doc.data()!['count'] as num).toInt();
+  }
+
   /// Create a new order from a CreateOrderRequest
   ///
   /// Looks up product prices, calculates pricing with markup/tariff,
@@ -108,6 +136,12 @@ class OrderService {
       'createdAt': FieldValue.serverTimestamp,
       'updatedAt': FieldValue.serverTimestamp,
     };
+
+    // Generate auto-increment display order number (e.g., CN35, JPN42)
+    final orderNum = await _nextOrderNumber(request.language);
+    final displayOrderNumber =
+        '${_languagePrefix(request.language)}$orderNum';
+    orderData['displayOrderNumber'] = displayOrderNumber;
 
     final docRef = await _ordersRef.add(orderData);
 

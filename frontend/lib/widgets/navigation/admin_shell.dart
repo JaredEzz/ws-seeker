@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:ws_seeker_shared/ws_seeker_shared.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_state.dart';
 
 class AdminShell extends StatelessWidget {
   final int selectedIndex;
@@ -11,7 +15,7 @@ class AdminShell extends StatelessWidget {
     required this.child,
   });
 
-  static const _destinations = [
+  static const _allDestinations = [
     _AdminDestination(
       icon: Icons.receipt_long_outlined,
       selectedIcon: Icons.receipt_long,
@@ -35,25 +39,37 @@ class AdminShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
+    final authState = context.watch<AuthBloc>().state;
+    final isSupplier = authState is AuthAuthenticated &&
+        authState.user.role == UserRole.supplier;
+
+    // Suppliers see Orders only (no Products or Invoices management)
+    final destinations = isSupplier
+        ? _allDestinations.where((d) => d.label == 'Orders').toList()
+        : _allDestinations;
+
+    final label = isSupplier ? 'Supplier' : 'Admin';
 
     void onDestinationSelected(int index) {
-      if (index != selectedIndex) {
-        context.go(_destinations[index].path);
+      if (index < destinations.length && index != selectedIndex) {
+        context.go(destinations[index].path);
       }
     }
+
+    final clampedIndex = selectedIndex.clamp(0, destinations.length - 1);
 
     if (width >= 800) {
       return Scaffold(
         body: Row(
           children: [
             NavigationRail(
-              selectedIndex: selectedIndex,
+              selectedIndex: clampedIndex,
               onDestinationSelected: onDestinationSelected,
               labelType: NavigationRailLabelType.all,
               leading: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text(
-                  'Admin',
+                  label,
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
               ),
@@ -70,7 +86,7 @@ class AdminShell extends StatelessWidget {
                   ),
                 ),
               ),
-              destinations: _destinations
+              destinations: destinations
                   .map((d) => NavigationRailDestination(
                         icon: Icon(d.icon),
                         selectedIcon: Icon(d.selectedIcon),
@@ -88,9 +104,9 @@ class AdminShell extends StatelessWidget {
     return Scaffold(
       body: child,
       bottomNavigationBar: NavigationBar(
-        selectedIndex: selectedIndex,
+        selectedIndex: clampedIndex,
         onDestinationSelected: onDestinationSelected,
-        destinations: _destinations
+        destinations: destinations
             .map((d) => NavigationDestination(
                   icon: Icon(d.icon),
                   selectedIcon: Icon(d.selectedIcon),

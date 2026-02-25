@@ -47,7 +47,9 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order Management'),
+        title: Text(user?.role == UserRole.supplier
+            ? 'Japanese Orders'
+            : 'Order Management'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -75,6 +77,7 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
             languageFilter: _languageFilter,
             statusFilter: _statusFilter,
             searchQuery: _searchQuery,
+            showLanguageFilter: user?.role != UserRole.supplier,
             onLanguageChanged: (lang) =>
                 setState(() => _languageFilter = lang),
             onStatusChanged: (status) =>
@@ -139,6 +142,7 @@ class _FilterBar extends StatelessWidget {
   final ProductLanguage? languageFilter;
   final OrderStatus? statusFilter;
   final String searchQuery;
+  final bool showLanguageFilter;
   final ValueChanged<ProductLanguage?> onLanguageChanged;
   final ValueChanged<OrderStatus?> onStatusChanged;
   final ValueChanged<String> onSearchChanged;
@@ -147,6 +151,7 @@ class _FilterBar extends StatelessWidget {
     required this.languageFilter,
     required this.statusFilter,
     required this.searchQuery,
+    this.showLanguageFilter = true,
     required this.onLanguageChanged,
     required this.onStatusChanged,
     required this.onSearchChanged,
@@ -175,21 +180,22 @@ class _FilterBar extends StatelessWidget {
               onChanged: onSearchChanged,
             ),
           ),
-          DropdownButton<ProductLanguage?>(
-            value: languageFilter,
-            hint: const Text('All Languages'),
-            underline: const SizedBox.shrink(),
-            items: [
-              const DropdownMenuItem(value: null, child: Text('All Languages')),
-              ...ProductLanguage.values.map(
-                (l) => DropdownMenuItem(
-                  value: l,
-                  child: Text(l.name.toUpperCase()),
+          if (showLanguageFilter)
+            DropdownButton<ProductLanguage?>(
+              value: languageFilter,
+              hint: const Text('All Languages'),
+              underline: const SizedBox.shrink(),
+              items: [
+                const DropdownMenuItem(value: null, child: Text('All Languages')),
+                ...ProductLanguage.values.map(
+                  (l) => DropdownMenuItem(
+                    value: l,
+                    child: Text(l.name.toUpperCase()),
+                  ),
                 ),
-              ),
-            ],
-            onChanged: onLanguageChanged,
-          ),
+              ],
+              onChanged: onLanguageChanged,
+            ),
           DropdownButton<OrderStatus?>(
             value: statusFilter,
             hint: const Text('All Statuses'),

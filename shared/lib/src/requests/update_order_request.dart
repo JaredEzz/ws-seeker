@@ -16,6 +16,10 @@ class UpdateOrderRequest with _$UpdateOrderRequest {
     String? trackingCarrier,
     String? proofOfPaymentUrl,
     String? invoiceId,
+    String? adminNotes,
+    String? displayOrderNumber,
+    double? airShippingCost,
+    double? oceanShippingCost,
   }) = _UpdateOrderRequest;
 
   factory UpdateOrderRequest.fromJson(Map<String, dynamic> json) =>

@@ -6,17 +6,58 @@ class UserService {
 
   UserService(this._firestore);
 
+  CollectionReference<Map<String, dynamic>> get _usersRef =>
+      _firestore.collection('users');
+
+  /// Get a user by ID
+  Future<Map<String, dynamic>?> getUser(String userId) async {
+    final doc = await _usersRef.doc(userId).get();
+    if (!doc.exists) return null;
+    final data = doc.data()!;
+    data['id'] = doc.id;
+    return data;
+  }
+
+  /// Update user profile fields (discordName, phone, etc.)
+  Future<void> updateProfile(
+    String userId,
+    Map<String, dynamic> updates,
+  ) async {
+    final allowed = <String, dynamic>{
+      'updatedAt': FieldValue.serverTimestamp,
+    };
+
+    // Only allow specific profile fields
+    const allowedFields = [
+      'discordName',
+      'phone',
+      'preferredPaymentMethod',
+      'wiseEmail',
+      'savedAddress',
+    ];
+
+    for (final field in allowedFields) {
+      if (updates.containsKey(field)) {
+        allowed[field] = updates[field];
+      }
+    }
+
+    try {
+      await _usersRef.doc(userId).update(allowed);
+    } catch (e) {
+      // If doc doesn't exist yet, create it
+      allowed['createdAt'] = FieldValue.serverTimestamp;
+      await _usersRef.doc(userId).set(allowed);
+    }
+  }
+
   Future<void> updateUserFromShopify({
     required String userId,
     required UserRole role,
     required ShippingAddress address,
   }) async {
-    final userRef = _firestore.collection('users').doc(userId);
-    
-    // For MVP, we'll try 'update' which merges, but requires doc to exist.
-    // If user signs up via Auth, doc might not exist yet. 
-    // We should use set with merge, but SetOptions is failing compilation.
-    // We will attempt a standard set for now (overwrite), but manually merge fields if needed later.
+    final userRef = _usersRef.doc(userId);
+
     try {
       await userRef.update({
         'role': role.name,

@@ -26,7 +26,7 @@ lib/
 ## Key Types
 - `Order`, `OrderItem`, `ShippingAddress` — core domain models
 - `ProductLanguage` enum: japanese, chinese, korean
-- `OrderStatus` enum: submitted -> invoiced -> payment_pending -> payment_received -> shipped -> delivered
+- `OrderStatus` enum: submitted -> awaiting_quote -> invoiced -> payment_pending -> payment_received -> shipped -> delivered | cancelled
 - `OrderPricing` — subtotal, markup, estimatedTariff, total
 
 ## Pricing Rules

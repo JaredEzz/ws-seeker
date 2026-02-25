@@ -21,6 +21,8 @@ enum ProductLanguage {
 enum OrderStatus {
   @JsonValue('submitted')
   submitted,
+  @JsonValue('awaiting_quote')
+  awaitingQuote,
   @JsonValue('invoiced')
   invoiced,
   @JsonValue('payment_pending')
@@ -31,6 +33,8 @@ enum OrderStatus {
   shipped,
   @JsonValue('delivered')
   delivered,
+  @JsonValue('cancelled')
+  cancelled,
 }
 
 /// Represents a wholesale order
@@ -52,6 +56,13 @@ class Order with _$Order {
     String? trackingNumber,
     String? trackingCarrier,
     String? proofOfPaymentUrl,
+    String? shippingMethod,
+    String? paymentMethod,
+    String? discordName,
+    String? adminNotes,
+    String? displayOrderNumber,
+    double? airShippingCost,
+    double? oceanShippingCost,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _Order;

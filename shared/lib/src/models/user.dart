@@ -29,6 +29,10 @@ class AppUser with _$AppUser {
     required String email,
     required UserRole role,
     ShippingAddress? savedAddress,
+    String? discordName,
+    String? phone,
+    String? preferredPaymentMethod,
+    String? wiseEmail,
     required DateTime createdAt,
     DateTime? updatedAt,
   }) = _AppUser;

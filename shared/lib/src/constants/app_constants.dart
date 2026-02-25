@@ -25,11 +25,13 @@ abstract final class AppConstants {
   /// Order status display names
   static const Map<String, String> orderStatusDisplayNames = {
     'submitted': 'Submitted',
+    'awaiting_quote': 'Awaiting Quote',
     'invoiced': 'Invoice Sent',
     'payment_pending': 'Payment Pending',
     'payment_received': 'Payment Received',
     'shipped': 'Shipped',
     'delivered': 'Delivered',
+    'cancelled': 'Cancelled',
   };
 
   /// Language display names
@@ -56,4 +58,6 @@ abstract final class ApiRoutes {
   static const String products = '/api/products';
   static const String invoices = '/api/invoices';
   static const String comments = '/api/comments';
+  static const String users = '/api/users';
+  static const String userProfile = '/api/users/me';
 }

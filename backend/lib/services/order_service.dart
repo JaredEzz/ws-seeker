@@ -99,6 +99,12 @@ class OrderService {
       'markup': pricing.markup,
       'estimatedTariff': pricing.estimatedTariff,
       'totalAmount': pricing.total,
+      if (request.shippingMethod != null)
+        'shippingMethod': request.shippingMethod,
+      if (request.paymentMethod != null)
+        'paymentMethod': request.paymentMethod,
+      if (request.discordName != null)
+        'discordName': request.discordName,
       'createdAt': FieldValue.serverTimestamp,
       'updatedAt': FieldValue.serverTimestamp,
     };
@@ -203,13 +209,47 @@ class OrderService {
     if (request.invoiceId != null) {
       updates['invoiceId'] = request.invoiceId;
     }
+    if (request.adminNotes != null) {
+      updates['adminNotes'] = request.adminNotes;
+    }
+    if (request.displayOrderNumber != null) {
+      updates['displayOrderNumber'] = request.displayOrderNumber;
+    }
+    if (request.airShippingCost != null) {
+      updates['airShippingCost'] = request.airShippingCost;
+    }
+    if (request.oceanShippingCost != null) {
+      updates['oceanShippingCost'] = request.oceanShippingCost;
+    }
 
     await _ordersRef.doc(orderId).update(updates);
   }
 
-  /// Validate that a status transition is allowed (forward-only)
+  /// Validate that a status transition is allowed
+  ///
+  /// Forward-only progression through the status pipeline, except:
+  /// - `cancelled` is allowed from any non-terminal state
+  /// - Cannot transition out of `delivered` or `cancelled`
   void _validateStatusTransition(OrderStatus current, OrderStatus next) {
-    final statusOrder = OrderStatus.values;
+    // Can't transition from terminal states
+    if (current == OrderStatus.delivered || current == OrderStatus.cancelled) {
+      throw StateError(
+          'Invalid status transition: cannot change from terminal status ${current.name}');
+    }
+
+    // Cancellation is always allowed from non-terminal states
+    if (next == OrderStatus.cancelled) return;
+
+    // Forward-only progression (excluding cancelled which is last in the enum)
+    const statusOrder = [
+      OrderStatus.submitted,
+      OrderStatus.awaitingQuote,
+      OrderStatus.invoiced,
+      OrderStatus.paymentPending,
+      OrderStatus.paymentReceived,
+      OrderStatus.shipped,
+      OrderStatus.delivered,
+    ];
     final currentIndex = statusOrder.indexOf(current);
     final nextIndex = statusOrder.indexOf(next);
 
@@ -222,11 +262,13 @@ class OrderService {
   OrderStatus? _parseOrderStatus(String status) {
     return switch (status) {
       'submitted' => OrderStatus.submitted,
+      'awaiting_quote' => OrderStatus.awaitingQuote,
       'invoiced' => OrderStatus.invoiced,
       'payment_pending' => OrderStatus.paymentPending,
       'payment_received' => OrderStatus.paymentReceived,
       'shipped' => OrderStatus.shipped,
       'delivered' => OrderStatus.delivered,
+      'cancelled' => OrderStatus.cancelled,
       _ => null,
     };
   }

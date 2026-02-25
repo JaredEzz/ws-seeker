@@ -24,6 +24,7 @@ import 'package:ws_seeker_backend/services/order_service.dart';
 import 'package:ws_seeker_backend/services/comment_service.dart';
 import 'package:ws_seeker_backend/services/invoice_service.dart';
 import 'package:ws_seeker_backend/handlers/invoices_handler.dart';
+import 'package:ws_seeker_backend/handlers/users_handler.dart';
 import 'package:ws_seeker_backend/middleware/auth_middleware.dart';
 
 void main() async {
@@ -81,6 +82,7 @@ void main() async {
     commentService: commentService,
   );
   final invoicesHandler = InvoicesHandler(invoiceService: invoiceService);
+  final usersHandler = UsersHandler(userService: userService);
   final authHandler = AuthHandler(authService);
 
   final router = Router();
@@ -114,6 +116,11 @@ void main() async {
       .addMiddleware(authMw)
       .addHandler(invoicesHandler.router.call);
   router.mount('/api/invoices', protectedInvoices);
+
+  final protectedUsers = const Pipeline()
+      .addMiddleware(authMw)
+      .addHandler(usersHandler.router.call);
+  router.mount('/api/users', protectedUsers);
 
 
   // Apply middleware

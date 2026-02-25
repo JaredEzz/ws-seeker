@@ -15,6 +15,9 @@ class CreateOrderRequest with _$CreateOrderRequest {
     required ProductLanguage language,
     required List<OrderItemRequest> items,
     required ShippingAddress shippingAddress,
+    String? shippingMethod,
+    String? paymentMethod,
+    String? discordName,
   }) = _CreateOrderRequest;
 
   factory CreateOrderRequest.fromJson(Map<String, dynamic> json) =>

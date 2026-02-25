@@ -5,7 +5,7 @@
 **Phase 0 (Product Import & Admin UI) — COMPLETE**
 All product catalog tabs from both spreadsheets are imported and manageable via the admin UI.
 
-**Phase 1 (Critical — Order Model + Form + Admin) — NOT STARTED**
+**Phase 1 (Critical — Order Model + Form + Admin) — IN PROGRESS**
 This is the next implementation phase. It replaces the Google Forms (order intake) and live order tracking spreadsheet (order management).
 
 ---
@@ -26,7 +26,7 @@ This is the next implementation phase. It replaces the Google Forms (order intak
 
 ## Phase 1: Order Model + Form + Admin (Next)
 
-### Step 1: Extend Order Model
+### Step 1: Extend Order Model ✅ COMPLETE
 **Files:** `shared/lib/src/models/order.dart`, `shared/lib/src/models/user.dart`, backend service + handler
 
 **Extend AppUser profile** (`shared/lib/src/models/user.dart`):
@@ -52,6 +52,23 @@ Add to OrderStatus enum:
 - `awaitingQuote` — before invoicing (submitted → awaitingQuote → invoiced)
 
 Run build_runner in shared/ and frontend/.
+
+**Completed:**
+- Extended `AppUser` with discordName, phone, preferredPaymentMethod, wiseEmail
+- Extended `Order` with shippingMethod, paymentMethod, discordName, adminNotes, displayOrderNumber, airShippingCost, oceanShippingCost
+- Added `awaitingQuote` and `cancelled` to `OrderStatus` enum
+- Extended `Invoice` with displayInvoiceNumber, dueDate, airShippingCost, oceanShippingCost
+- Updated `CreateOrderRequest` with shippingMethod, paymentMethod, discordName
+- Updated `UpdateOrderRequest` with adminNotes, displayOrderNumber, airShippingCost, oceanShippingCost
+- Updated status display names in `AppConstants`
+- Backend: `OrderService.createOrder` writes new fields, `updateOrder` handles new fields
+- Backend: Status transition allows `cancelled` from any non-terminal state
+- Backend: `UserService` with `getUser()` and `updateProfile()` methods
+- Backend: New `UsersHandler` with `GET/PATCH /api/users/me` endpoints
+- Frontend: `FirebaseAuthRepository._fetchUserProfile` reads new profile fields
+- Frontend: `HttpOrderRepository._orderFromMap` parses new order fields
+- Frontend: New `HttpUserRepository` for profile CRUD
+- Ran build_runner in shared/ (18 outputs) and frontend/ (0 outputs, uses shared)
 
 ### Step 2: Enhance Order Form + Profile Pre-fill
 **Files:** `frontend/lib/screens/orders/order_form_screen.dart`, `frontend/lib/blocs/orders/order_form_bloc.dart`, `frontend/lib/widgets/forms/address_form.dart`

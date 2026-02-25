@@ -181,6 +181,13 @@ class HttpOrderRepository implements OrderRepository {
       trackingNumber: map['trackingNumber'] as String?,
       trackingCarrier: map['trackingCarrier'] as String?,
       proofOfPaymentUrl: map['proofOfPaymentUrl'] as String?,
+      shippingMethod: map['shippingMethod'] as String?,
+      paymentMethod: map['paymentMethod'] as String?,
+      discordName: map['discordName'] as String?,
+      adminNotes: map['adminNotes'] as String?,
+      displayOrderNumber: map['displayOrderNumber'] as String?,
+      airShippingCost: (map['airShippingCost'] as num?)?.toDouble(),
+      oceanShippingCost: (map['oceanShippingCost'] as num?)?.toDouble(),
       createdAt: _parseDateTime(map['createdAt']),
       updatedAt: _parseDateTime(map['updatedAt']),
     );
@@ -322,6 +329,10 @@ class MockOrderRepository implements OrderRepository {
         trackingCarrier: request.trackingCarrier ?? old.trackingCarrier,
         proofOfPaymentUrl: request.proofOfPaymentUrl ?? old.proofOfPaymentUrl,
         invoiceId: request.invoiceId ?? old.invoiceId,
+        adminNotes: request.adminNotes ?? old.adminNotes,
+        displayOrderNumber: request.displayOrderNumber ?? old.displayOrderNumber,
+        airShippingCost: request.airShippingCost ?? old.airShippingCost,
+        oceanShippingCost: request.oceanShippingCost ?? old.oceanShippingCost,
         updatedAt: DateTime.now(),
       );
     }

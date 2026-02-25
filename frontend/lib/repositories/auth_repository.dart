@@ -122,6 +122,10 @@ class FirebaseAuthRepository implements AuthRepository {
         email: user.email ?? email,
         role: role,
         savedAddress: savedAddress,
+        discordName: data['discordName'] as String?,
+        phone: data['phone'] as String?,
+        preferredPaymentMethod: data['preferredPaymentMethod'] as String?,
+        wiseEmail: data['wiseEmail'] as String?,
         createdAt: user.metadata.creationTime ?? DateTime.now(),
       );
     } catch (e) {
@@ -154,6 +158,10 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<AppUser> _fetchUserProfile(User user) async {
     UserRole role = _parseRole(null, user.email);
     ShippingAddress? savedAddress;
+    String? discordName;
+    String? phone;
+    String? preferredPaymentMethod;
+    String? wiseEmail;
 
     try {
       final doc = await _firestore.collection('users').doc(user.uid).get();
@@ -165,6 +173,10 @@ class FirebaseAuthRepository implements AuthRepository {
             Map<String, dynamic>.from(data['savedAddress'] as Map),
           );
         }
+        discordName = data['discordName'] as String?;
+        phone = data['phone'] as String?;
+        preferredPaymentMethod = data['preferredPaymentMethod'] as String?;
+        wiseEmail = data['wiseEmail'] as String?;
       }
     } catch (e) {
       print('Failed to fetch user profile from Firestore: $e');
@@ -175,6 +187,10 @@ class FirebaseAuthRepository implements AuthRepository {
       email: user.email ?? '',
       role: role,
       savedAddress: savedAddress,
+      discordName: discordName,
+      phone: phone,
+      preferredPaymentMethod: preferredPaymentMethod,
+      wiseEmail: wiseEmail,
       createdAt: user.metadata.creationTime ?? DateTime.now(),
     );
   }

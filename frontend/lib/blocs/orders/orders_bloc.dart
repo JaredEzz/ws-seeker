@@ -76,7 +76,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       );
       add(const OrdersFetchRequested());
     } catch (e) {
-      // Handle error
+      emit(OrdersFailure(message: 'Status update failed: $e'));
     }
   }
 }

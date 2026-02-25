@@ -274,16 +274,16 @@ class _OrdersTable extends StatelessWidget {
         DataCell(Text('\$${order.totalAmount.toStringAsFixed(2)}')),
         DataCell(_StatusChip(
           order: order,
-          onStatusChanged: currentUserRole == UserRole.wholesaler
-              ? null
-              : (newStatus) {
+          onStatusChanged: currentUserRole == UserRole.superUser
+              ? (newStatus) {
                   context.read<OrdersBloc>().add(
                         OrderStatusUpdateRequested(
                           orderId: order.id,
                           status: newStatus,
                         ),
                       );
-                },
+                }
+              : null,
         )),
         DataCell(Text(order.shippingMethod ?? '-')),
         DataCell(

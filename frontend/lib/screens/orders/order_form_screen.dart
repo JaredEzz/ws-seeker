@@ -204,18 +204,45 @@ class _LanguageSelector extends StatelessWidget {
   }
 }
 
-class _ProductSelector extends StatelessWidget {
+class _ProductSelector extends StatefulWidget {
   final OrderFormState state;
   const _ProductSelector({required this.state});
 
   @override
+  State<_ProductSelector> createState() => _ProductSelectorState();
+}
+
+class _ProductSelectorState extends State<_ProductSelector> {
+  final _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<Product> get _filteredProducts {
+    if (_searchQuery.isEmpty) return widget.state.availableProducts;
+    final q = _searchQuery.toLowerCase();
+    return widget.state.availableProducts.where((p) {
+      return p.name.toLowerCase().contains(q) ||
+          (p.sku?.toLowerCase().contains(q) ?? false) ||
+          (p.category?.toLowerCase().contains(q) ?? false);
+    }).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final state = widget.state;
+
     if (state.status == OrderFormStatus.loading) {
       return const Center(child: CircularProgressIndicator());
     }
 
     final selectedCount =
         state.selectedItems.values.where((q) => q > 0).length;
+    final filtered = _filteredProducts;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,7 +263,34 @@ class _ProductSelector extends StatelessWidget {
                   ),
             ),
           ),
-          ...state.availableProducts.map((p) {
+          TextField(
+            controller: _searchController,
+            decoration: InputDecoration(
+              hintText: 'Search products...',
+              prefixIcon: const Icon(Icons.search),
+              suffixIcon: _searchQuery.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() => _searchQuery = '');
+                      },
+                    )
+                  : null,
+              border: const OutlineInputBorder(),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              isDense: true,
+            ),
+            onChanged: (val) => setState(() => _searchQuery = val),
+          ),
+          const SizedBox(height: 8),
+          if (filtered.isEmpty && _searchQuery.isNotEmpty)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('No products match your search.'),
+            ),
+          ...filtered.map((p) {
             final qty = state.selectedItems[p.id] ?? 0;
             final availableTypes = OrderFormState.availableTypesFor(p);
             final selectedType = state.selectedProductTypes[p.id];

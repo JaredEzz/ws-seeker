@@ -34,7 +34,7 @@ class AppTheme {
       // 3. Components Styling
 
       // Cards: White, Bordered, Low Shadow
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Tokens.surfaceCard,
         elevation: 0,
         shape: RoundedRectangleBorder(

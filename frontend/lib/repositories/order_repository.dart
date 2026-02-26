@@ -14,6 +14,7 @@ abstract interface class OrderRepository {
   Future<List<OrderComment>> fetchComments(String orderId);
   Stream<List<OrderComment>> watchComments(String orderId);
   Future<void> addComment(String orderId, String content, {String? imageUrl});
+  Stream<List<OrderComment>> watchAllComments();
 }
 
 /// HTTP-based order repository that calls the backend API
@@ -164,6 +165,31 @@ class HttpOrderRepository implements OrderRepository {
     if (response.statusCode != 201) {
       throw Exception('Failed to add comment: ${response.body}');
     }
+  }
+
+  @override
+  Stream<List<OrderComment>> watchAllComments() {
+    return FirebaseFirestore.instance
+        .collectionGroup('comments')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final data = doc.data();
+              final ts = data['createdAt'];
+              final createdAt = ts is Timestamp
+                  ? ts.toDate()
+                  : DateTime.now();
+              return OrderComment(
+                id: doc.id,
+                orderId: data['orderId'] as String? ?? '',
+                userId: data['userId'] as String? ?? '',
+                userName: data['userName'] as String? ?? '',
+                content: data['content'] as String? ?? '',
+                imageUrl: data['imageUrl'] as String?,
+                isInternal: data['isInternal'] as bool? ?? false,
+                createdAt: createdAt,
+              );
+            }).toList());
   }
 
   Future<List<OrderComment>> _fetchComments(String orderId) async {
@@ -426,5 +452,19 @@ class MockOrderRepository implements OrderRepository {
   @override
   Future<void> addComment(String orderId, String content, {String? imageUrl}) async {
     await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  @override
+  Stream<List<OrderComment>> watchAllComments() {
+    return Stream.value([
+      OrderComment(
+        id: 'c1',
+        orderId: 'ORD-001',
+        userId: 'system',
+        userName: 'System',
+        content: 'Order created',
+        createdAt: DateTime.now().subtract(const Duration(days: 2)),
+      ),
+    ]);
   }
 }

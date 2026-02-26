@@ -32,7 +32,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         selectedIndex: 0,
         onDestinationSelected: (index) {
           if (index == 1) context.push('/place-order');
-          if (index == 2) {
+          if (index == 2) context.push('/chats');
+          if (index == 3) {
             if (user?.role == UserRole.superUser || user?.role == UserRole.supplier) {
               context.go('/admin/orders');
             } else {
@@ -50,6 +51,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             icon: Icon(Icons.add_shopping_cart_outlined),
             selectedIcon: Icon(Icons.add_shopping_cart),
             label: 'New Order',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.chat_outlined),
+            selectedIcon: Icon(Icons.chat),
+            label: 'Chats',
           ),
           if (user?.role == UserRole.superUser || user?.role == UserRole.supplier)
             const NavigationDestination(

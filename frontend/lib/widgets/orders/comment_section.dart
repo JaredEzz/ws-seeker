@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_state.dart';
 import '../../blocs/comments/comments_bloc.dart';
 import '../../repositories/order_repository.dart';
 import '../../services/storage_service.dart';
@@ -127,7 +129,14 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
                   );
                 }
                 if (state is CommentsLoaded) {
-                  return _CommentList(comments: state.comments);
+                  final authState = context.read<AuthBloc>().state;
+                  final currentUserId = authState is AuthAuthenticated
+                      ? authState.user.id
+                      : '';
+                  return _CommentList(
+                    comments: state.comments,
+                    currentUserId: currentUserId,
+                  );
                 }
                 if (state is CommentsFailure) {
                   return Text('Error: ${state.message}');
@@ -216,7 +225,8 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
 
 class _CommentList extends StatelessWidget {
   final List<OrderComment> comments;
-  const _CommentList({required this.comments});
+  final String currentUserId;
+  const _CommentList({required this.comments, required this.currentUserId});
 
   @override
   Widget build(BuildContext context) {
@@ -234,7 +244,10 @@ class _CommentList extends StatelessWidget {
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final comment = comments[index];
-        return _CommentBubble(comment: comment);
+        return _CommentBubble(
+          comment: comment,
+          isMe: comment.userId == currentUserId,
+        );
       },
     );
   }
@@ -242,73 +255,95 @@ class _CommentList extends StatelessWidget {
 
 class _CommentBubble extends StatelessWidget {
   final OrderComment comment;
-  const _CommentBubble({required this.comment});
+  final bool isMe;
+  const _CommentBubble({required this.comment, required this.isMe});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Tokens.userColor(comment.userId),
-        borderRadius: BorderRadius.circular(Tokens.radiusLg),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(
-                comment.userName,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const Spacer(),
-              Text(
-                _formatTime(comment.createdAt),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-              ),
-            ],
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: isMe
+          ? const EdgeInsets.only(left: 48)
+          : const EdgeInsets.only(right: 48),
+      child: Align(
+        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Tokens.userColor(comment.userId),
+            borderRadius: BorderRadius.circular(Tokens.radiusLg),
           ),
-          if (comment.content.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(comment.content),
-          ],
-          if (comment.imageUrl != null) ...[
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () => _showFullImage(context, comment.imageUrl!),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 200, maxHeight: 150),
-                  child: Image.network(
-                    comment.imageUrl!,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const SizedBox(
-                        width: 200,
-                        height: 100,
-                        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: 200,
-                        height: 100,
-                        color: Colors.grey.shade200,
-                        child: const Center(child: Icon(Icons.broken_image_outlined)),
-                      );
-                    },
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      comment.userName,
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Tooltip(
+                    message: _formatFullTime(comment.createdAt),
+                    child: Text(
+                      _formatTime(comment.createdAt),
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: Colors.grey.shade700,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (comment.content.isNotEmpty) ...[
+                const SizedBox(height: 4),
+                Text(comment.content),
+              ],
+              if (comment.imageUrl != null) ...[
+                const SizedBox(height: 8),
+                GestureDetector(
+                  onTap: () => _showFullImage(context, comment.imageUrl!),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: ConstrainedBox(
+                      constraints:
+                          const BoxConstraints(maxWidth: 200, maxHeight: 150),
+                      child: Image.network(
+                        comment.imageUrl!,
+                        fit: BoxFit.cover,
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return const SizedBox(
+                            width: 200,
+                            height: 100,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                                    strokeWidth: 2)),
+                          );
+                        },
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 200,
+                            height: 100,
+                            color: Colors.grey.shade200,
+                            child: const Center(
+                                child: Icon(Icons.broken_image_outlined)),
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            ),
-          ],
-        ],
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -344,12 +379,21 @@ class _CommentBubble extends StatelessWidget {
   }
 
   String _formatTime(DateTime dt) {
+    final local = dt.toLocal();
     final now = DateTime.now();
-    final diff = now.difference(dt);
+    final diff = now.difference(local);
     if (diff.inMinutes < 1) return 'Just now';
     if (diff.inHours < 1) return '${diff.inMinutes}m ago';
     if (diff.inDays < 1) return '${diff.inHours}h ago';
     if (diff.inDays < 7) return '${diff.inDays}d ago';
-    return '${dt.month}/${dt.day}/${dt.year}';
+    return '${local.month}/${local.day}/${local.year}';
+  }
+
+  String _formatFullTime(DateTime dt) {
+    final local = dt.toLocal();
+    final h = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final m = local.minute.toString().padLeft(2, '0');
+    final ampm = local.hour < 12 ? 'AM' : 'PM';
+    return '${local.month}/${local.day}/${local.year} $h:$m $ampm';
   }
 }

@@ -35,6 +35,12 @@ class AdminShell extends StatelessWidget {
       path: '/admin/invoices',
     ),
     _AdminDestination(
+      icon: Icons.chat_outlined,
+      selectedIcon: Icons.chat,
+      label: 'Chats',
+      path: '/admin/chats',
+    ),
+    _AdminDestination(
       icon: Icons.history_outlined,
       selectedIcon: Icons.history,
       label: 'Audit Logs',
@@ -49,9 +55,11 @@ class AdminShell extends StatelessWidget {
     final isSupplier = authState is AuthAuthenticated &&
         authState.user.role == UserRole.supplier;
 
-    // Suppliers see Orders only (no Products or Invoices management)
+    // Suppliers see Orders + Chats only (no Products, Invoices, or Audit Logs)
     final destinations = isSupplier
-        ? _allDestinations.where((d) => d.label == 'Orders').toList()
+        ? _allDestinations
+            .where((d) => d.label == 'Orders' || d.label == 'Chats')
+            .toList()
         : _allDestinations;
 
     final label = isSupplier ? 'Supplier' : 'Admin';

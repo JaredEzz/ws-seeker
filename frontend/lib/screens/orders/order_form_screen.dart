@@ -273,6 +273,61 @@ class _ProductSelectorState extends State<_ProductSelector> {
     super.dispose();
   }
 
+  void _showProductImageDialog(BuildContext context, String imageUrl, String productName) {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 600, maxHeight: 600),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      productName,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Flexible(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  loadingBuilder: (context, child, progress) {
+                    if (progress == null) return child;
+                    return const SizedBox(
+                      height: 200,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => Container(
+                    height: 150,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Text('Could not load image'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   List<Product> get _filteredProducts {
     if (_searchQuery.isEmpty) return widget.state.availableProducts;
     final q = _searchQuery.toLowerCase();
@@ -356,6 +411,14 @@ class _ProductSelectorState extends State<_ProductSelector> {
                       title: Row(
                         children: [
                           Flexible(child: Text(p.name)),
+                          if (p.imageUrl != null) ...[
+                            const SizedBox(width: 4),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(4),
+                              onTap: () => _showProductImageDialog(context, p.imageUrl!, p.name),
+                              child: const Icon(Icons.image, size: 18),
+                            ),
+                          ],
                           if (p.quoteRequired) ...[
                             const SizedBox(width: 8),
                             Container(

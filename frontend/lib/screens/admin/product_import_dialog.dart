@@ -285,6 +285,8 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
       final priceIdx = headers.indexOf('price');
       final skuIdx = headers.indexOf('sku');
       final descIdx = headers.indexOf('description');
+      final imageIdx = headers.indexWhere(
+          (h) => h == 'imageurl' || h == 'image_url' || h == 'image');
 
       if (nameIdx == -1 || langIdx == -1 || priceIdx == -1) {
         _showError('CSV must have columns: name, language, price');
@@ -311,6 +313,9 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
                 : null,
             description: descIdx >= 0 && row.length > descIdx
                 ? row[descIdx].toString()
+                : null,
+            imageUrl: imageIdx >= 0 && row.length > imageIdx
+                ? row[imageIdx].toString()
                 : null,
           ));
         } catch (e) {

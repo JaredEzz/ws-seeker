@@ -69,6 +69,7 @@ class HttpProductRepository implements ProductRepository {
       ),
       basePrice: (data['basePrice'] as num).toDouble(),
       description: data['description'] as String?,
+      imageUrl: data['imageUrl'] as String?,
       sku: data['sku'] as String?,
       boxPriceJpy: (data['boxPriceJpy'] as num?)?.toDouble(),
       noShrinkPriceJpy: (data['noShrinkPriceJpy'] as num?)?.toDouble(),

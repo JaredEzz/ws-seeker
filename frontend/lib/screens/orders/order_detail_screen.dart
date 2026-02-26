@@ -245,8 +245,22 @@ class _ItemsCard extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item.productName,
-                                style: Theme.of(context).textTheme.bodyMedium),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(item.productName,
+                                      style: Theme.of(context).textTheme.bodyMedium),
+                                ),
+                                if (item.imageUrl != null) ...[
+                                  const SizedBox(width: 4),
+                                  InkWell(
+                                    borderRadius: BorderRadius.circular(4),
+                                    onTap: () => _showProductImageDialog(context, item.imageUrl!, item.productName),
+                                    child: const Icon(Icons.image, size: 18),
+                                  ),
+                                ],
+                              ],
+                            ),
                             Text('Qty: ${item.quantity} x \$${item.unitPrice.toStringAsFixed(2)}',
                                 style: Theme.of(context).textTheme.bodySmall),
                           ],
@@ -259,6 +273,91 @@ class _ItemsCard extends StatelessWidget {
                     ],
                   ),
                 )),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static void _showProductImageDialog(BuildContext context, String imageUrl, String productName) {
+    showDialog(
+      context: context,
+      builder: (_) => _ProductImageDialog(imageUrl: imageUrl, productName: productName),
+    );
+  }
+}
+
+class _ProductImageDialog extends StatelessWidget {
+  final String imageUrl;
+  final String productName;
+  const _ProductImageDialog({required this.imageUrl, required this.productName});
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 600, maxHeight: 600),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    productName,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Flexible(
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.contain,
+                loadingBuilder: (context, child, progress) {
+                  if (progress == null) return child;
+                  return SizedBox(
+                    height: 200,
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        value: progress.expectedTotalBytes != null
+                            ? progress.cumulativeBytesLoaded /
+                                progress.expectedTotalBytes!
+                            : null,
+                      ),
+                    ),
+                  );
+                },
+                errorBuilder: (context, error, stack) {
+                  return Container(
+                    height: 150,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.errorContainer,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.broken_image,
+                            color: Theme.of(context).colorScheme.onErrorContainer),
+                        const SizedBox(height: 4),
+                        Text('Could not load image',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onErrorContainer)),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
           ],
         ),
       ),

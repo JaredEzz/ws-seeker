@@ -44,6 +44,11 @@ class CommentService {
 
     final docRef = await _commentsRef(orderId).add(commentData);
 
+    // Touch the parent order's updatedAt so "last modified" stays current
+    await _firestore.collection('orders').doc(orderId).update({
+      'updatedAt': FieldValue.serverTimestamp,
+    });
+
     return {
       'id': docRef.id,
       ...commentData,

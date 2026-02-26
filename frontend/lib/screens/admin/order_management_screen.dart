@@ -214,6 +214,8 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
         keyOf = (o) => o.trackingNumber ?? '';
       case 9:
         keyOf = (o) => o.createdAt;
+      case 10:
+        keyOf = (o) => o.updatedAt;
       default:
         return orders;
     }
@@ -387,7 +389,8 @@ class _OrdersTable extends StatelessWidget {
             _sortableColumn('Status'),
             _sortableColumn('Shipping'),
             _sortableColumn('Tracking'),
-            _sortableColumn('Date'),
+            _sortableColumn('Created'),
+            _sortableColumn('Modified'),
             const DataColumn(label: Text('Actions')),
           ],
           rows: orders.map((order) => _buildRow(context, order)).toList(),
@@ -432,6 +435,7 @@ class _OrdersTable extends StatelessWidget {
               : const Text('-'),
         ),
         DataCell(Text(_formatDate(order.createdAt))),
+        DataCell(Text(_formatDate(order.updatedAt))),
         DataCell(_ActionButtons(order: order)),
       ],
     );

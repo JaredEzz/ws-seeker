@@ -46,6 +46,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   bool _addressInitialized = false;
   final _reviewFormKey = GlobalKey<FormState>();
   final _addressFormKey = GlobalKey<FormState>();
+  final _bottomAnchorKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +123,12 @@ class _OrderFormContentState extends State<_OrderFormContent> {
               ),
               Step(
                 title: const Text('Select Products'),
-                content: _ProductSelector(state: state),
+                content: Column(
+                  children: [
+                    _ProductSelector(state: state),
+                    SizedBox(key: _bottomAnchorKey),
+                  ],
+                ),
                 isActive: _currentStep >= 1,
                 state: state.itemRequests.isNotEmpty
                     ? StepState.complete
@@ -147,10 +153,10 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   }
 
   void _scrollToBottom() {
-    final controller = PrimaryScrollController.maybeOf(context);
-    if (controller != null && controller.hasClients) {
-      controller.animateTo(
-        controller.position.maxScrollExtent,
+    final keyContext = _bottomAnchorKey.currentContext;
+    if (keyContext != null) {
+      Scrollable.ensureVisible(
+        keyContext,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeOut,
       );

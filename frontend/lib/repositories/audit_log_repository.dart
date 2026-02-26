@@ -8,6 +8,7 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 class AuditLogQuery {
   final String? action;
   final String? resourceType;
+  final String? resourceId;
   final String? search;
   final DateTime? startDate;
   final DateTime? endDate;
@@ -17,6 +18,7 @@ class AuditLogQuery {
   const AuditLogQuery({
     this.action,
     this.resourceType,
+    this.resourceId,
     this.search,
     this.startDate,
     this.endDate,
@@ -59,6 +61,9 @@ class HttpAuditLogRepository implements AuditLogRepository {
     if (query.action != null) queryParams['action'] = query.action!;
     if (query.resourceType != null) {
       queryParams['resourceType'] = query.resourceType!;
+    }
+    if (query.resourceId != null) {
+      queryParams['resourceId'] = query.resourceId!;
     }
     if (query.search != null && query.search!.isNotEmpty) {
       queryParams['search'] = query.search!;

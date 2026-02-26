@@ -6,6 +6,7 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_state.dart';
+import '../../repositories/audit_log_repository.dart';
 import '../../repositories/order_repository.dart';
 import '../../services/storage_service.dart';
 import '../../widgets/orders/comment_section.dart';
@@ -88,9 +89,8 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
     final order = _order!;
     final authState = context.read<AuthBloc>().state;
-    final isAdmin = authState is AuthAuthenticated &&
-        (authState.user.role == UserRole.superUser ||
-            authState.user.role == UserRole.supplier);
+    final userRole = authState is AuthAuthenticated ? authState.user.role : null;
+    final isAdmin = userRole == UserRole.superUser || userRole == UserRole.supplier;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -149,6 +149,10 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           ],
           const SizedBox(height: 16),
           CommentSection(orderId: order.id),
+          if (userRole == UserRole.superUser) ...[
+            const SizedBox(height: 16),
+            _ActivityLogSection(orderId: order.id),
+          ],
         ],
       ),
     );
@@ -719,5 +723,218 @@ class _InfoCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _ActivityLogSection extends StatefulWidget {
+  final String orderId;
+  const _ActivityLogSection({required this.orderId});
+
+  @override
+  State<_ActivityLogSection> createState() => _ActivityLogSectionState();
+}
+
+class _ActivityLogSectionState extends State<_ActivityLogSection> {
+  bool _loading = false;
+  List<AuditLog>? _logs;
+  String? _error;
+
+  Future<void> _loadLogs() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final repo = context.read<AuditLogRepository>();
+      final page = await repo.getAuditLogs(AuditLogQuery(
+        resourceId: widget.orderId,
+        limit: 100,
+      ));
+      setState(() {
+        _logs = page.logs;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        leading: const Icon(Icons.history, size: 20),
+        title: Text('Activity Log', style: theme.textTheme.titleMedium),
+        initiallyExpanded: false,
+        onExpansionChanged: (expanded) {
+          if (expanded && _logs == null && !_loading) {
+            _loadLogs();
+          }
+        },
+        children: [
+          if (_loading)
+            const Padding(
+              padding: EdgeInsets.all(24),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (_error != null)
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text('Error: $_error',
+                  style: TextStyle(color: theme.colorScheme.error)),
+            )
+          else if (_logs != null && _logs!.isEmpty)
+            const Padding(
+              padding: EdgeInsets.all(16),
+              child: Text('No activity recorded.'),
+            )
+          else if (_logs != null)
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 400),
+              child: ListView.separated(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                itemCount: _logs!.length,
+                separatorBuilder: (_, __) =>
+                    const Divider(height: 1, indent: 56),
+                itemBuilder: (context, index) {
+                  final log = _logs![index];
+                  return _ActivityLogEntry(log: log);
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ActivityLogEntry extends StatelessWidget {
+  final AuditLog log;
+  const _ActivityLogEntry({required this.log});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final detailStr = _formatDetails(log.action, log.details);
+
+    return ListTile(
+      dense: true,
+      leading: _actionIcon(log.action),
+      title: Text(_actionLabel(log.action),
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(log.userEmail, style: theme.textTheme.bodySmall),
+          if (detailStr.isNotEmpty)
+            Text(
+              detailStr,
+              style: theme.textTheme.bodySmall
+                  ?.copyWith(color: theme.colorScheme.outline),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+        ],
+      ),
+      trailing: Text(
+        _formatTimestamp(log.createdAt),
+        style: theme.textTheme.bodySmall,
+      ),
+      isThreeLine: detailStr.isNotEmpty,
+    );
+  }
+
+  static String _actionLabel(String action) {
+    return switch (action) {
+      'order.created' => 'Order Created',
+      'order.updated' => 'Order Updated',
+      'order.deleted' => 'Order Deleted',
+      'comment.created' => 'Comment Added',
+      'invoice.generated' => 'Invoice Generated',
+      'invoice.statusUpdated' => 'Invoice Status Updated',
+      _ => action,
+    };
+  }
+
+  static const _statusLabels = {
+    'submitted': 'Submitted',
+    'awaitingQuote': 'Awaiting Quote',
+    'invoiced': 'Invoice Sent',
+    'paymentPending': 'Payment Pending',
+    'paymentReceived': 'Payment Received',
+    'shipped': 'Shipped',
+    'delivered': 'Delivered',
+    'cancelled': 'Cancelled',
+  };
+
+  static String _formatDetails(String action, Map<String, dynamic>? details) {
+    if (details == null || details.isEmpty) return '';
+
+    final parts = <String>[];
+    for (final entry in details.entries) {
+      switch (entry.key) {
+        case 'statusChange':
+          final raw = entry.value.toString();
+          final arrow = raw.split(' -> ');
+          if (arrow.length == 2) {
+            final from = _statusLabels[arrow[0]] ?? arrow[0];
+            final to = _statusLabels[arrow[1]] ?? arrow[1];
+            parts.add('$from \u2192 $to');
+          } else {
+            parts.add(raw);
+          }
+        case 'trackingNumber':
+          parts.add('Tracking: ${entry.value}');
+        case 'proofOfPaymentUploaded':
+          parts.add('Proof of payment uploaded');
+        case 'language':
+          parts.add(entry.value.toString().toUpperCase());
+        case 'itemCount':
+          parts.add('${entry.value} item${entry.value == 1 ? '' : 's'}');
+        case 'commentId':
+        case 'displayOrderNumber':
+          break;
+        default:
+          parts.add('${entry.key}: ${entry.value}');
+      }
+    }
+    return parts.join(' \u00b7 ');
+  }
+
+  Widget _actionIcon(String action) {
+    final (icon, color) = switch (action) {
+      'order.created' => (Icons.add_circle_outline, Colors.blue),
+      'order.updated' => (Icons.edit_outlined, Colors.orange),
+      'order.deleted' => (Icons.delete_outline, Colors.red),
+      'comment.created' => (Icons.comment_outlined, Colors.indigo),
+      'invoice.generated' => (Icons.description_outlined, Colors.green),
+      _ => (Icons.info_outline, Colors.grey),
+    };
+
+    return CircleAvatar(
+      radius: 16,
+      backgroundColor: color.withValues(alpha: 0.12),
+      child: Icon(icon, color: color, size: 16),
+    );
+  }
+
+  String _formatTimestamp(DateTime dt) {
+    final local = dt.toLocal();
+    final now = DateTime.now();
+    final diff = now.difference(local);
+    if (diff.inMinutes < 1) return 'just now';
+    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
+    if (diff.inDays < 1) return '${diff.inHours}h ago';
+    final h = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final m = local.minute.toString().padLeft(2, '0');
+    final ampm = local.hour < 12 ? 'AM' : 'PM';
+    return '${local.month}/${local.day} $h:$m $ampm';
   }
 }

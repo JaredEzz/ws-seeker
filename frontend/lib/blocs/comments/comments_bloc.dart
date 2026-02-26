@@ -16,7 +16,8 @@ final class CommentsFetchRequested extends CommentsEvent {
 final class CommentSendRequested extends CommentsEvent {
   final String orderId;
   final String content;
-  const CommentSendRequested({required this.orderId, required this.content});
+  final String? imageUrl;
+  const CommentSendRequested({required this.orderId, required this.content, this.imageUrl});
 }
 
 final class _CommentsUpdated extends CommentsEvent {
@@ -97,7 +98,7 @@ class CommentsBloc extends Bloc<CommentsEvent, CommentsState> {
     Emitter<CommentsState> emit,
   ) async {
     try {
-      await _orderRepository.addComment(event.orderId, event.content);
+      await _orderRepository.addComment(event.orderId, event.content, imageUrl: event.imageUrl);
       // No need to manually refresh — Firestore stream will emit the update
     } catch (e) {
       emit(CommentsFailure(message: e.toString()));

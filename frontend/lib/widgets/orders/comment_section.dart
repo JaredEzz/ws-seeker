@@ -1,9 +1,13 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/comments/comments_bloc.dart';
 import '../../repositories/order_repository.dart';
+import '../../services/storage_service.dart';
 
 class CommentSection extends StatelessWidget {
   final String orderId;
@@ -30,6 +34,9 @@ class _CommentSectionContent extends StatefulWidget {
 
 class _CommentSectionContentState extends State<_CommentSectionContent> {
   final _controller = TextEditingController();
+  Uint8List? _pendingImageBytes;
+  String? _pendingImageName;
+  bool _isSending = false;
 
   @override
   void dispose() {
@@ -37,14 +44,66 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
     super.dispose();
   }
 
-  void _sendComment() {
-    final content = _controller.text.trim();
-    if (content.isEmpty) return;
+  Future<void> _pickImage() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'gif', 'webp'],
+      withData: true,
+    );
 
-    context.read<CommentsBloc>().add(
-          CommentSendRequested(orderId: widget.orderId, content: content),
+    if (result == null || result.files.isEmpty) return;
+    final file = result.files.first;
+    if (file.bytes == null) return;
+
+    setState(() {
+      _pendingImageBytes = file.bytes;
+      _pendingImageName = file.name;
+    });
+  }
+
+  void _clearPendingImage() {
+    setState(() {
+      _pendingImageBytes = null;
+      _pendingImageName = null;
+    });
+  }
+
+  Future<void> _sendComment() async {
+    final content = _controller.text.trim();
+    if (content.isEmpty && _pendingImageBytes == null) return;
+    if (_isSending) return;
+
+    setState(() => _isSending = true);
+
+    try {
+      String? imageUrl;
+      if (_pendingImageBytes != null) {
+        final storageService = StorageService();
+        imageUrl = await storageService.uploadCommentImage(
+          orderId: widget.orderId,
+          filename: _pendingImageName!,
+          bytes: _pendingImageBytes!,
         );
-    _controller.clear();
+      }
+
+      if (!mounted) return;
+      context.read<CommentsBloc>().add(
+            CommentSendRequested(
+              orderId: widget.orderId,
+              content: content,
+              imageUrl: imageUrl,
+            ),
+          );
+      _controller.clear();
+      _clearPendingImage();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to upload image: $e')),
+      );
+    } finally {
+      if (mounted) setState(() => _isSending = false);
+    }
   }
 
   @override
@@ -77,8 +136,47 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
               },
             ),
             const Divider(),
+            // Pending image preview
+            if (_pendingImageBytes != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.memory(
+                        _pendingImageBytes!,
+                        width: 120,
+                        height: 90,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    Positioned(
+                      top: 2,
+                      right: 2,
+                      child: GestureDetector(
+                        onTap: _clearPendingImage,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.black54,
+                            shape: BoxShape.circle,
+                          ),
+                          padding: const EdgeInsets.all(2),
+                          child: const Icon(Icons.close, size: 16, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             Row(
               children: [
+                IconButton(
+                  icon: const Icon(Icons.image_outlined),
+                  tooltip: 'Attach image',
+                  onPressed: _isSending ? null : _pickImage,
+                ),
+                const SizedBox(width: 4),
                 Expanded(
                   child: TextField(
                     controller: _controller,
@@ -94,10 +192,19 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                IconButton.filled(
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendComment,
-                ),
+                _isSending
+                    ? const SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Padding(
+                          padding: EdgeInsets.all(8),
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : IconButton.filled(
+                        icon: const Icon(Icons.send),
+                        onPressed: _sendComment,
+                      ),
               ],
             ),
           ],
@@ -165,9 +272,73 @@ class _CommentBubble extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
-          Text(comment.content),
+          if (comment.content.isNotEmpty) ...[
+            const SizedBox(height: 4),
+            Text(comment.content),
+          ],
+          if (comment.imageUrl != null) ...[
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _showFullImage(context, comment.imageUrl!),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 200, maxHeight: 150),
+                  child: Image.network(
+                    comment.imageUrl!,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return const SizedBox(
+                        width: 200,
+                        height: 100,
+                        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        width: 200,
+                        height: 100,
+                        color: Colors.grey.shade200,
+                        child: const Center(child: Icon(Icons.broken_image_outlined)),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ],
+      ),
+    );
+  }
+
+  void _showFullImage(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.all(16),
+        child: Stack(
+          children: [
+            Center(
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 4.0,
+                child: Image.network(imageUrl),
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 28),
+                style: IconButton.styleFrom(backgroundColor: Colors.black54),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

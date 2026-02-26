@@ -20,10 +20,11 @@ class CommentService {
     required String userId,
     required String userName,
     required String content,
+    String? imageUrl,
     bool isInternal = false,
   }) async {
-    if (content.trim().isEmpty) {
-      throw ArgumentError('Comment content cannot be empty');
+    if (content.trim().isEmpty && (imageUrl == null || imageUrl.trim().isEmpty)) {
+      throw ArgumentError('Comment must have content or an image');
     }
 
     // Verify order exists
@@ -38,6 +39,8 @@ class CommentService {
       'userId': userId,
       'userName': userName,
       'content': content.trim(),
+      if (imageUrl != null && imageUrl.trim().isNotEmpty)
+        'imageUrl': imageUrl.trim(),
       'isInternal': isInternal,
       'createdAt': FieldValue.serverTimestamp,
     };

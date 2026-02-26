@@ -107,6 +107,7 @@ class OrderService {
         unitPrice: unitPrice,
         totalPrice: totalPrice,
         productType: itemRequest.productType,
+        imageUrl: productData['imageUrl'] as String?,
       ));
     }
 
@@ -129,6 +130,7 @@ class OrderService {
                 'unitPrice': item.unitPrice,
                 'totalPrice': item.totalPrice,
                 if (item.productType != null) 'productType': item.productType,
+                if (item.imageUrl != null) 'imageUrl': item.imageUrl,
               })
           .toList(),
       'status': hasQuoteRequired

@@ -226,6 +226,7 @@ class ProductService {
       if (row.category != null) 'category': row.category,
       if (row.specifications != null) 'specifications': row.specifications,
       if (row.notes != null) 'notes': row.notes,
+      if (row.imageUrl != null) 'imageUrl': row.imageUrl,
       'quoteRequired': row.quoteRequired,
     };
   }

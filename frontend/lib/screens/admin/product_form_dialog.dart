@@ -1,6 +1,8 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
+import '../../services/storage_service.dart';
 
 /// Dialog for creating or editing a product.
 /// Pass [product] = null for create mode, or an existing Product for edit mode.
@@ -40,6 +42,10 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
   late final TextEditingController _caseUsdCtrl;
   late final TextEditingController _caseUsdTariffCtrl;
 
+  // Image
+  late final TextEditingController _imageUrlCtrl;
+  bool _uploadingImage = false;
+
   // CN fields
   String? _category;
   bool _quoteRequired = false;
@@ -71,6 +77,8 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
     _caseUsdCtrl = TextEditingController(text: _optDouble(p?.casePriceUsd));
     _caseUsdTariffCtrl = TextEditingController(text: _optDouble(p?.casePriceUsdWithTariff));
 
+    _imageUrlCtrl = TextEditingController(text: p?.imageUrl ?? '');
+
     _category = p?.category;
     _quoteRequired = p?.quoteRequired ?? false;
   }
@@ -94,6 +102,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
     _noShrinkUsdTariffCtrl.dispose();
     _caseUsdCtrl.dispose();
     _caseUsdTariffCtrl.dispose();
+    _imageUrlCtrl.dispose();
     super.dispose();
   }
 
@@ -187,6 +196,60 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                       controller: _notesCtrl,
                       decoration: const InputDecoration(labelText: 'Notes / Remarks'),
                     ),
+
+                    // Image URL
+                    const SizedBox(height: Tokens.space12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: _imageUrlCtrl,
+                            decoration: const InputDecoration(
+                              labelText: 'Image URL',
+                              hintText: 'https://...',
+                            ),
+                            onChanged: (_) => setState(() {}),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        _uploadingImage
+                            ? const SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                              )
+                            : IconButton(
+                                icon: const Icon(Icons.upload_file),
+                                tooltip: 'Upload image',
+                                onPressed: _pickAndUploadImage,
+                              ),
+                      ],
+                    ),
+                    if (_imageUrlCtrl.text.trim().isNotEmpty) ...[
+                      const SizedBox(height: Tokens.space8),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(Tokens.radiusSm),
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxHeight: 150),
+                          child: Image.network(
+                            _imageUrlCtrl.text.trim(),
+                            fit: BoxFit.contain,
+                            errorBuilder: (_, __, ___) => Container(
+                              height: 60,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.errorContainer,
+                                borderRadius: BorderRadius.circular(Tokens.radiusSm),
+                              ),
+                              child: const Text('Could not load image'),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
 
                     // Language-specific fields
                     if (_language == ProductLanguage.japanese) ..._buildJpnFields(),
@@ -298,6 +361,38 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
     return double.tryParse(text);
   }
 
+  Future<void> _pickAndUploadImage() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'gif', 'webp'],
+      withData: true,
+    );
+
+    if (result == null || result.files.isEmpty) return;
+    final file = result.files.first;
+    if (file.bytes == null) return;
+
+    setState(() => _uploadingImage = true);
+    try {
+      final url = await StorageService().uploadProductImage(
+        productName: _nameCtrl.text.trim().isNotEmpty
+            ? _nameCtrl.text.trim()
+            : 'unnamed',
+        filename: file.name,
+        bytes: file.bytes!,
+      );
+      _imageUrlCtrl.text = url;
+      setState(() {});
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Upload failed: $e')),
+        );
+      }
+    }
+    if (mounted) setState(() => _uploadingImage = false);
+  }
+
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
@@ -308,6 +403,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
       if (_skuCtrl.text.trim().isNotEmpty) 'sku': _skuCtrl.text.trim(),
       if (_descriptionCtrl.text.trim().isNotEmpty) 'description': _descriptionCtrl.text.trim(),
       if (_notesCtrl.text.trim().isNotEmpty) 'notes': _notesCtrl.text.trim(),
+      if (_imageUrlCtrl.text.trim().isNotEmpty) 'imageUrl': _imageUrlCtrl.text.trim(),
       'quoteRequired': _quoteRequired,
     };
 

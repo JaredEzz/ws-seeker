@@ -366,11 +366,12 @@ class OrdersHandler {
     try {
       final body = await request.readAsString();
       final data = jsonDecode(body) as Map<String, dynamic>;
-      final content = data['content'] as String?;
+      final content = data['content'] as String? ?? '';
+      final imageUrl = data['imageUrl'] as String?;
 
-      if (content == null || content.trim().isEmpty) {
+      if (content.trim().isEmpty && (imageUrl == null || imageUrl.trim().isEmpty)) {
         return Response(400,
-            body: jsonEncode({'error': 'content is required'}),
+            body: jsonEncode({'error': 'content or imageUrl is required'}),
             headers: {'Content-Type': 'application/json'});
       }
 
@@ -379,6 +380,7 @@ class OrdersHandler {
         userId: userId,
         userName: userEmail ?? 'Unknown',
         content: content,
+        imageUrl: imageUrl,
         isInternal: data['isInternal'] as bool? ?? false,
       );
 

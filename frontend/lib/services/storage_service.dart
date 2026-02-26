@@ -25,6 +25,45 @@ class StorageService {
     return ref.getDownloadURL();
   }
 
+  /// Upload a comment image to Firebase Cloud Storage and return the download URL.
+  ///
+  /// Files are stored under `comment_images/{orderId}/{timestamp}_{filename}`.
+  Future<String> uploadCommentImage({
+    required String orderId,
+    required String filename,
+    required Uint8List bytes,
+  }) async {
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final ref = _storage.ref('comment_images/$orderId/${timestamp}_$filename');
+
+    final metadata = SettableMetadata(
+      contentType: _contentTypeFromFilename(filename),
+    );
+
+    await ref.putData(bytes, metadata);
+    return ref.getDownloadURL();
+  }
+
+  /// Upload a product image to Firebase Cloud Storage and return the download URL.
+  ///
+  /// Files are stored under `product_images/{productName}/{filename}`.
+  Future<String> uploadProductImage({
+    required String productName,
+    required String filename,
+    required Uint8List bytes,
+  }) async {
+    final safeName = productName.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final ref = _storage.ref('product_images/$safeName/${timestamp}_$filename');
+
+    final metadata = SettableMetadata(
+      contentType: _contentTypeFromFilename(filename),
+    );
+
+    await ref.putData(bytes, metadata);
+    return ref.getDownloadURL();
+  }
+
   String _contentTypeFromFilename(String filename) {
     final ext = filename.split('.').last.toLowerCase();
     return switch (ext) {

@@ -15,6 +15,7 @@ class OrderComment with _$OrderComment {
     required String userId,
     required String userName,
     required String content,
+    String? imageUrl,
     @Default(false) bool isInternal,
     required DateTime createdAt,
   }) = _OrderComment;

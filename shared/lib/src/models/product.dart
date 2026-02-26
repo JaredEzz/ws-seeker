@@ -83,6 +83,9 @@ class ProductImportRow with _$ProductImportRow {
     // Availability remarks
     String? notes,
 
+    // Product image URL
+    String? imageUrl,
+
     // True when price is "ask"
     @Default(false) bool quoteRequired,
   }) = _ProductImportRow;

@@ -13,7 +13,7 @@ abstract interface class OrderRepository {
   Future<void> deleteOrder(String id);
   Future<List<OrderComment>> fetchComments(String orderId);
   Stream<List<OrderComment>> watchComments(String orderId);
-  Future<void> addComment(String orderId, String content);
+  Future<void> addComment(String orderId, String content, {String? imageUrl});
 }
 
 /// HTTP-based order repository that calls the backend API
@@ -143,6 +143,7 @@ class HttpOrderRepository implements OrderRepository {
                 userId: data['userId'] as String? ?? '',
                 userName: data['userName'] as String? ?? '',
                 content: data['content'] as String? ?? '',
+                imageUrl: data['imageUrl'] as String?,
                 isInternal: data['isInternal'] as bool? ?? false,
                 createdAt: createdAt,
               );
@@ -150,11 +151,14 @@ class HttpOrderRepository implements OrderRepository {
   }
 
   @override
-  Future<void> addComment(String orderId, String content) async {
+  Future<void> addComment(String orderId, String content, {String? imageUrl}) async {
     final response = await http.post(
       Uri.parse('$_baseUrl${ApiRoutes.orders}/$orderId/comments'),
       headers: await _authHeaders,
-      body: jsonEncode({'content': content}),
+      body: jsonEncode({
+        'content': content,
+        if (imageUrl != null) 'imageUrl': imageUrl,
+      }),
     );
 
     if (response.statusCode != 201) {
@@ -238,17 +242,24 @@ class HttpOrderRepository implements OrderRepository {
       userId: map['userId'] as String,
       userName: map['userName'] as String,
       content: map['content'] as String,
+      imageUrl: map['imageUrl'] as String?,
       isInternal: map['isInternal'] as bool? ?? false,
       createdAt: _parseDateTime(map['createdAt']),
     );
   }
 
   DateTime _parseDateTime(dynamic value) {
-    if (value is String) return DateTime.parse(value);
+    if (value is String) {
+      final dt = DateTime.parse(value);
+      if (dt.isUtc) return dt;
+      // Server timestamps are UTC; re-interpret as UTC if Z suffix was missing
+      return DateTime.utc(dt.year, dt.month, dt.day, dt.hour, dt.minute,
+          dt.second, dt.millisecond, dt.microsecond);
+    }
     if (value is Map) {
-      // Firestore Timestamp format
+      // Firestore Timestamp format — always UTC
       final seconds = value['_seconds'] as int? ?? 0;
-      return DateTime.fromMillisecondsSinceEpoch(seconds * 1000);
+      return DateTime.fromMillisecondsSinceEpoch(seconds * 1000, isUtc: true);
     }
     return DateTime.now();
   }
@@ -412,7 +423,7 @@ class MockOrderRepository implements OrderRepository {
   }
 
   @override
-  Future<void> addComment(String orderId, String content) async {
+  Future<void> addComment(String orderId, String content, {String? imageUrl}) async {
     await Future.delayed(const Duration(milliseconds: 300));
   }
 }

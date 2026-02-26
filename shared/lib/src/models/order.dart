@@ -82,6 +82,8 @@ class OrderItem with _$OrderItem {
     required double totalPrice,
     /// JPN product type: 'box', 'no_shrink', or 'case'
     String? productType,
+    /// Product image URL snapshot at order creation time
+    String? imageUrl,
   }) = _OrderItem;
 
   factory OrderItem.fromJson(Map<String, dynamic> json) =>

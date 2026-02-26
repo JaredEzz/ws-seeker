@@ -42,6 +42,7 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
   String _searchQuery = '';
   int? _sortColumnIndex;
   bool _sortAscending = true;
+  bool _filtersExpanded = true;
   final _searchController = TextEditingController();
 
   @override
@@ -111,20 +112,28 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
       ),
       body: Column(
         children: [
-          // Filter bar
-          _FilterBar(
-            languageFilter: _languageFilter,
-            statusFilter: _statusFilter,
-            searchController: _searchController,
-            showLanguageFilter: user?.role != UserRole.supplier,
-            hasActiveFilters: _hasActiveFilters,
-            onLanguageChanged: (lang) =>
-                setState(() => _languageFilter = lang),
-            onStatusChanged: (status) =>
-                setState(() => _statusFilter = status),
-            onSearchChanged: (query) =>
-                setState(() => _searchQuery = query),
-            onClearAll: _clearAllFilters,
+          // Collapsible filter bar
+          _CollapsibleFilterBar(
+            expanded: _filtersExpanded,
+            onToggle: () =>
+                setState(() => _filtersExpanded = !_filtersExpanded),
+            activeFilterCount: (_languageFilter != null ? 1 : 0) +
+                (_statusFilter != null ? 1 : 0) +
+                (_searchQuery.isNotEmpty ? 1 : 0),
+            child: _FilterBar(
+              languageFilter: _languageFilter,
+              statusFilter: _statusFilter,
+              searchController: _searchController,
+              showLanguageFilter: user?.role != UserRole.supplier,
+              hasActiveFilters: _hasActiveFilters,
+              onLanguageChanged: (lang) =>
+                  setState(() => _languageFilter = lang),
+              onStatusChanged: (status) =>
+                  setState(() => _statusFilter = status),
+              onSearchChanged: (query) =>
+                  setState(() => _searchQuery = query),
+              onClearAll: _clearAllFilters,
+            ),
           ),
           const Divider(height: 1),
           // Orders table
@@ -226,6 +235,87 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
       return _sortAscending ? cmp : -cmp;
     });
     return sorted;
+  }
+}
+
+class _CollapsibleFilterBar extends StatelessWidget {
+  final bool expanded;
+  final VoidCallback onToggle;
+  final int activeFilterCount;
+  final Widget child;
+
+  const _CollapsibleFilterBar({
+    required this.expanded,
+    required this.onToggle,
+    required this.activeFilterCount,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: onToggle,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                Icon(
+                  expanded
+                      ? Icons.filter_list_off
+                      : Icons.filter_list,
+                  size: 18,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Search & Filters',
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                if (activeFilterCount > 0) ...[
+                  const SizedBox(width: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.primary,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      '$activeFilterCount',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+                const Spacer(),
+                Icon(
+                  expanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  size: 20,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+        ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          alignment: Alignment.topCenter,
+          child: expanded ? child : const SizedBox.shrink(),
+        ),
+      ],
+    );
   }
 }
 

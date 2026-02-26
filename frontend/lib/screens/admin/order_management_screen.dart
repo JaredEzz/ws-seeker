@@ -369,40 +369,57 @@ class _OrdersTable extends StatelessWidget {
       );
     }
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+    final stripe = theme.colorScheme.surfaceContainerLow;
+
+    return Scrollbar(
+      thumbVisibility: true,
       child: SingleChildScrollView(
-        child: DataTable(
-          columnSpacing: 16,
-          sortColumnIndex: sortColumnIndex,
-          sortAscending: sortAscending,
-          headingRowColor: WidgetStateProperty.all(
-            theme.colorScheme.surfaceContainerHighest,
+        scrollDirection: Axis.horizontal,
+        child: SingleChildScrollView(
+          child: DataTable(
+            columnSpacing: 16,
+            sortColumnIndex: sortColumnIndex,
+            sortAscending: sortAscending,
+            headingRowColor: WidgetStateProperty.all(
+              theme.colorScheme.surfaceContainerHighest,
+            ),
+            dataRowColor: WidgetStateProperty.resolveWith((states) => null),
+            columns: [
+              _sortableColumn('Order #'),
+              _sortableColumn('Language'),
+              _sortableColumn('Customer'),
+              _sortableColumn('Discord'),
+              _sortableColumn('Items'),
+              _sortableColumn('Total', numeric: true),
+              _sortableColumn('Status'),
+              _sortableColumn('Shipping'),
+              _sortableColumn('Tracking'),
+              _sortableColumn('Created'),
+              _sortableColumn('Modified'),
+              const DataColumn(label: Text('Actions')),
+            ],
+            rows: orders
+                .asMap()
+                .entries
+                .map((entry) => _buildRow(
+                      context,
+                      entry.value,
+                      stripe: entry.key.isOdd ? stripe : null,
+                    ))
+                .toList(),
           ),
-          columns: [
-            _sortableColumn('Order #'),
-            _sortableColumn('Language'),
-            _sortableColumn('Customer'),
-            _sortableColumn('Discord'),
-            _sortableColumn('Items'),
-            _sortableColumn('Total', numeric: true),
-            _sortableColumn('Status'),
-            _sortableColumn('Shipping'),
-            _sortableColumn('Tracking'),
-            _sortableColumn('Created'),
-            _sortableColumn('Modified'),
-            const DataColumn(label: Text('Actions')),
-          ],
-          rows: orders.map((order) => _buildRow(context, order)).toList(),
         ),
       ),
     );
   }
 
-  DataRow _buildRow(BuildContext context, Order order) {
+  DataRow _buildRow(BuildContext context, Order order, {Color? stripe}) {
     final displayId = order.displayOrderNumber ?? order.id;
 
     return DataRow(
+      color: stripe != null
+          ? WidgetStateProperty.all(stripe)
+          : null,
       cells: [
         DataCell(
           Text(displayId, style: const TextStyle(fontWeight: FontWeight.w500)),
@@ -442,7 +459,11 @@ class _OrdersTable extends StatelessWidget {
   }
 
   String _formatDate(DateTime dt) {
-    return '${dt.month}/${dt.day}/${dt.year}';
+    final local = dt.toLocal();
+    final h = local.hour % 12 == 0 ? 12 : local.hour % 12;
+    final m = local.minute.toString().padLeft(2, '0');
+    final ampm = local.hour < 12 ? 'AM' : 'PM';
+    return '${local.month}/${local.day}/${local.year} $h:$m $ampm';
   }
 }
 

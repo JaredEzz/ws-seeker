@@ -262,7 +262,10 @@ class OrderService {
       updates['trackingCarrier'] = request.trackingCarrier;
     }
     if (request.proofOfPaymentUrl != null) {
-      updates['proofOfPaymentUrl'] = request.proofOfPaymentUrl;
+      // Empty string means "clear the field" (soft delete)
+      updates['proofOfPaymentUrl'] = request.proofOfPaymentUrl!.isEmpty
+          ? FieldValue.delete
+          : request.proofOfPaymentUrl;
     }
     if (request.invoiceId != null) {
       updates['invoiceId'] = request.invoiceId;

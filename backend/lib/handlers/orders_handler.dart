@@ -241,20 +241,38 @@ class OrdersHandler {
       }
 
       // Audit log
+      final auditDetails = <String, dynamic>{
+        if (updateRequest.status != null)
+          'statusChange': '${order['status']} -> ${updateRequest.status!.name}',
+        if (updateRequest.trackingNumber != null)
+          'trackingNumber': updateRequest.trackingNumber,
+        if (order['displayOrderNumber'] != null)
+          'displayOrderNumber': order['displayOrderNumber'],
+      };
+
+      // Proof of payment: distinguish upload from removal
+      if (updateRequest.proofOfPaymentUrl != null) {
+        if (updateRequest.proofOfPaymentUrl!.isEmpty) {
+          // Removal — store the old URL so it's accessible from the audit log
+          auditDetails['proofOfPaymentRemoved'] = true;
+          final oldUrl = order['proofOfPaymentUrl'] as String?;
+          if (oldUrl != null) {
+            auditDetails['proofOfPaymentUrl'] = oldUrl;
+          }
+        } else {
+          // Upload — store the new URL
+          auditDetails['proofOfPaymentUploaded'] = true;
+          auditDetails['proofOfPaymentUrl'] = updateRequest.proofOfPaymentUrl;
+        }
+      }
+
       _auditService?.log(
         userId: userId,
         userEmail: request.context[AuthContext.userEmail] as String? ?? '',
         action: 'order.updated',
         resourceType: 'order',
         resourceId: id,
-        details: {
-          if (updateRequest.status != null)
-            'statusChange': '${order['status']} -> ${updateRequest.status!.name}',
-          if (updateRequest.trackingNumber != null)
-            'trackingNumber': updateRequest.trackingNumber,
-          if (updateRequest.proofOfPaymentUrl != null)
-            'proofOfPaymentUploaded': true,
-        },
+        details: auditDetails,
       );
 
       return Response.ok(

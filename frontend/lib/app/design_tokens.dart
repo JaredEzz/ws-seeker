@@ -100,7 +100,21 @@ abstract final class Tokens {
   static const surfaceBackground = stone50;   // Scaffold — warm off-white
   static const surfaceCard       = white;     // Cards
   static const surfaceInputFill  = stone100;  // Inputs — "signals type here"
-  static const surfaceComment    = stone100;  // Comment bubbles
+  static const surfaceComment    = stone100;  // Comment bubbles (fallback)
+
+  /// Generates a unique muted pastel color from a string (e.g. userId/email).
+  /// High saturation kept low (25-35%) and lightness high (85-92%) so black
+  /// text remains readable.
+  static Color userColor(String key) {
+    var hash = 0;
+    for (final c in key.codeUnits) {
+      hash = ((hash << 5) - hash + c) & 0x7FFFFFFF;
+    }
+    final hue = (hash % 360).toDouble();
+    final saturation = 0.25 + (hash % 11) / 100; // 0.25–0.35
+    final lightness = 0.85 + (hash % 8) / 100;   // 0.85–0.92
+    return HSLColor.fromAHSL(1, hue, saturation, lightness).toColor();
+  }
 
   // ---------------------------------------------------------------------------
   // Text hierarchy

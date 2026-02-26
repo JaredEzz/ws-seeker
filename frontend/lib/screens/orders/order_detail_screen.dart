@@ -130,6 +130,13 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                   );
               _loadOrder();
             },
+            onRemoved: () async {
+              await context.read<OrderRepository>().updateOrder(
+                    order.id,
+                    const UpdateOrderRequest(proofOfPaymentUrl: ''),
+                  );
+              _loadOrder();
+            },
           ),
           if (order.trackingNumber != null) ...[
             const SizedBox(height: 16),
@@ -459,10 +466,12 @@ class _InvoiceCard extends StatelessWidget {
 class _ProofOfPaymentCard extends StatefulWidget {
   final Order order;
   final Future<void> Function(String url) onUploaded;
+  final Future<void> Function() onRemoved;
 
   const _ProofOfPaymentCard({
     required this.order,
     required this.onUploaded,
+    required this.onRemoved,
   });
 
   @override
@@ -471,7 +480,50 @@ class _ProofOfPaymentCard extends StatefulWidget {
 
 class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
   bool _uploading = false;
+  bool _removing = false;
   String? _uploadedFileName;
+
+  Future<void> _confirmRemove() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Remove Proof of Payment?'),
+        content: const Text(
+          'The uploaded file will be preserved in the activity log '
+          'and can still be accessed from there.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Remove'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _removing = true);
+    try {
+      await widget.onRemoved();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Proof of payment removed')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to remove: $e')),
+        );
+      }
+    }
+    if (mounted) setState(() => _removing = false);
+  }
 
   Future<void> _pickAndUpload() async {
     final result = await FilePicker.platform.pickFiles(
@@ -654,6 +706,19 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                     icon: const Icon(Icons.upload_file, size: 18),
                     label: const Text('Upload New'),
                   ),
+                  OutlinedButton.icon(
+                    onPressed: _removing ? null : _confirmRemove,
+                    icon: _removing
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Icon(Icons.delete_outline,
+                            size: 18, color: theme.colorScheme.error),
+                    label: Text('Remove',
+                        style: TextStyle(color: theme.colorScheme.error)),
+                  ),
                 ],
               ),
             ] else ...[
@@ -824,6 +889,8 @@ class _ActivityLogEntry extends StatelessWidget {
     final theme = Theme.of(context);
     final detailStr = _formatDetails(log.action, log.details);
 
+    final proofUrl = log.details?['proofOfPaymentUrl'] as String?;
+
     return ListTile(
       dense: true,
       leading: _actionIcon(log.action),
@@ -841,13 +908,24 @@ class _ActivityLogEntry extends StatelessWidget {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+          if (proofUrl != null)
+            GestureDetector(
+              onTap: () => web.window.open(proofUrl, '_blank'),
+              child: Text(
+                'View file',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.primary,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
         ],
       ),
       trailing: Text(
         _formatTimestamp(log.createdAt),
         style: theme.textTheme.bodySmall,
       ),
-      isThreeLine: detailStr.isNotEmpty,
+      isThreeLine: detailStr.isNotEmpty || proofUrl != null,
     );
   }
 
@@ -894,6 +972,11 @@ class _ActivityLogEntry extends StatelessWidget {
           parts.add('Tracking: ${entry.value}');
         case 'proofOfPaymentUploaded':
           parts.add('Proof of payment uploaded');
+        case 'proofOfPaymentRemoved':
+          parts.add('Proof of payment removed');
+        case 'proofOfPaymentUrl':
+          // Handled separately as a clickable link
+          break;
         case 'language':
           parts.add(entry.value.toString().toUpperCase());
         case 'itemCount':

@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -342,7 +343,7 @@ class _FilterBar extends StatelessWidget {
   }
 }
 
-class _OrdersTable extends StatelessWidget {
+class _OrdersTable extends StatefulWidget {
   final List<Order> orders;
   final UserRole? currentUserRole;
   final int? sortColumnIndex;
@@ -358,55 +359,88 @@ class _OrdersTable extends StatelessWidget {
   });
 
   @override
+  State<_OrdersTable> createState() => _OrdersTableState();
+}
+
+class _OrdersTableState extends State<_OrdersTable> {
+  final _horizontalController = ScrollController();
+  final _verticalController = ScrollController();
+
+  @override
+  void dispose() {
+    _horizontalController.dispose();
+    _verticalController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    DataColumn _sortableColumn(String label, {bool numeric = false}) {
+    DataColumn sortableColumn(String label, {bool numeric = false}) {
       return DataColumn(
         label: Text(label),
         numeric: numeric,
-        onSort: onSort,
+        onSort: widget.onSort,
       );
     }
 
     final stripe = theme.colorScheme.surfaceContainerLow;
 
-    return Scrollbar(
-      thumbVisibility: true,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SingleChildScrollView(
-          child: DataTable(
-            columnSpacing: 16,
-            sortColumnIndex: sortColumnIndex,
-            sortAscending: sortAscending,
-            headingRowColor: WidgetStateProperty.all(
-              theme.colorScheme.surfaceContainerHighest,
+    return ScrollConfiguration(
+      behavior: ScrollConfiguration.of(context).copyWith(
+        dragDevices: {
+          PointerDeviceKind.touch,
+          PointerDeviceKind.mouse,
+          PointerDeviceKind.trackpad,
+        },
+      ),
+      child: Scrollbar(
+        controller: _verticalController,
+        thumbVisibility: true,
+        child: Scrollbar(
+          controller: _horizontalController,
+          thumbVisibility: true,
+          notificationPredicate: (notification) => notification.depth == 1,
+          child: SingleChildScrollView(
+            controller: _verticalController,
+            child: SingleChildScrollView(
+              controller: _horizontalController,
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                columnSpacing: 16,
+                sortColumnIndex: widget.sortColumnIndex,
+                sortAscending: widget.sortAscending,
+                headingRowColor: WidgetStateProperty.all(
+                  theme.colorScheme.surfaceContainerHighest,
+                ),
+                dataRowColor:
+                    WidgetStateProperty.resolveWith((states) => null),
+                columns: [
+                  sortableColumn('Order #'),
+                  sortableColumn('Language'),
+                  sortableColumn('Customer'),
+                  sortableColumn('Discord'),
+                  sortableColumn('Items'),
+                  sortableColumn('Total', numeric: true),
+                  sortableColumn('Status'),
+                  sortableColumn('Shipping'),
+                  sortableColumn('Tracking'),
+                  sortableColumn('Created'),
+                  sortableColumn('Modified'),
+                  const DataColumn(label: Text('Actions')),
+                ],
+                rows: widget.orders
+                    .asMap()
+                    .entries
+                    .map((entry) => _buildRow(
+                          context,
+                          entry.value,
+                          stripe: entry.key.isOdd ? stripe : null,
+                        ))
+                    .toList(),
+              ),
             ),
-            dataRowColor: WidgetStateProperty.resolveWith((states) => null),
-            columns: [
-              _sortableColumn('Order #'),
-              _sortableColumn('Language'),
-              _sortableColumn('Customer'),
-              _sortableColumn('Discord'),
-              _sortableColumn('Items'),
-              _sortableColumn('Total', numeric: true),
-              _sortableColumn('Status'),
-              _sortableColumn('Shipping'),
-              _sortableColumn('Tracking'),
-              _sortableColumn('Created'),
-              _sortableColumn('Modified'),
-              const DataColumn(label: Text('Actions')),
-            ],
-            rows: orders
-                .asMap()
-                .entries
-                .map((entry) => _buildRow(
-                      context,
-                      entry.value,
-                      stripe: entry.key.isOdd ? stripe : null,
-                    ))
-                .toList(),
           ),
         ),
       ),
@@ -434,7 +468,7 @@ class _OrdersTable extends StatelessWidget {
             : '\$${order.totalAmount.toStringAsFixed(2)}')),
         DataCell(_StatusChip(
           order: order,
-          onStatusChanged: currentUserRole == UserRole.superUser
+          onStatusChanged: widget.currentUserRole == UserRole.superUser
               ? (newStatus) {
                   context.read<OrdersBloc>().add(
                         OrderStatusUpdateRequested(

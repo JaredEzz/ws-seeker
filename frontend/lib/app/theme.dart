@@ -138,11 +138,14 @@ class AppTheme {
       ),
 
       // Floating Action Button
-      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: Tokens.stone900,
         foregroundColor: Tokens.textOnPrimary,
         elevation: 2,
-        shape: CircleBorder(),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        extendedPadding: const EdgeInsets.symmetric(horizontal: 20),
       ),
     );
   }

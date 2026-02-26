@@ -32,11 +32,22 @@ class OrderService {
   /// Atomically increment and return the next order number for a language.
   ///
   /// Uses a per-language counter document in `counters/orders_{language}`.
-  /// `set` with `FieldValue.increment` is atomic — creates the doc with
-  /// count=1 if missing, or increments if it exists.
+  /// Uses `update` (not `set`) because `set` replaces the document before
+  /// applying transforms, causing `FieldValue.increment` to always start
+  /// from 0. Falls back to `create` for the first order of each language.
   Future<int> _nextOrderNumber(ProductLanguage language) async {
     final docRef = _countersRef.doc('orders_${language.name}');
-    await docRef.set({'count': const FieldValue.increment(1)});
+    try {
+      await docRef.update({'count': const FieldValue.increment(1)});
+    } on Object {
+      // Counter doc doesn't exist yet — create it with count = 1.
+      try {
+        await docRef.create({'count': 1});
+      } on Object {
+        // Another request already created it; just increment.
+        await docRef.update({'count': const FieldValue.increment(1)});
+      }
+    }
     final doc = await docRef.get();
     return (doc.data()!['count'] as num).toInt();
   }
@@ -221,8 +232,9 @@ class OrderService {
   /// progression, never backward.
   Future<void> updateOrder(
     String orderId,
-    UpdateOrderRequest request,
-  ) async {
+    UpdateOrderRequest request, {
+    bool isAdmin = false,
+  }) async {
     final doc = await _ordersRef.doc(orderId).get();
     if (!doc.exists) {
       throw ArgumentError('Order not found: $orderId');
@@ -233,10 +245,13 @@ class OrderService {
       'updatedAt': FieldValue.serverTimestamp,
     };
 
-    // Validate and apply status transition
+    // Validate and apply status transition (admins bypass validation)
     if (request.status != null) {
-      final currentStatus = _parseOrderStatus(currentData['status'] as String);
-      _validateStatusTransition(currentStatus, request.status!);
+      if (!isAdmin) {
+        final currentStatus =
+            _parseOrderStatus(currentData['status'] as String);
+        _validateStatusTransition(currentStatus, request.status!);
+      }
       updates['status'] = request.status!.name;
     }
 
@@ -333,6 +348,24 @@ class OrderService {
       }
     }
     return (productData['basePrice'] as num).toDouble();
+  }
+
+  /// Delete an order and its comments subcollection
+  Future<void> deleteOrder(String orderId) async {
+    final doc = await _ordersRef.doc(orderId).get();
+    if (!doc.exists) {
+      throw ArgumentError('Order not found: $orderId');
+    }
+
+    // Delete comments subcollection first
+    final commentsRef = _ordersRef.doc(orderId).collection('comments');
+    final comments = await commentsRef.get();
+    for (final commentDoc in comments.docs) {
+      await commentsRef.doc(commentDoc.id).delete();
+    }
+
+    // Delete the order document
+    await _ordersRef.doc(orderId).delete();
   }
 
   OrderStatus _parseOrderStatus(String status) {

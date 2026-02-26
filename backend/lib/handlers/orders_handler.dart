@@ -48,6 +48,9 @@ class OrdersHandler {
     // PATCH /api/orders/<id> - Update order
     router.patch('/<id>', _updateOrder);
 
+    // DELETE /api/orders/<id> - Delete order (superUser only)
+    router.delete('/<id>', _deleteOrder);
+
     // POST /api/orders/<orderId>/comments - Add comment
     router.post('/<orderId>/comments', _addComment);
 
@@ -229,7 +232,8 @@ class OrdersHandler {
       final data = jsonDecode(body) as Map<String, dynamic>;
       final updateRequest = UpdateOrderRequest.fromJson(data);
 
-      await _orderService.updateOrder(id, updateRequest);
+      await _orderService.updateOrder(id, updateRequest,
+          isAdmin: role != UserRole.wholesaler);
 
       // Send status change emails (fire-and-forget)
       if (updateRequest.status != null) {
@@ -267,6 +271,50 @@ class OrdersHandler {
     } catch (e) {
       return Response.internalServerError(
           body: jsonEncode({'error': 'Failed to update order: $e'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+  }
+
+  /// DELETE /api/orders/<id>
+  /// Requires superUser role
+  Future<Response> _deleteOrder(Request request, String id) async {
+    final userId = request.context[AuthContext.userId] as String?;
+    final role = request.context[AuthContext.userRole] as UserRole?;
+
+    if (userId == null || role == null) {
+      return Response(401,
+          body: jsonEncode({'error': 'Unauthorized'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    if (role != UserRole.superUser) {
+      return Response(403,
+          body: jsonEncode({'error': 'Only super users can delete orders'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    try {
+      await _orderService.deleteOrder(id);
+
+      // Audit log
+      _auditService?.log(
+        userId: userId,
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'order.deleted',
+        resourceType: 'order',
+        resourceId: id,
+      );
+
+      return Response.ok(
+          jsonEncode({'message': 'Order deleted'}),
+          headers: {'Content-Type': 'application/json'});
+    } on ArgumentError catch (e) {
+      return Response(404,
+          body: jsonEncode({'error': e.message}),
+          headers: {'Content-Type': 'application/json'});
+    } catch (e) {
+      return Response.internalServerError(
+          body: jsonEncode({'error': 'Failed to delete order: $e'}),
           headers: {'Content-Type': 'application/json'});
     }
   }

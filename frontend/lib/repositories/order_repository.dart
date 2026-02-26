@@ -9,6 +9,7 @@ abstract interface class OrderRepository {
   Future<Order> getOrderById(String id);
   Future<Order> createOrder(CreateOrderRequest request);
   Future<void> updateOrder(String id, UpdateOrderRequest request);
+  Future<void> deleteOrder(String id);
   Future<List<OrderComment>> fetchComments(String orderId);
   Stream<List<OrderComment>> watchComments(String orderId);
   Future<void> addComment(String orderId, String content);
@@ -103,6 +104,18 @@ class HttpOrderRepository implements OrderRepository {
 
     if (response.statusCode != 200) {
       throw Exception('Failed to update order: ${response.body}');
+    }
+  }
+
+  @override
+  Future<void> deleteOrder(String id) async {
+    final response = await http.delete(
+      Uri.parse('$_baseUrl${ApiRoutes.orders}/$id'),
+      headers: await _authHeaders,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to delete order: ${response.body}');
     }
   }
 
@@ -341,6 +354,12 @@ class MockOrderRepository implements OrderRepository {
         updatedAt: DateTime.now(),
       );
     }
+  }
+
+  @override
+  Future<void> deleteOrder(String id) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    _mockOrders.removeWhere((o) => o.id == id);
   }
 
   @override

@@ -126,8 +126,8 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateDialog,
-        label: const Text('Add Product'),
         icon: const Icon(Icons.add),
+        label: const Text('New Product'),
       ),
       body: Column(
         children: [

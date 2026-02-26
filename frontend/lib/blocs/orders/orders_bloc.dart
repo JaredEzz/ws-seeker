@@ -18,6 +18,11 @@ final class OrderStatusUpdateRequested extends OrdersEvent {
   const OrderStatusUpdateRequested({required this.orderId, required this.status});
 }
 
+final class OrderDeleteRequested extends OrdersEvent {
+  final String orderId;
+  const OrderDeleteRequested({required this.orderId});
+}
+
 // State
 sealed class OrdersState {
   const OrdersState();
@@ -41,6 +46,12 @@ final class OrdersFailure extends OrdersState {
   const OrdersFailure({required this.message});
 }
 
+/// Emitted briefly after a successful delete, then auto-reloads.
+final class OrderActionSuccess extends OrdersState {
+  final String message;
+  const OrderActionSuccess({required this.message});
+}
+
 // BLoC
 class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   final OrderRepository _orderRepository;
@@ -50,6 +61,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
         super(const OrdersInitial()) {
     on<OrdersFetchRequested>(_onFetchRequested);
     on<OrderStatusUpdateRequested>(_onStatusUpdateRequested);
+    on<OrderDeleteRequested>(_onDeleteRequested);
   }
 
   Future<void> _onFetchRequested(
@@ -77,6 +89,19 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
       add(const OrdersFetchRequested());
     } catch (e) {
       emit(OrdersFailure(message: 'Status update failed: $e'));
+    }
+  }
+
+  Future<void> _onDeleteRequested(
+    OrderDeleteRequested event,
+    Emitter<OrdersState> emit,
+  ) async {
+    try {
+      await _orderRepository.deleteOrder(event.orderId);
+      emit(const OrderActionSuccess(message: 'Order deleted'));
+      add(const OrdersFetchRequested());
+    } catch (e) {
+      emit(OrdersFailure(message: 'Delete failed: $e'));
     }
   }
 }

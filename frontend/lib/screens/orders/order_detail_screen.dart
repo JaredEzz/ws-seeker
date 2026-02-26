@@ -1,3 +1,6 @@
+import 'dart:js_interop';
+import 'dart:typed_data';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:web/web.dart' as web;
@@ -7,6 +10,7 @@ import '../../app/design_tokens.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../repositories/audit_log_repository.dart';
+import '../../repositories/invoice_repository.dart';
 import '../../repositories/order_repository.dart';
 import '../../services/storage_service.dart';
 import '../../widgets/orders/comment_section.dart';
@@ -142,9 +146,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             const SizedBox(height: 16),
             _TrackingCard(order: order),
           ],
-          if (order.invoiceId != null) ...[
+          if (isAdmin || order.invoiceId != null) ...[
             const SizedBox(height: 16),
-            _InvoiceCard(order: order),
+            _InvoiceCard(order: order, isAdmin: isAdmin, onChanged: _loadOrder),
           ],
           if (isAdmin && order.adminNotes != null) ...[
             const SizedBox(height: 16),
@@ -534,12 +538,78 @@ class _TrackingCard extends StatelessWidget {
   }
 }
 
-class _InvoiceCard extends StatelessWidget {
+class _InvoiceCard extends StatefulWidget {
   final Order order;
-  const _InvoiceCard({required this.order});
+  final bool isAdmin;
+  final VoidCallback onChanged;
+
+  const _InvoiceCard({
+    required this.order,
+    required this.isAdmin,
+    required this.onChanged,
+  });
+
+  @override
+  State<_InvoiceCard> createState() => _InvoiceCardState();
+}
+
+class _InvoiceCardState extends State<_InvoiceCard> {
+  bool _generating = false;
+  bool _downloadingPdf = false;
+
+  Future<void> _generateInvoice() async {
+    setState(() => _generating = true);
+    try {
+      await context.read<InvoiceRepository>().generateInvoice(widget.order.id);
+      widget.onChanged();
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invoice generated')),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to generate invoice: $e')),
+        );
+      }
+    }
+    if (mounted) setState(() => _generating = false);
+  }
+
+  Future<void> _downloadPdf() async {
+    setState(() => _downloadingPdf = true);
+    try {
+      final bytes = await context
+          .read<InvoiceRepository>()
+          .downloadPdf(widget.order.invoiceId!);
+      final data = Uint8List.fromList(bytes);
+      final blob = web.Blob(
+        [data.toJS].toJS,
+        web.BlobPropertyBag(type: 'application/pdf'),
+      );
+      final url = web.URL.createObjectURL(blob);
+      final anchor = web.document.createElement('a') as web.HTMLAnchorElement
+        ..href = url
+        ..download = 'Invoice_${widget.order.invoiceId}.pdf';
+      web.document.body!.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      web.URL.revokeObjectURL(url);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to download PDF: $e')),
+        );
+      }
+    }
+    if (mounted) setState(() => _downloadingPdf = false);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final hasInvoice = widget.order.invoiceId != null;
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -548,13 +618,43 @@ class _InvoiceCard extends StatelessWidget {
           children: [
             Text('Invoice', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
-            Row(
-              children: [
-                const Icon(Icons.receipt_long, size: 20),
-                const SizedBox(width: 8),
-                Text('Invoice #${order.invoiceId}'),
-              ],
-            ),
+            if (hasInvoice) ...[
+              Row(
+                children: [
+                  const Icon(Icons.receipt_long, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text('Invoice #${widget.order.invoiceId}'),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _downloadingPdf ? null : _downloadPdf,
+                    icon: _downloadingPdf
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.picture_as_pdf, size: 18),
+                    label: const Text('Download PDF'),
+                  ),
+                ],
+              ),
+            ] else if (widget.isAdmin) ...[
+              FilledButton.icon(
+                onPressed: _generating ? null : _generateInvoice,
+                icon: _generating
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Icon(Icons.receipt),
+                label: Text(_generating ? 'Generating...' : 'Generate Invoice'),
+              ),
+            ],
           ],
         ),
       ),

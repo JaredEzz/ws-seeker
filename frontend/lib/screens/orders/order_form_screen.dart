@@ -147,11 +147,10 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   }
 
   void _scrollToBottom() {
-    final scrollable = Scrollable.maybeOf(context);
-    if (scrollable != null) {
-      final position = scrollable.position;
-      position.animateTo(
-        position.maxScrollExtent,
+    final controller = PrimaryScrollController.maybeOf(context);
+    if (controller != null && controller.hasClients) {
+      controller.animateTo(
+        controller.position.maxScrollExtent,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeOut,
       );

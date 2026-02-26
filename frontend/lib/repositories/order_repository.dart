@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart' show FirebaseFirestore, Timestamp;
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
@@ -123,11 +124,29 @@ class HttpOrderRepository implements OrderRepository {
   Future<List<OrderComment>> fetchComments(String orderId) => _fetchComments(orderId);
 
   @override
-  Stream<List<OrderComment>> watchComments(String orderId) async* {
-    // Emit immediately, then poll every 10 seconds
-    yield await _fetchComments(orderId);
-    yield* Stream.periodic(const Duration(seconds: 10))
-        .asyncMap((_) => _fetchComments(orderId));
+  Stream<List<OrderComment>> watchComments(String orderId) {
+    return FirebaseFirestore.instance
+        .collection('orders')
+        .doc(orderId)
+        .collection('comments')
+        .orderBy('createdAt')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final data = doc.data();
+              final ts = data['createdAt'];
+              final createdAt = ts is Timestamp
+                  ? ts.toDate()
+                  : DateTime.now();
+              return OrderComment(
+                id: doc.id,
+                orderId: orderId,
+                userId: data['userId'] as String? ?? '',
+                userName: data['userName'] as String? ?? '',
+                content: data['content'] as String? ?? '',
+                isInternal: data['isInternal'] as bool? ?? false,
+                createdAt: createdAt,
+              );
+            }).toList());
   }
 
   @override

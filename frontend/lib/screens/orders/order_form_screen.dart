@@ -51,6 +51,14 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Place Wholesale Order')),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+      floatingActionButton: _currentStep == 1
+          ? FloatingActionButton.extended(
+              onPressed: _scrollToBottom,
+              icon: const Icon(Icons.keyboard_double_arrow_down),
+              label: const Text('Jump to Bottom'),
+            )
+          : null,
       body: BlocConsumer<OrderFormBloc, OrderFormState>(
         listener: (context, state) {
           if (state.status == OrderFormStatus.success) {
@@ -136,6 +144,18 @@ class _OrderFormContentState extends State<_OrderFormContent> {
         },
       ),
     );
+  }
+
+  void _scrollToBottom() {
+    final scrollable = Scrollable.maybeOf(context);
+    if (scrollable != null) {
+      final position = scrollable.position;
+      position.animateTo(
+        position.maxScrollExtent,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeOut,
+      );
+    }
   }
 
   void _onStepContinue(BuildContext context, OrderFormState state) {

@@ -198,6 +198,7 @@ class HttpOrderRepository implements OrderRepository {
                 unitPrice: (item['unitPrice'] as num).toDouble(),
                 totalPrice: (item['totalPrice'] as num).toDouble(),
                 productType: item['productType'] as String?,
+                imageUrl: item['imageUrl'] as String?,
               ))
           .toList(),
       status: OrderStatus.values.firstWhere(

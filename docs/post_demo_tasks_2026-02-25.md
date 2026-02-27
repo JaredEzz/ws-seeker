@@ -8,7 +8,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ## P0 — Bug Fixes & Broken Features
 
-### 1. Fix "Jump to Bottom" button on order form
+### 1. ~~Fix "Jump to Bottom" button on order form~~ ✅ DONE
 
 **Transcript ref:** ~276s — "the jump to bottom button isn't working right now"
 
@@ -25,7 +25,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 2. Fix admin chats aggregation view
+### 2. ~~Fix admin chats aggregation view~~ ✅ DONE
 
 **Transcript ref:** ~562s — "I did just add this chats thing... It's not currently working, but I will fix that"
 
@@ -49,7 +49,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 3. Fix supplier login / Japanese-only view
+### 3. ~~Fix supplier login / Japanese-only view~~ ✅ DONE
 
 **Transcript ref:** ~1546s — "This was working earlier so I'm not sure why they broke it"
 
@@ -134,7 +134,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 7. Make invoice line items editable (admin)
+### 7. ~~Make invoice line items editable (admin)~~ ✅ DONE
 
 **Transcript ref:** ~684s — "as long as I can update the invoice to what the supplier has like the most accurate pricing" / ~1299s — "I can make these all editable"
 
@@ -163,7 +163,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 8. Add tariff as a separate line on invoices
+### 8. ~~Add tariff as a separate line on invoices~~ ✅ DONE
 
 **Transcript ref:** ~1346s — "Japanese is one where the tariff is part of the product line... want to separate those?" / ~1359s — "Let's do it"
 
@@ -185,7 +185,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 9. Add custom/extra line items to invoices
+### 9. ~~Add custom/extra line items to invoices~~ ✅ DONE
 
 **Transcript ref:** ~1453s — "Are you able to add extra line items if needed? Sure. Yeah."
 
@@ -295,7 +295,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 13. Implement dark mode
+### 13. ~~Implement dark mode~~ ✅ DONE
 
 **Transcript ref:** ~2094s — "Dark mode. Yeah. Easy I'll have that."
 
@@ -559,18 +559,18 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 ## Suggested Execution Order
 
 **Week 1 (bugs + quick wins):**
-1. P0: Fix jump-to-bottom button (#1)
-2. P0: Fix admin chats view (#2)
-3. P0: Fix supplier login (#3)
+1. ~~P0: Fix jump-to-bottom button (#1)~~ ✅
+2. ~~P0: Fix admin chats view (#2)~~ ✅
+3. ~~P0: Fix supplier login (#3)~~ ✅
 4. P1: Remove `submitted` status → default `awaitingQuote` (#4)
 5. P1: Hide markup from customers (#5)
 6. P1: Add "prices not final" disclaimer (#6)
-7. P1: Dark mode (#13)
+7. ~~P1: Dark mode (#13)~~ ✅
 
 **Week 2 (invoicing + notifications):**
-8. P1: Editable invoice line items (#7)
-9. P1: Separate tariff line (#8)
-10. P1: Custom invoice line items (#9)
+8. ~~P1: Editable invoice line items (#7)~~ ✅
+9. ~~P1: Separate tariff line (#8)~~ ✅
+10. ~~P1: Custom invoice line items (#9)~~ ✅
 11. P1: Invoice PDF branding (#10)
 12. P1: Email notifications — comments + payment (#11)
 13. P1: Email notifications — status changes (#12)

@@ -1,0 +1,306 @@
+[1.700s] This call is now being recorded.
+[9s]  Last time, the resolution is really bad, so I want to make sure the resolution is set up, right?
+[18s]  so,
+[19.300s]  Hey, can you guys see?
+[23.100s]  I know it's really big. I can adjust the resolution of that makes things.
+[28.400s]  Better.
+[30.600s]  Samsung.
+[32s]  Odyssey, The Odyssey Odyssey.
+[36.500s]  What is that?
+[37.800s]  You have the Odyssey monitor.
+[40s]  Um yeah, I think so, the Samsung.
+[44.700s]  Galaxy one. Yeah.
+[47.500s]  I mean my Powershell script. This should change it, okay, that better.
+[54.500s]  Easier to see.
+[59.400s]  Good on my.
+[61.700s]  All right, we've got three windows that I want to share, but I might switch between them, although I did build this to be responsive, so it should be good on mobile as well. Let me just set this up. So this one over here,
+[74.800s]  This one over here and this one in the middle. Okay, so I'm going to just start from the login on all of these. And then, let me pull up my little demo script.
+[84.400s]  Off to the side.
+[89.900s]  Oh, I've got that already. Although I do need the
+[95.200s]  These real quick. So let's start from the login page for demo purposes. I am going to
+[103.700s]  be logging in this three different emails and I've got this debug mode that skips the email. But what we're gonna do is we're gonna take
+[111.800s]  The super user.
+[113.800s]  We're gonna log in, on the left.
+[115.900s]  But it will send you an email with this link. And then when you open the link, it'll log you in, oh, of course.
+[121.600s]  Let me just do my email address.
+[125.400s]  I'll take a good start.
+[127.600s]  There we go.
+[128.600s]  And then in this one we're going to do the supplier. This would be like me. I think it was her name.
+[135.700s]  and great now,
+[137.400s]  I'm not getting this.
+[140.400s]  I should just stayed logged in.
+[145.100s]  On the side. I'm just going to leave this one logged in. We can still demo everything, I'll fix that up at the end.
+[151.100s]  So what we got here is the dashboard with all of the orders. We'll walk through the profile first. So this is where you set everything up the Discord name, phone number, if needed, and all of your payment information, this will change. So if I just put in like, hey, this is my Jared at PayPal.
+[168.600s]  Calm, email address.
+[170.600s]  And then I go back out and see the profile. You know, that gets saved, acet H. We don't save because that kind of information is security, is, would be a security risk, and then you're shipping address. That'll prefill.
+[183.400s]  and then this new order form, I just kind of copied from the
+[188.400s]  From these forms. So you pay which language you want first, and then you've got the products, these products are all managed on the admin side over here. So you've got you select by language and you can modify
+[205s]  The products I am working on importing the images that is taking a lot longer, but when you edit it, you can all so load in the images. So like you can see I'm I'm working on that right now but these will have little images that you can open up, but you got base price description, any notes, or remarks, the skew. And then depending on which languages it's going to have different fields for like
+[228.300s]  Box. No, shrink case. And I think Chinese has different fields like
+[233.900s]  category official fan art and then, you know, prices and stuff base price Korean has
+[242.300s]  Base price. We can modify these if needed. But this is where you define the products, and this is what shows up. We've got a little search bar, so,
+[251.300s]  This isn't Chinese if I do.
+[254.100s]  Chinese, you know, we can search for the gem products and you get the volume one, two, and three. You can add as many as you want. It is required to put the product type here, loose, boxer sealed case, I just copy that from over here, loose box sealed case.
+[270.200s]  we can modify that if that's not required,
+[272.900s]  So yeah, they filled this order form.
+[276.500s]  They can search or scroll the jump to bottom button isn't working right now, but I'm I'm working on that.
+[285.300s]  And then once you can continue here, you've got a review of everything, the prices and stuff and then the contact info with the you know, payment method and shipping method and then confirm their shipping address. But again this is all pre-filled and then you place the order and then it'll show up at the top of the list.
+[302.100s]  Um, with an ID and the status, and then if we go to the admin page Taylor, this is where you would see things or, you know, whoever this one shows up. So you can see this Chinese two just showed up. So this is my test user, the total, and then you can change the status here to, you know, being awaiting quote, payment bending received shipped delivered canceled, whatever. Both people can open up the order and see the details. This is what I was talking about. With the image, you can see the images here, but right now, they're working figuring that out.
+[337.200s]  But you've got all the information here about the pricing and the products and stuff and the shipping method.
+[343.700s]  Had the bonding you've got the comments so you can go back and forth. You can upload proof of payment. We'll upload a quick little image right here.
+[352.300s]  You go a little green Pokeball that little dumb both sides, and then you can do instant comments. So here from one site, this is the whole sailor.
+[363.300s]  That shows up over here and then hey, that worked from the other person says who did it with their email address and timing and stuff. So you've got chats here and then images will work here.
+[375.200s]  Um, as well.
+[377.200s]  So you can send images there. If you don't, if it's like an image that's not the proof of payment or something goes. Wrong with that.
+[383.300s]  I've been talking for a while, any questions how is this looking so far?
+[386.900s]  Looks great, two things. Um sorry go ahead, Taylor.
+[390.600s]  No, you go first.
+[393.300s]  Oh, the markup. Can we hide that number? Yes, I was gonna add
+[400.500s]  So I usually do the markup or we usually have the markup on the sheet already. So the price is that are listed already have the markup. Okay, great to know. Yeah. So you would
+[414.800s]  I mean, right now we can go in and edit these and
+[420s]  Yeah, we can just get rid of that markup field if you want.
+[424s]  Yeah, I don't need to see and like you can justify the base prices in here as well. We can just get rid of that, that's totally fine. Well, let's keep the markup Taylor that saves us work of having to manually going to mark up.
+[435.900s]  There just picked him when we get the price sheet.
+[440.600s]  From our supplier.
+[442.700s]  Well, okay, so supports importing. I'm not sure. I don't think that this format in the is what you guys.
+[452.900s]  Like get it as so I was gonna wait to see what the format is that you guys, get? And then we can work on importing the CSV for that. But then, you can import all the stuff in the out, we can calculate the markup there so that it's automatic.
+[466.100s]  But we can work through that workflow.
+[470.400s]  Okay.
+[472s]  Sorry, coming down with a little bit of a cold. So then at the activity log here shows just basically anything that happens on the order whether you know, somebody uploaded something or added a comment or something, that's just like all the activity here. Maybe somebody goes in here and
+[489.500s]  you know, updates it to
+[493.500s]  ship that will now show up only for the admin.
+[498.500s]  You can see that the order was updated from submitted to shift just now.
+[505.300s]  So that is the orders.
+[509.500s]  Let's see the Chinese orders are limited to
+[515.900s]  Or no, I'm sorry. The Japanese orders.
+[519.600s]  Are limited to.
+[526.700s]  Wise as the payment method, you can't choose between this and if they don't have a wise email setup, they can't place this order.
+[533.200s]  Um, that's correct, right?
+[537.700s]  Yes. Yeah, it's got different shipping methods here.
+[541.600s]  Um, let's see. Yeah, each of the
+[544.300s]  different products have different like each of the different languages have different nuances around the app so I probably won't Point all of them out here from the admin screen. You can filter by all the different things you can sort. By all the different things, you know, items it does have you can't see it over here but this is scrollable.
+[562.400s]  So, you can delete any order if you want to or view it from here. Right now you can click on the order number or on this view to view it last modified. It's going to be super helpful. So you can just see, like, any any action that gets taken on the order. Whether somebody updates the payment or comments or something, it'll jump up to the top. I did just add this chats thing to collect all the chats. I was thinking that would be helpful feature. It's not currently working, but I will fix that. But that would just take all of the chats from all of the different orders and put them in Reverse chronological order. So you can, you know, but you can do that via this list too. There's thought it would be easier to have a better view for that.
+[600.100s]  If we go to invoices, we can take that order. That just happened. Let's see.
+[605.400s]  I think it has to go into.
+[608.600s]  Submitted first before it shows them invoices.
+[612.700s]  Let me remember how it shows up.
+[624.900s]  Crap.
+[627.700s]  You hear me now?
+[630.300s]  Oh yeah, I can hear. What's up?
+[639.800s]  Let me stop the share for a second. Yeah. Um, figure out the invoicing perfect. So the invoicing part does Taylor have a chance to modify
+[649.800s]  The initial invoice in case.
+[653s]  People. Yes.
+[655.400s]  Or that.
+[660.200s]  well, let me just get you to the piece that actually
+[664.600s]  Shows the invoices. But yeah, we can have you modify any piece of it before it goes out afterwards. You know, you've got the PDF download, right? And this is what the PDF looks like it. Generates it. We can modify anything about this. I know you guys aren't Carla wholesale. I just right now, that's what I generated.
+[684.300s]  Yeah, we just have. Sometimes I'll I will every time a customer orders, I'll ask the supplier for more for the most up-to-date pricing and it sometimes we'll vary from, what's on the sheet. And so that's why I like I'm currently like manually inputting the invoice prices. So as long as I can update the invoice to what the supplier has like the most accurate pricing before it gets yeah for sure.
+[711.700s]  Okay. Yeah, that's probably how we'll have to do it.
+[715.500s]  I think we don't even show them.
+[718.700s]  The customers in voice yet, so they start order.
+[724.300s]  They don't see the voice, they just that they submit that order for us.
+[729.400s]  Tailor goes in generates and voice based off.
+[733.600s]  The boats that we get.
+[736.700s]  yeah, because I have to do shipping to the shipping, isn't the same, it's very
+[743.900s]  order.
+[747.400s]  Because so what happens is our suppliers.
+[752.400s]  either don't I think consistently, which is
+[756.200s]  It's annoying and we've asked them to, but they don't. And so when they get or the price of change, I mean with Japanese really fast sometimes
+[766.100s]  Where should you?
+[772.400s]  Kind of quiet. Kenny.
+[774.600s]  You know.
+[780.500s]  You guys hear him? It's just a little muffled on my side.
+[783.700s]  Yeah, it's very muffled.
+[789.200s]  Hello.
+[791.200s]  This is better. Oh yeah. That's a little
+[797s]  um,
+[801s]  Crap. So train thought, so for Japanese, primarily Taylor, doesn't really ever.
+[808.200s]  Beat the invoice. It's always our Japanese supplier.
+[813.100s]  And our Japanese and their prices change. So rapidly that some times if we have a quote Bill, tell how you have things set up, it never most of times in my not line with what she has listened to the price and is there a way where we can have it? So I think it would work very the quote, the invoices on generator on the app.
+[834.300s]  It's just like the request for what boxes they want and then that gets sent to the queue of Taylor and my Japanese supplier and then they built out, they build out the invoice. So let's say I want 20, Black Bolt, 20 white flare, right? All I would hit that, then it gets the order gets created into Taylor's queue or my Japanese suppliers queue. Then they go in and manually. Enter the pricing.
+[860.100s]  For this box, that's fine. Yeah, we can remove all the invoicing from here, or we can just make it like,
+[866s]  a template that they fill in the price because it's all they're gonna, they're not gonna add the products, they're just editing the pricing. Yeah, yeah. So we can create template invoice for them to then send out to the customer. Remember, rather than having the member see the invoice.
+[879.700s]  Yeah. And to be clear, the invoice wasn't ever going to be seen by. Oh, okay, user. I was just showing you the management screen for the admins. Okay? Sorry, I didn't see the right then.
+[893.800s]  The right. Okay. Let me
+[897.400s]  get back to this, I don't
+[900.700s]  What? We'll keep going and we'll come back to them voicing if that's okay. Okay.
+[910.100s]  as its
+[914.300s]  we start the deploy.
+[918.100s]  Yeah, I realized I had built out like a status, like a sample.
+[924.600s]  Invoice.
+[927s]  But then I went through and while I was testing the demo, I completed it. And so I ended up in this paid standpoint but we're just gonna deploy a fix where I can generate a new invoice here instead of using the API.
+[938.100s]  This is audit logs. So this shows any action that anybody does across all orders, this is more for
+[947.300s]  Like troubleshooting, if somebody's like, hey, I went and I did this or and I didn't happen all. So, on the orders, all right side, you can take your proof of payment and remove it.
+[960.400s]  just like, I don't know if you need a new one, but the admin on that action can go back through that activity log and see
+[971.400s]  That was up like back here. This when they uploaded the file you can click and still view the files. So we're just doing a soft delete where it doesn't show up on the Order anymore, but we can still see it just for automotive ability and
+[985.700s]  You know, making sure that they they sent that.
+[988.900s]  We do have the quote system so on the Japanese orders.
+[995.200s]  A lot of these say quote required instead of the price, a lot of the 0. So I I'm gonna need to go through and do that, but when you modify the Japanese product that's just got this checkbox that says, quote required prices ask,
+[1012.600s]  So, you can fill in any of these in any of these will show up, but it's kind of up to you to update the price and stuff. It's just depends on what you want to show on the order form when they're doing it. So what do you typically show?
+[1023.200s]  People.
+[1024.500s]  When they like, if it's always just ask for a quote, no Japanese the Japanese. She does keep the most recent sets up to date with pricing. I'll buy, it's not real-time sometimes because she forgets too, but they do, they can look at the price sheets to see the quotes, and that's what these fields. Can you know why? Yes, this will be the price sheet and then you guys. Yeah. Modify it through this. Yeah, so that's that's fine. Yeah we just there. It's probably a processing. We were lit. We let everybody know. That's not the final price. Yeah, maybe we could.
+[1060.700s]  We can tell people that but then maybe somewhere on the order form, we could say, like this is not the final price or something, just sometimes, you know, we don't want someone to get quoted 1,000 and it's actually 1,000 and then they're like it said this. So maybe just something like that, we can add that to pretty much any. I mean, this one says that. So oh yeah, this order contains products that require cope. Yes. Confirm. What's the quotas provided. Sorry. I didn't show that before I was sticking to the Chinese ones. Well yeah, that's great.
+[1092.100s]  just,
+[1094.200s]  I think we'll do that for all three languages because
+[1098.400s]  Yeah, we just there's always it's always changing. That's fine. I'm sometimes it goes lower. So
+[1105.800s]  that's nice. Just wait for this to pull. It's taking forever.
+[1111.400s]  What else? I have to go through?
+[1114.400s]  That we talked to downloading the PDF for the invoices, right? And I will get this to look more like this one like with your logo and stuff.
+[1123.300s]  I can definitely do that.
+[1126.100s]  We have.
+[1130.900s]  Oh, as far as notifications, I didn't build any in but I didn't know what you wanted. So this is maybe more for Taylor. Like I did to think about this chat view. Just whenever anybody does the action of like updating their order with the proof of payment or adding a comment or something, I didn't know. If you wanted emails for all of those that is going to be a lot of emails, or if you just want to be able to come in and check,
+[1155.100s]  Um, yeah, I I think I'll just decide process wise like if I want people to comment when they want changes on their order or DM me on Discord, like just whatever. I mean, can I was kind of decide moving forward, what we want chroma to do. I guess I want as much of this to be moved out of Discord.
+[1179.200s]  Okay.
+[1180.800s]  oh,
+[1182.100s]  I would love to have notifications for when a comment is left and a separate.
+[1187.500s]  identifier for when
+[1190s]  Payment has been submitted that way to, you know, Taylor can distinguish those better.
+[1196.700s]  Yeah. Like if I if this was an app like I mean when this app if I was using like notifications I would like phone notifications for every comment and then email notifications for payment methods. Okay yeah. Um do you have Android arrows?
+[1213.100s]  IOS. Okay, so for the iOS, I did look into this because web apps can still. Like, I can make it a full-fledged IOS app, but that's a little bit Overkill. You can still get notifications through web apps, but you have to do the whole like install as an app thing, right? I can set up totally easily and I'm just not sure how consistent those notifications are but we can do like
+[1237.100s]  An hourly summary awesome or like a daily summary digest of like things that have happened in the last hour, the last 24 hours. Yeah, notifications as well. Or we could even do this court box. It's the notifications. End up not being super great. We're like just forward you. The things that are happening like basically these activity log entries. Yeah, any of that. Sounds good. Just whatever. Like I'll have the web page, the web app open, but it's more for when I don't have it. You know, after hours, kind of thing. So, just put water notifications or whatever. Okay, yeah, that's great. All right. So now you can see on the order page for the admin, not on the customer side.
+[1283.900s]  Um, they have this generate invoice button, so we can click that. And then the invoice is generated, it's got the download PDF, but then if you go to the invoices, this is the draft. And so, this is where I can make these all editable. And then you can just have like,
+[1299.900s]  Download the PDF Market Ascent or void it if you don't you know if you want to I can just make this like a delete button if that would work, if that way you want to be able to do. So just modify these prices here.
+[1312.900s]  Yes, and shipping line.
+[1316.400s]  Ownership, okay, cool. Um, what all does? Let's see.
+[1321.400s]  If this has the shipping, okay, I see shipping costs got it. Is that the same for every language or will that change
+[1334.500s]  Okay. Well, yeah. I mean
+[1336.800s]  One or the other, right? Like, you don't need different fields, but
+[1340.300s]  Yeah. It's it's fun or the other but for Chinese they can do both. So okay.
+[1346.300s]  Japanese is one where the sheriff is, part of the just is a product line that are supplier. Will put tariff isn't? Oh, I see. So, that's you. Want to separate those at all?
+[1359.500s]  Let's do it. And then I'll just let my
+[1362.200s]  Chinese.
+[1364s]  And Korean suppliers now that we need to separated, okay?
+[1368.800s]  I will do that.
+[1370.300s]  and then what as far as like, I didn't do really anything on
+[1377.600s]  Currency.
+[1379.100s]  Like foreign exchange rates.
+[1382s]  Do you know that only one?
+[1384.800s]  Okay.
+[1386.700s]  How do you want to handle that?
+[1390.300s]  Um,
+[1391.800s]  because I know you've got, I can't remember these. There we go. The top of your Japanese price. You've got this Google Finance, I can look that up.
+[1401.200s]  For your price sheet. But really, I thought that would just be in this product management page.
+[1406.800s]  Yeah, we can do that. Um just give because again that's just
+[1414.100s]  Yeah, let's do it there.
+[1416s]  Um, we're just
+[1420.500s]  you want to put in these prices and then have it convert it to the USD prices, correct? Okay. And then,
+[1429.200s]  The tariffs will just be added on the invoice step I can. Yeah these parts. Yeah. Okay.
+[1434.500s]  All right, so what I'm hearing is, we still need, I mean, obviously the stuff that's still not working, like the images, the chats notifications, and then we need editable invoices.
+[1447.200s]  And then be able to delete with the fields.
+[1451.100s]  Into shooting the Terra Fields added.
+[1453.700s]  Are you able to add or can you do it so that we can add extra light items of needed? Sure. Yeah.
+[1462.300s]  Only fine. Okay? It's harder because it's totally doable. So yeah. Sorry man. That's okay cool. So this is the process getting rid of the markup
+[1472s]  Yes, absolutely.
+[1474.900s]  So they go in in Japanese doesn't have the markup just Chinese and Korean right?
+[1481.700s]  That's another layer.
+[1485.700s]  I will have to figure that out right now. I'm pretty sure all of them have it Chinese Korean. Well, let's see, we don't have
+[1493.700s]  let me create an invoice for one of the Japanese orders.
+[1497.100s]  and see, it does look like
+[1500.600s]  Here.
+[1504.300s]  No, Japanese does not have a markup. I mean, it's 0 right now. So it's kind of hard. Let me make an order that actually has Japanese
+[1511.800s]  with a price like this, Inferno X,
+[1520.400s]  Yeah, it doesn't look like as a markup. So okay.
+[1525.500s]  Sweet. Um,
+[1529.100s]  Trying to think what else, just annoying because Japanese is segregated from what Chinese, right? And so that was the other thing I was gonna show you is that if I open up an incognito window,
+[1541.400s]  And then go. Sorry.
+[1544.500s]  Here.
+[1546.300s]  This was working earlier so I'm not sure why they broke it, what how I broke it? But I had the supplier.
+[1556.900s]  Where it only shows the Japanese. So basically, it's this
+[1561.300s]  Form right here.
+[1563.400s]  Yeah right here, but it's it's always filtered to Japanese. Perfect. Only shows those, but it's got all the statuses and stuff and they can still change all the statuses that right? Yeah. Okay. And then still have invoices and products but only do you want them to be able to modify the Japanese products or no?
+[1581.400s]  yes, that would
+[1583.500s]  Then we put the pressure on her to do it. So,
+[1587s]  um, where Michigan dump the CSV. Yeah. The CSV will have to figure out what the sample looks like. Like
+[1596.100s]  I'm Japanese will be really easy.
+[1598.400s]  Japanese will really easy. So that's the cool part Chinese and Korean.
+[1603.600s]  We could probably make it easy to work with them.
+[1606.300s]  Perfect. And last request, the Japanese supplier login.
+[1611.800s]  Could you make it so that it is Japanese native?
+[1618.700s]  I can try. Yeah. Sorry. Like all of it. Yeah because yeah, she and her internationalization is a beast but I will.
+[1629.700s]  If nothing I just say most browsers have translation bill. Yeah.
+[1636s]  this is that building flutter and so I
+[1639.900s]  it translation is a little bit harder.
+[1644.600s]  It's gonna take me some extra time. I can do it for sure, but it's gonna take me some time.
+[1650.100s]  I find me for it. Hey,
+[1654.400s]  So, the way that I was thinking of this is that like we've got the initial price, quote, that was 1,000. And then I'm gonna just like wrap that into, you know,
+[1664.400s]  The first month or whatever, of like bug fixes and like, whatever's still missing from the initial stuff. Anything. That's like a minor feature, right? Big features like that. Like, the initialization, I will, you know, build more for once we're done with that, but just anything existing. And then if we want to continue, like, if you want me to continue maintaining it, we can do that on an ongoing basis. I didn't know if you guys had like another person, another developer that you want to meet a transfer, you know, the code to or ownership.
+[1690.900s]  For maintenance longer term. I'm happy to still do it, you know, my right? But
+[1696.800s]  Like, oh, that's you. You're not Adobe right now. That's my goal. Then, no, not under Dhabi, I think. Oh yeah. Oh that's yeah. So it just need to see how busy because we keep him busy with other stuff too. And like, depending on the bug fixer, like the feature, the maintenance isn't gonna be huge. I just don't want to be like, hey,
+[1721.700s]  Five years of like, I don't want to be like a five years of Maintenance included in your initial because I just don't have time for that. But if, you know, we have a good business relationship, so we're finding with that.
+[1732.200s]  Yeah, as far as running costs, really, none of this is that much like it's on Google cloud. And the billing isn't crazy if it becomes that which so right now,
+[1745.100s]  Let me just go look at the gcloud.
+[1754.200s]  It's just for like hosting the website. Oh, also, like the name of it. I just needed WS Seeker because I was kind of like a play on. Yeah, Seeker from the games, but we can put this at whatever domain you want, if you care about that, okay?
+[1769.200s]  This one is Ws, Seeker.
+[1780.300s]  Like it's not a heavy compute thing, it's cost me 82 cents in the last, you know, whatever. So like I said like don't even worry about that. We can still transfer if you want to transfer to your billing account depending on usage and stuffy is people getting here and stuff? The biggest thing honestly is the audit logs and not on a different service called neon and they have a free tier that should, you know,
+[1805s]  Should handle your guys's operations for, like, 12 years. I think, you know, and we keep all the audit logs forever. It's like half a gigabyte, but these are text logs and so they're super small. They're like instead of. Yeah, so that's just a structure organization but all that is laid out in the code base, pretty easily. So I would like to, you know, transfer ownership to you guys via GitHub, not all obviously stay on as a maintainer as long as you want me to, but if you have another Dev, I
+[1834.100s]  You know, you're paying me for this. I want to give you ownership as much as you need to be able to continue to maintain it and update it and stuff in the future. Because yeah, I'm hoping this is a long term thing for you guys.
+[1845.200s]  Me too Taylor. Yeah.
+[1849.600s]  So I'm hoping I am also a long-term thing. So no, you're you're yeah, just depends on how you are.
+[1859.800s]  Yeah, this looks great.
+[1862.100s]  Great, I'm glad you think so. I was it's kind of hard not knowing like the process and not having seen what you guys work on day in and day out. Yeah, so one thing I didn't say is Shopify, login is integrated so that you can only log in if you are a member on the Shopify thing, or I need to put in whatever emails you guys want to use for the supplier and the admin stuff. So I'll just send me those emails and I'll get those accounts set up with those specific roles. But by default, if you are
+[1893.600s]  You know, a member on that Shopify list, you'll log in, as this wholesaler thing and you'll have your own login and stuff, okay?
+[1901.800s]  Cool. So
+[1903.900s]  just quick high level run through. They log in, they go order new order, they choose what products they want.
+[1912.400s]  Then it should take them to the order screen after, right? Like you. Yeah. This is like a review and submit and then it takes them back to the list.
+[1923.200s]  But with the new one on top. So yeah. So then you
+[1928.600s]  Okay, perfect. And then we're gonna have to build a process where they understand what they're being quote for initially is just a sample quote.
+[1936.800s]  that's way for the initial, the final quote from
+[1940.100s]  Taylor or Japanese supplier.
+[1942.400s]  What's the clarify? You wanted the back quote thing right now. It's only on Japanese but you want to on all of them right? Yeah, okay.
+[1950.800s]  Yeah.
+[1952.400s]  Perfect. She generates or my job or Japanese supplier generates then they can see it.
+[1958.300s]  Um and then they from there it's just me sailing. Yeah.
+[1964.800s]  okay, so we
+[1966.700s]  do notifications for the customer and can you can we do email notifications for them? Yes.
+[1977.300s]  Up. When a quote was submitted and then when tracking is provided or any changes, you just submit the quote through the comments and then change the status of it, I guess.
+[1987.700s]  so submit, and then like,
+[1991.400s]  I can put another status, that's says, well do you give them the quote and they invoice at the same time?
+[1998.100s]  Or close except it and then you generate them voice. Yeah. Then we generate the voice. So I need to add a new status. That is quote sent or something, right? Oh, same thing.
+[2010.700s]  He. Yeah. This system is the same. Yeah, yeah, right. Oh was doing before.
+[2018.400s]  Well.
+[2019.700s]  a waiting, quote means
+[2022.100s]  Oh God. Yeah, that's like the first thing. Yeah, yeah, yeah. Yeah, that's automatically default. Yeah.
+[2030.200s]  Yeah.
+[2031.900s]  On everything that's. Yeah, that is, yeah, it's gonna be the default status until okay. So I'll just get rid of this submitted status and we'll just start with a waiting quote as the first status that it goes into cool, let me submit it.
+[2046.400s]  Okay.
+[2048.400s]  That looks great Jared. Thank you. Like how you nail everything? I ask
+[2053.700s]  appreciate it.
+[2055.100s]  Yeah, so we'll get as soon as I get done everything that we've talked about here, I'll send you over the invoice for the initial stuff. I'll get working on the initial, the internationalization.
+[2068s]  For the Japanese supplier and bill you for that separately. And then yeah, we'll just say one month from today or, you know, you know, whatever we'll say March, you know, by the end of the March we'll be included in terms of Maintenance and, you know, minor feature updates and then we'll decide again, we'll decide that in March how we want to move forward with it. Okay? Hopefully we'll have a better picture of how things work and if you guys happy with it or not. So,
+[2094.900s]  Perfect Dark mode. Yeah. Easy I'll have that. I almost got to it today but ran out of time. I I do dark mode on everything too, so don't even worry. Yeah, same. So sorry about that. No good. Or are you doing?
+[2113s]  Everything seems pretty clear. Okay, cool? What's your role going to be in this turtle's worth
+[2120.700s]  What was that? He's gonna sorry. So he's gonna be like Taylor. Um,
+[2125.800s]  Does each different profile have their own?
+[2129.200s]  Order list view, by chance, Jared hasn't combined.
+[2135.200s]  It's all combined.
+[2137.300s]  okay, um, since we're gonna
+[2139.600s]  Slowly, the goal is to eventually have multiple tailors, right? Because the program was really big. I want to be able to have these orders separated between the different colors as we call them because they all get paid off their the sales for Chinese and Korean. So be nice to be able to distinguish shoes orders who based on the customer that they
+[2160.800s]  on boarded and signed with the program. So, the other one out and signed five, distinct people those five state with her.
+[2168.300s]  Um, she gets the payment. She, you know, she gets paid off for those five because they signed up with her right. And she manages all their orders. Yes. And then if he's still nice to have Jared, be able to see the view too because then if Taylor's out for two weeks, I'd be nice to have Jared as back up to help him. Yeah. The spots right? No. We can definitely do that. Um, what I would do is I would add another filter that's just like account owner and then when they sign up, like, we'd probably have another view, that's like a customer's view. Yeah, that might be good to have any way just to see, like, who's logged in and what their orders and stuff are like a user's view. Yeah. And then we would have a filter that would just be on by default that would be like, hey only show me my customers. Yeah. But you could have a, you know, obviously you could unselect that filter to see all of them but that would be on by default is that kind of what you would want. Yeah, that's that's perfect yeah. That's like a medium sized feature. I would say that that's like
+[2223.900s]  Less maybe about the same size as internationalization but like we'd figure that out too. Depending on how you guys want to manage that and how automatic or manual you want to be look. Okay, let's sold the Air. National one would take you. I mean how long would it take you just so what have we? I guess. You said. It's not
+[2245.500s]  I'm curious if she has like a browser plugin on her and then just tries to translate everything maybe I could. I mean, let me work on it for like an hour and let you know at the end of that, if I'm like halfway done or like, okay, not so much done, I don't think that that user one would take me longer like it as long as it's defined. I don't think that would take me longer than an hour, maybe hour and a half. Okay. And I guess the customers need to be able to be assigned to kill managers. Right? So that's yeah, right. But I mean we could just load in all of the because would they already have a Shopify account?
+[2278.300s]  The members the wholesale. Yeah, the people that you're signing up.
+[2283.600s]  Yeah, they they're required to have Shopify or shop account.
+[2288.800s]  So I could automatically import all of the users from the Shopify just regularly and then you would have another view here as the admin that just says like, hey, you're my user and you're, you know, that we would, we would manage it internally if that's okay. Yeah. Totally
+[2304.500s]  So as far as what reports you guys want in terms of like how many orders and stuff, like I would probably just do the filter and then take screenshots or something. We could add reporting functionality to in the future. If we want it, it's not big deal.
+[2317.400s]  So yeah, do you want me to work on the internationalization first after I get the current bugs and stuff done or do you want me to work on the account management like ownership stuff to account management first? Okay,
+[2331.600s]  And then let me talk to my Japanese supplier, to see if we just showed her, what is what she could never get without?
+[2338.300s]  A full-on Japanese version because she knows English just not very well. Yeah, that's okay. Honestly I'm gonna pipe it into Claude it's just depends on how like Chachi BT and stuff and depends on how good it is. I don't know Japanese, so I can't validate it super easily so that's why I was gonna take me longer. Gotcha.
+[2357.700s]  Do you have anybody on staff? That could help me like Emery to see?
+[2363.200s]  Not right now, just curious.
+[2369.800s]  I'll get its crispy son. That helps us with the Translating when we talked to her, so I can ask him. He can
+[2376.900s]  Yeah, it would just be like hey look this over and tell me if I got anything glaring here. Yeah, yeah I mean you can send screenshots and me. Yeah, right. Yeah, yeah as far as account managers. So that's gonna be like these admins and stuff are there just those two at first? Jared and Taylor, Jared, Taylor and my Japanese supplier, right? Okay, got it.
+[2399.200s]  But she automatically gets all of the Japanese orders, right? Yeah. Yeah. And not like broken up by customer and then tailor, and Jack would be broken up by customer. Correct. Regardless of what, how? Yeah. Okay. Cool. All right.
+[2414s]  I can do that.
+[2416.300s]  Cool. Anything else Taylor Jared?
+[2420.300s]  No. I think you covered quite a bit. Yeah, yeah. This is a lot. Send me all these emails for what you want to log into. I am Gonna Leave This up. Oh, as far as domains, you care. Should I just leave it at this web app or just
+[2434.700s]  We can leave it like that for now, okay?
+[2437.500s]  there's no, because
+[2438.900s]  Yeah, we have a separate, LLC, we're spinning up for all this, that way, it doesn't muddy coma, right?
+[2445.100s]  Yeah, I'll just leave it on branded for now with all the stuff till you guys and then when are you targeting actually getting it like using and stuff? Obviously it's going to depend on how quickly I can get stuff fixed, but I think I can do that all in the next week. I think yes. Whenever you're ready. It's not a there's no time framework.
+[2462.900s]  On a reach.
+[2464.400s]  Okay.
+[2465.800s]  Great.
+[2467s]  Um, there are products. Yeah, sorry, no I think we're good. We can we get into their? Thank you guys.
+[2472.800s]  Third. Yeah, tell jar, I'll pick you guys on site, actually.
+[2477s]  All right, thanks, okay. Sounds good.
+[2480.100s]  But yeah, bye.

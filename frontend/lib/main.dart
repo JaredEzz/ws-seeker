@@ -7,6 +7,7 @@ import 'app/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_event.dart';
 import 'blocs/orders/orders_bloc.dart';
+import 'blocs/theme/theme_cubit.dart';
 import 'firebase_options.dart';
 import 'repositories/auth_repository.dart';
 import 'repositories/invoice_repository.dart';
@@ -57,6 +58,7 @@ void main() async {
               orderRepository: context.read<OrderRepository>(),
             ),
           ),
+          BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
         ],
         child: WSSeekerApp(authBloc: authBloc),
       ),
@@ -84,11 +86,17 @@ class _WSSeekerAppState extends State<WSSeekerApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'WS-Seeker',
-      theme: AppTheme.lightTheme,
-      routerConfig: _appRouter.router,
-      debugShowCheckedModeBanner: false,
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, themeMode) {
+        return MaterialApp.router(
+          title: 'WS-Seeker',
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeMode,
+          routerConfig: _appRouter.router,
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }

@@ -4,51 +4,140 @@ import 'design_tokens.dart';
 
 class AppTheme {
   static ThemeData get lightTheme {
+    final textTheme = GoogleFonts.interTextTheme().apply(
+      bodyColor: Tokens.textDisplay,
+      displayColor: Tokens.textDisplay,
+    );
+    return _buildTheme(
+      brightness: Brightness.light,
+      textTheme: textTheme,
+      primary: Tokens.stone900,
+      onPrimary: Tokens.white,
+      secondary: Tokens.stone100,
+      onSecondary: Tokens.stone900,
+      surface: Tokens.surfaceCard,
+      onSurface: Tokens.textDisplay,
+      outline: Tokens.borderDefault,
+      scaffoldBg: Tokens.surfaceBackground,
+      cardColor: Tokens.surfaceCard,
+      cardBorder: Tokens.borderDefault,
+      inputFill: Tokens.surfaceInputFill,
+      borderDefault: Tokens.borderDefault,
+      borderFocus: Tokens.borderFocus,
+      textSecondary: Tokens.textSecondary,
+      textPlaceholder: Tokens.textPlaceholder,
+      navIndicator: Tokens.stone100,
+      navSelectedIcon: Tokens.stone900,
+      fabBg: Tokens.stone900,
+      fabFg: Tokens.white,
+      outlinedBtnBg: Tokens.surfaceCard,
+      outlinedBtnFg: Tokens.stone900,
+      textBtnFg: Tokens.stone900,
+    );
+  }
+
+  static ThemeData get darkTheme {
+    final textTheme = GoogleFonts.interTextTheme().apply(
+      bodyColor: Tokens.stone100,
+      displayColor: Tokens.stone100,
+    );
+    return _buildTheme(
+      brightness: Brightness.dark,
+      textTheme: textTheme,
+      primary: Tokens.stone100,
+      onPrimary: Tokens.stone900,
+      secondary: Tokens.stone800,
+      onSecondary: Tokens.stone100,
+      surface: Tokens.stone900,
+      onSurface: Tokens.stone100,
+      outline: Tokens.stone700,
+      scaffoldBg: Tokens.stone950,
+      cardColor: Tokens.stone900,
+      cardBorder: Tokens.stone700,
+      inputFill: Tokens.stone800,
+      borderDefault: Tokens.stone700,
+      borderFocus: Tokens.stone300,
+      textSecondary: Tokens.stone400,
+      textPlaceholder: Tokens.stone500,
+      navIndicator: Tokens.stone800,
+      navSelectedIcon: Tokens.stone100,
+      fabBg: Tokens.stone100,
+      fabFg: Tokens.stone900,
+      outlinedBtnBg: Tokens.stone900,
+      outlinedBtnFg: Tokens.stone100,
+      textBtnFg: Tokens.stone100,
+    );
+  }
+
+  static ThemeData _buildTheme({
+    required Brightness brightness,
+    required TextTheme textTheme,
+    required Color primary,
+    required Color onPrimary,
+    required Color secondary,
+    required Color onSecondary,
+    required Color surface,
+    required Color onSurface,
+    required Color outline,
+    required Color scaffoldBg,
+    required Color cardColor,
+    required Color cardBorder,
+    required Color inputFill,
+    required Color borderDefault,
+    required Color borderFocus,
+    required Color textSecondary,
+    required Color textPlaceholder,
+    required Color navIndicator,
+    required Color navSelectedIcon,
+    required Color fabBg,
+    required Color fabFg,
+    required Color outlinedBtnBg,
+    required Color outlinedBtnFg,
+    required Color textBtnFg,
+  }) {
     return ThemeData(
       useMaterial3: true,
+      brightness: brightness,
 
-      // 1. Typography (Inter-like)
+      // 1. Typography (Inter)
       fontFamily: GoogleFonts.inter().fontFamily,
-      textTheme: GoogleFonts.interTextTheme().apply(
-        bodyColor: Tokens.textDisplay,
-        displayColor: Tokens.textDisplay,
-      ),
+      textTheme: textTheme,
 
       // 2. Color Scheme
-      colorScheme: const ColorScheme(
-        brightness: Brightness.light,
-        primary: Tokens.stone900,
-        onPrimary: Tokens.white,
-        secondary: Tokens.stone100,
-        onSecondary: Tokens.stone900,
+      colorScheme: ColorScheme(
+        brightness: brightness,
+        primary: primary,
+        onPrimary: onPrimary,
+        secondary: secondary,
+        onSecondary: onSecondary,
         error: Tokens.destructive,
         onError: Tokens.white,
-        surface: Tokens.surfaceCard,
-        onSurface: Tokens.textDisplay,
-        outline: Tokens.borderDefault,
+        surface: surface,
+        onSurface: onSurface,
+        outline: outline,
       ),
 
-      scaffoldBackgroundColor: Tokens.surfaceBackground,
-      dividerColor: Tokens.borderDefault,
+      scaffoldBackgroundColor: scaffoldBg,
+      dividerColor: borderDefault,
 
       // 3. Components Styling
 
-      // Cards: White, Bordered, Low Shadow
+      // Cards
       cardTheme: CardThemeData(
-        color: Tokens.surfaceCard,
+        color: cardColor,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(Tokens.radiusMd),
-          side: const BorderSide(color: Tokens.borderDefault, width: 1),
+          side: BorderSide(color: cardBorder, width: 1),
         ),
         margin: EdgeInsets.zero,
       ),
 
-      // Buttons: Black background, sharp corners
+      // Buttons: Primary fill
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Tokens.stone900,
-          foregroundColor: Tokens.textOnPrimary,
+          backgroundColor: primary,
+          foregroundColor: onPrimary,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Tokens.radiusMd),
@@ -58,12 +147,12 @@ class AppTheme {
         ),
       ),
 
-      // Outlined Buttons: White background, border
+      // Outlined Buttons
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          backgroundColor: Tokens.surfaceCard,
-          foregroundColor: Tokens.stone900,
-          side: const BorderSide(color: Tokens.borderDefault),
+          backgroundColor: outlinedBtnBg,
+          foregroundColor: outlinedBtnFg,
+          side: BorderSide(color: borderDefault),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Tokens.radiusMd),
           ),
@@ -74,48 +163,48 @@ class AppTheme {
       // Text Button: Ghost style
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: Tokens.stone900,
+          foregroundColor: textBtnFg,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(Tokens.radiusMd),
           ),
         ),
       ),
 
-      // Inputs: Warm fill, clean borders
+      // Inputs
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Tokens.surfaceInputFill,
+        fillColor: inputFill,
         contentPadding: const EdgeInsets.symmetric(horizontal: Tokens.space12, vertical: Tokens.space12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Tokens.radiusMd),
-          borderSide: const BorderSide(color: Tokens.borderDefault),
+          borderSide: BorderSide(color: borderDefault),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Tokens.radiusMd),
-          borderSide: const BorderSide(color: Tokens.borderDefault),
+          borderSide: BorderSide(color: borderDefault),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(Tokens.radiusMd),
-          borderSide: const BorderSide(color: Tokens.borderFocus, width: 1.5),
+          borderSide: BorderSide(color: borderFocus, width: 1.5),
         ),
-        labelStyle: const TextStyle(color: Tokens.textSecondary),
-        hintStyle: const TextStyle(color: Tokens.textPlaceholder),
+        labelStyle: TextStyle(color: textSecondary),
+        hintStyle: TextStyle(color: textPlaceholder),
       ),
 
       // Navigation: Clean sidebar
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: Tokens.surfaceCard,
-        indicatorColor: Tokens.stone100,
-        selectedIconTheme: const IconThemeData(color: Tokens.stone900),
-        unselectedIconTheme: const IconThemeData(color: Tokens.textSecondary),
+        backgroundColor: surface,
+        indicatorColor: navIndicator,
+        selectedIconTheme: IconThemeData(color: navSelectedIcon),
+        unselectedIconTheme: IconThemeData(color: textSecondary),
         labelType: NavigationRailLabelType.all,
-        selectedLabelTextStyle: const TextStyle(
-          color: Tokens.stone900,
+        selectedLabelTextStyle: TextStyle(
+          color: navSelectedIcon,
           fontWeight: FontWeight.w600,
           fontSize: 12,
         ),
-        unselectedLabelTextStyle: const TextStyle(
-          color: Tokens.textSecondary,
+        unselectedLabelTextStyle: TextStyle(
+          color: textSecondary,
           fontWeight: FontWeight.w500,
           fontSize: 12,
         ),
@@ -123,15 +212,15 @@ class AppTheme {
       ),
 
       // AppBar: Border bottom, no shadow
-      appBarTheme: const AppBarTheme(
-        backgroundColor: Tokens.surfaceCard,
-        foregroundColor: Tokens.textDisplay,
+      appBarTheme: AppBarTheme(
+        backgroundColor: surface,
+        foregroundColor: onSurface,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
-        shape: Border(bottom: BorderSide(color: Tokens.borderDefault)),
+        shape: Border(bottom: BorderSide(color: borderDefault)),
         titleTextStyle: TextStyle(
-          color: Tokens.textDisplay,
+          color: onSurface,
           fontSize: 18,
           fontWeight: FontWeight.w600,
         ),
@@ -139,8 +228,8 @@ class AppTheme {
 
       // Floating Action Button
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: Tokens.stone900,
-        foregroundColor: Tokens.textOnPrimary,
+        backgroundColor: fabBg,
+        foregroundColor: fabFg,
         elevation: 2,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),

@@ -194,11 +194,10 @@ class PdfService {
           children: [
             _totalRow('SUBTOTAL', subtotal),
             if (markup > 0) _totalRow('Markup (13%)', markup),
-            if (tariff > 0) _totalRow('Estimated Tariff', tariff),
-            if (airShipping > 0)
-              _totalRow('AIR SHIPPING + Tariffs', airShipping),
+            if (tariff > 0) _totalRow('Tariff', tariff),
+            if (airShipping > 0) _totalRow('Air Shipping', airShipping),
             if (oceanShipping > 0)
-              _totalRow('OCEAN SHIPPING + Tariffs', oceanShipping),
+              _totalRow('Ocean Shipping', oceanShipping),
             pw.Divider(thickness: 1.5, color: PdfColors.grey800),
             pw.Padding(
               padding: const pw.EdgeInsets.symmetric(vertical: 4),

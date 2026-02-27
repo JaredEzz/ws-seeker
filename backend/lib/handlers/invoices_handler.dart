@@ -40,6 +40,9 @@ class InvoicesHandler {
     // PATCH /api/invoices/<id>/status - Update invoice status
     router.patch('/<id>/status', _updateStatus);
 
+    // PATCH /api/invoices/<id> - Update draft invoice (line items, pricing)
+    router.patch('/<id>', _updateInvoice);
+
     // GET /api/invoices/<id>/pdf - Download invoice as PDF
     router.get('/<id>/pdf', _downloadPdf);
 
@@ -173,6 +176,51 @@ class InvoicesHandler {
     } catch (e) {
       return Response.internalServerError(
           body: jsonEncode({'error': 'Failed to generate PDF: $e'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+  }
+
+  /// PATCH /api/invoices/<id>
+  /// Body: { lineItems: [...], subtotal, markup, tariff, airShippingCost,
+  ///         oceanShippingCost, total }
+  Future<Response> _updateInvoice(Request request, String id) async {
+    final role = request.context[AuthContext.userRole] as UserRole?;
+
+    if (role != UserRole.superUser && role != UserRole.supplier) {
+      return Response(403,
+          body: jsonEncode({'error': 'Only admins can edit invoices'}),
+          headers: {'Content-Type': 'application/json'});
+    }
+
+    try {
+      final body = await request.readAsString();
+      final data = jsonDecode(body) as Map<String, dynamic>;
+
+      final updated = await _invoiceService.updateDraftInvoice(id, data);
+
+      _auditService?.log(
+        userId: request.context[AuthContext.userId] as String? ?? '',
+        userEmail: request.context[AuthContext.userEmail] as String? ?? '',
+        action: 'invoice.updated',
+        resourceType: 'invoice',
+        resourceId: id,
+        details: {'updatedFields': data.keys.toList()},
+      );
+
+      return Response.ok(
+          jsonEncode({'invoice': updated}),
+          headers: {'Content-Type': 'application/json'});
+    } on StateError catch (e) {
+      return Response(409,
+          body: jsonEncode({'error': e.message}),
+          headers: {'Content-Type': 'application/json'});
+    } on ArgumentError catch (e) {
+      return Response(400,
+          body: jsonEncode({'error': e.message}),
+          headers: {'Content-Type': 'application/json'});
+    } catch (e) {
+      return Response.internalServerError(
+          body: jsonEncode({'error': 'Failed to update invoice: $e'}),
           headers: {'Content-Type': 'application/json'});
     }
   }

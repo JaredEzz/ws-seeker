@@ -9,6 +9,7 @@ import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/orders_bloc.dart';
 import '../../repositories/order_repository.dart';
+import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/navigation/admin_shell.dart';
 
 class OrderManagementScreen extends StatelessWidget {
@@ -91,6 +92,7 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
             ? 'Japanese Orders'
             : 'Order Management'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh',

@@ -7,6 +7,7 @@ import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/orders_bloc.dart';
+import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/navigation/adaptive_navigation.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -74,6 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           appBar: AppBar(
             title: Text(user?.role == UserRole.superUser ? 'Super User Dashboard' : 'Wholesale Dashboard'),
             actions: [
+              const ThemeToggleButton(),
               Builder(
                 builder: (context) => IconButton(
                   icon: const Icon(Icons.refresh),

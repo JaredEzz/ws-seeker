@@ -13,6 +13,7 @@ import '../../repositories/audit_log_repository.dart';
 import '../../repositories/invoice_repository.dart';
 import '../../repositories/order_repository.dart';
 import '../../services/storage_service.dart';
+import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/orders/comment_section.dart';
 
 class OrderDetailScreen extends StatefulWidget {
@@ -61,6 +62,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             ? 'Order ${_order!.displayOrderNumber ?? _order!.id}'
             : 'Order Details'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadOrder,

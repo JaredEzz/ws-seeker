@@ -4,6 +4,7 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 import '../../blocs/audit_logs/audit_logs_bloc.dart';
 import '../../repositories/audit_log_repository.dart';
+import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/navigation/admin_shell.dart';
 
 class AuditLogsScreen extends StatelessWidget {
@@ -83,6 +84,7 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
       appBar: AppBar(
         title: const Text('Audit Logs'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh',

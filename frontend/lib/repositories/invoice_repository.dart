@@ -8,6 +8,7 @@ abstract interface class InvoiceRepository {
   Future<Invoice> getInvoiceById(String id);
   Future<Invoice> generateInvoice(String orderId);
   Future<void> updateInvoiceStatus(String id, String status);
+  Future<Invoice> updateInvoice(String id, Map<String, dynamic> updates);
   Future<List<int>> downloadPdf(String id);
 }
 
@@ -90,6 +91,22 @@ class HttpInvoiceRepository implements InvoiceRepository {
     if (response.statusCode != 200) {
       throw Exception('Failed to update invoice status: ${response.body}');
     }
+  }
+
+  @override
+  Future<Invoice> updateInvoice(String id, Map<String, dynamic> updates) async {
+    final response = await http.patch(
+      Uri.parse('$_baseUrl${ApiRoutes.invoices}/$id'),
+      headers: await _authHeaders,
+      body: jsonEncode(updates),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update invoice: ${response.body}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return _invoiceFromMap(data['invoice'] as Map<String, dynamic>);
   }
 
   @override

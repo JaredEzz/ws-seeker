@@ -10,6 +10,7 @@ import '../../blocs/all_chats/all_chats_bloc.dart';
 import '../../blocs/comments/comments_bloc.dart';
 import '../../repositories/order_repository.dart';
 import '../../services/storage_service.dart';
+import '../../widgets/common/theme_toggle_button.dart';
 
 class AllChatsScreen extends StatelessWidget {
   const AllChatsScreen({super.key});
@@ -34,6 +35,7 @@ class AllChatsContent extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Chats'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh',

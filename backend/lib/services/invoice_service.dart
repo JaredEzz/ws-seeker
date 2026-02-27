@@ -116,6 +116,63 @@ class InvoiceService {
     }).toList();
   }
 
+  /// Update a draft invoice (line items, pricing fields)
+  ///
+  /// Only invoices in 'draft' status can be edited.
+  /// Accepts: lineItems, subtotal, markup, tariff, airShippingCost,
+  /// oceanShippingCost, total.
+  Future<Map<String, dynamic>?> updateDraftInvoice(
+    String invoiceId,
+    Map<String, dynamic> updates,
+  ) async {
+    final doc = await _invoicesRef.doc(invoiceId).get();
+    if (!doc.exists) {
+      throw ArgumentError('Invoice not found: $invoiceId');
+    }
+
+    final data = doc.data()!;
+    if (data['status'] != 'draft') {
+      throw StateError('Only draft invoices can be edited');
+    }
+
+    final updateMap = <String, dynamic>{};
+
+    if (updates.containsKey('lineItems')) {
+      final items = updates['lineItems'] as List<dynamic>;
+      updateMap['lineItems'] = items.map((item) {
+        final i = item as Map<String, dynamic>;
+        return {
+          'description': i['description'] as String,
+          'quantity': (i['quantity'] as num).toInt(),
+          'unitPrice': (i['unitPrice'] as num).toDouble(),
+          'totalPrice': (i['totalPrice'] as num).toDouble(),
+        };
+      }).toList();
+    }
+
+    for (final key in [
+      'subtotal',
+      'markup',
+      'tariff',
+      'airShippingCost',
+      'oceanShippingCost',
+      'total',
+    ]) {
+      if (updates.containsKey(key) && updates[key] != null) {
+        updateMap[key] = (updates[key] as num).toDouble();
+      }
+    }
+
+    if (updateMap.isEmpty) {
+      throw ArgumentError('No valid fields to update');
+    }
+
+    updateMap['updatedAt'] = FieldValue.serverTimestamp;
+    await _invoicesRef.doc(invoiceId).update(updateMap);
+
+    return getInvoiceById(invoiceId);
+  }
+
   /// Update invoice status
   Future<void> updateInvoiceStatus(String invoiceId, String status) async {
     final updates = <String, dynamic>{

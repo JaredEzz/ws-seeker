@@ -8,6 +8,7 @@ import '../../blocs/orders/order_form_bloc.dart';
 import '../../blocs/orders/orders_bloc.dart';
 import '../../repositories/order_repository.dart';
 import '../../repositories/product_repository.dart';
+import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/forms/address_form.dart';
 
 class OrderFormScreen extends StatelessWidget {
@@ -50,7 +51,10 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Place Wholesale Order')),
+      appBar: AppBar(
+        title: const Text('Place Wholesale Order'),
+        actions: const [ThemeToggleButton()],
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: _currentStep == 1
           ? FloatingActionButton.extended(

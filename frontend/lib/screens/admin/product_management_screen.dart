@@ -4,6 +4,7 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/products/products_bloc.dart';
 import '../../repositories/product_repository.dart';
+import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/navigation/admin_shell.dart';
 import 'product_form_dialog.dart';
 import 'product_import_dialog.dart';
@@ -111,6 +112,7 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
       appBar: AppBar(
         title: const Text('Product Management'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.upload_file),
             tooltip: 'Import CSV',

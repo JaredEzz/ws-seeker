@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_state.dart';
+import '../common/theme_toggle_button.dart';
 
 class AdminShell extends StatelessWidget {
   final int selectedIndex;
@@ -92,10 +93,17 @@ class AdminShell extends StatelessWidget {
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: const EdgeInsets.only(bottom: 16),
-                    child: IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      tooltip: 'Back to Dashboard',
-                      onPressed: () => context.go('/dashboard'),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const ThemeToggleButton(),
+                        const SizedBox(height: 8),
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          tooltip: 'Back to Dashboard',
+                          onPressed: () => context.go('/dashboard'),
+                        ),
+                      ],
                     ),
                   ),
                 ),

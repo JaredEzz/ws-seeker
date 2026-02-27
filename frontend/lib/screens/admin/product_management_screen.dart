@@ -256,6 +256,24 @@ class _ProductCard extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (product.imageUrl != null) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(Tokens.radiusSm),
+                    child: Image.network(
+                      product.imageUrl!,
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        width: 48,
+                        height: 48,
+                        color: Tokens.stone100,
+                        child: const Icon(Icons.broken_image, size: 20, color: Tokens.textTertiary),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: Tokens.space12),
+                ],
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -12,14 +12,10 @@ final class AllChatsFetchRequested extends AllChatsEvent {
   const AllChatsFetchRequested();
 }
 
-final class _AllChatsCommentsUpdated extends AllChatsEvent {
+final class _AllChatsOrderCommentsUpdated extends AllChatsEvent {
+  final String orderId;
   final List<OrderComment> comments;
-  const _AllChatsCommentsUpdated(this.comments);
-}
-
-final class _AllChatsOrdersLoaded extends AllChatsEvent {
-  final List<Order> orders;
-  const _AllChatsOrdersLoaded(this.orders);
+  const _AllChatsOrderCommentsUpdated(this.orderId, this.comments);
 }
 
 final class _AllChatsError extends AllChatsEvent {
@@ -64,16 +60,15 @@ final class AllChatsFailure extends AllChatsState {
 // BLoC
 class AllChatsBloc extends Bloc<AllChatsEvent, AllChatsState> {
   final OrderRepository _orderRepository;
-  StreamSubscription<List<OrderComment>>? _commentsSubscription;
+  final List<StreamSubscription<List<OrderComment>>> _commentSubscriptions = [];
   List<Order> _orders = [];
-  List<OrderComment> _allComments = [];
+  final Map<String, List<OrderComment>> _commentsByOrder = {};
 
   AllChatsBloc({required OrderRepository orderRepository})
       : _orderRepository = orderRepository,
         super(const AllChatsInitial()) {
     on<AllChatsFetchRequested>(_onFetchRequested);
-    on<_AllChatsOrdersLoaded>(_onOrdersLoaded);
-    on<_AllChatsCommentsUpdated>(_onCommentsUpdated);
+    on<_AllChatsOrderCommentsUpdated>(_onOrderCommentsUpdated);
     on<_AllChatsError>(_onError);
   }
 
@@ -83,63 +78,63 @@ class AllChatsBloc extends Bloc<AllChatsEvent, AllChatsState> {
   ) async {
     emit(const AllChatsLoading());
 
+    // Cancel previous per-order subscriptions
+    for (final sub in _commentSubscriptions) {
+      await sub.cancel();
+    }
+    _commentSubscriptions.clear();
+    _commentsByOrder.clear();
+
     try {
+      // getOrders() is already role-filtered (supplier → JPN only, etc.)
       final orders = await _orderRepository.getOrders();
       _orders = orders;
 
-      // Start watching all comments
-      _commentsSubscription?.cancel();
-      _commentsSubscription = _orderRepository.watchAllComments().listen(
-        (comments) => add(_AllChatsCommentsUpdated(comments)),
-        onError: (e) => add(_AllChatsError(e.toString())),
-      );
+      if (orders.isEmpty) {
+        emit(const AllChatsLoaded(conversations: []));
+        return;
+      }
+
+      // Watch comments for each order individually — uses per-document
+      // subcollection reads which respect Firestore security rules.
+      for (final order in orders) {
+        final sub = _orderRepository.watchComments(order.id).listen(
+          (comments) => add(_AllChatsOrderCommentsUpdated(order.id, comments)),
+          onError: (e) => add(_AllChatsError(e.toString())),
+        );
+        _commentSubscriptions.add(sub);
+      }
     } catch (e) {
       emit(AllChatsFailure(message: e.toString()));
     }
   }
 
-  void _onOrdersLoaded(
-    _AllChatsOrdersLoaded event,
+  void _onOrderCommentsUpdated(
+    _AllChatsOrderCommentsUpdated event,
     Emitter<AllChatsState> emit,
   ) {
-    _orders = event.orders;
-    _rebuildConversations(emit);
-  }
-
-  void _onCommentsUpdated(
-    _AllChatsCommentsUpdated event,
-    Emitter<AllChatsState> emit,
-  ) {
-    _allComments = event.comments;
+    _commentsByOrder[event.orderId] = event.comments;
     _rebuildConversations(emit);
   }
 
   void _rebuildConversations(Emitter<AllChatsState> emit) {
-    // Build a set of known order IDs for filtering
     final orderMap = {for (final o in _orders) o.id: o};
 
-    // Group comments by orderId
-    final commentsByOrder = <String, List<OrderComment>>{};
-    for (final comment in _allComments) {
-      if (orderMap.containsKey(comment.orderId)) {
-        commentsByOrder.putIfAbsent(comment.orderId, () => []).add(comment);
-      }
-    }
-
-    // Build conversations — only orders that have comments
     final conversations = <OrderConversation>[];
-    for (final entry in commentsByOrder.entries) {
+    for (final entry in _commentsByOrder.entries) {
       final order = orderMap[entry.key];
-      if (order != null) {
-        // Comments arrive sorted desc from Firestore already
+      if (order != null && entry.value.isNotEmpty) {
+        // watchComments returns ascending; reverse for most-recent-first
+        final sorted = List<OrderComment>.from(entry.value)
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
         conversations.add(OrderConversation(
           order: order,
-          comments: entry.value,
+          comments: sorted,
         ));
       }
     }
 
-    // Sort by most recent message first
+    // Sort conversations by most recent message first
     conversations.sort((a, b) => b.lastMessageTime.compareTo(a.lastMessageTime));
 
     emit(AllChatsLoaded(conversations: conversations));
@@ -154,7 +149,9 @@ class AllChatsBloc extends Bloc<AllChatsEvent, AllChatsState> {
 
   @override
   Future<void> close() {
-    _commentsSubscription?.cancel();
+    for (final sub in _commentSubscriptions) {
+      sub.cancel();
+    }
     return super.close();
   }
 }

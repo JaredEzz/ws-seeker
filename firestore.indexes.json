@@ -62,6 +62,13 @@
     },
     {
       "collectionGroup": "comments",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "createdAt", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "comments",
       "queryScope": "COLLECTION_GROUP",
       "fields": [
         { "fieldPath": "createdAt", "order": "DESCENDING" }

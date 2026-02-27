@@ -1137,7 +1137,7 @@ class _ActivityLogEntry extends StatelessWidget {
             Text(
               detailStr,
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.outline),
+                  ?.copyWith(color: SemanticColors.of(context).textSecondary),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

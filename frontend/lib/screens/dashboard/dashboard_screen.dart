@@ -156,7 +156,7 @@ class _OrderList extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.inbox_outlined, size: 64, color: Theme.of(context).colorScheme.outline),
+            Icon(Icons.inbox_outlined, size: 64, color: SemanticColors.of(context).textTertiary),
             const SizedBox(height: 16),
             Text('No orders yet', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),

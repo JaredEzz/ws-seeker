@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
+import '../../app/design_tokens.dart';
 import '../../blocs/audit_logs/audit_logs_bloc.dart';
 import '../../repositories/audit_log_repository.dart';
 import '../../widgets/common/theme_toggle_button.dart';
@@ -267,7 +268,7 @@ class _AuditLogTile extends StatelessWidget {
             Text(
               detailStr,
               style: theme.textTheme.bodySmall
-                  ?.copyWith(color: theme.colorScheme.outline),
+                  ?.copyWith(color: SemanticColors.of(context).textSecondary),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

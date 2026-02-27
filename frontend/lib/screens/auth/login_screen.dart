@@ -65,11 +65,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     'A Croma TCG web app',
                     style: TextStyle(
                       fontSize: 16,
-                      color: Tokens.textTertiary,
+                      color: SemanticColors.of(context).textTertiary,
                       fontWeight: FontWeight.w500,
                     ),
                     textAlign: TextAlign.center,
@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         'Debug mode (skip email)',
                         style: TextStyle(
                           fontSize: 13,
-                          color: Tokens.textTertiary,
+                          color: SemanticColors.of(context).textTertiary,
                         ),
                       ),
                       const SizedBox(width: 8),

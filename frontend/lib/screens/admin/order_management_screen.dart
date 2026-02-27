@@ -599,20 +599,27 @@ class _LanguageBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (label, color) = switch (language) {
-      ProductLanguage.japanese => ('JPN', Colors.red.shade100),
-      ProductLanguage.chinese => ('CN', Colors.amber.shade100),
-      ProductLanguage.korean => ('KR', Colors.blue.shade100),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final (label, bg, fg) = switch (language) {
+      ProductLanguage.japanese => ('JPN',
+          isDark ? Colors.red.shade900 : Colors.red.shade100,
+          isDark ? Colors.red.shade100 : Colors.red.shade900),
+      ProductLanguage.chinese => ('CN',
+          isDark ? Colors.amber.shade900 : Colors.amber.shade100,
+          isDark ? Colors.amber.shade100 : Colors.amber.shade900),
+      ProductLanguage.korean => ('KR',
+          isDark ? Colors.blue.shade900 : Colors.blue.shade100,
+          isDark ? Colors.blue.shade100 : Colors.blue.shade900),
     };
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color,
+        color: bg,
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: fg)),
     );
   }
 }

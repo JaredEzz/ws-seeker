@@ -335,14 +335,14 @@ class _ProductCard extends StatelessWidget {
             const SizedBox(height: Tokens.space8),
 
             // Price information
-            _buildPriceInfo(),
+            _buildPriceInfo(sem, isDark),
 
             // Specifications
             if (product.specifications != null) ...[
               const SizedBox(height: 6),
               Text(
                 product.specifications!,
-                style: const TextStyle(fontSize: 12, color: Tokens.textSecondary),
+                style: TextStyle(fontSize: 12, color: sem.textSecondary),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -353,9 +353,9 @@ class _ProductCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 product.notes!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
-                  color: Tokens.feedbackWarningText,
+                  color: sem.warningText,
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -366,28 +366,28 @@ class _ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceInfo() {
+  Widget _buildPriceInfo(SemanticColors sem, bool isDark) {
     if (product.language == ProductLanguage.japanese) {
-      return _buildJpnPrices();
+      return _buildJpnPrices(sem, isDark);
     }
     // CN and KR: show base price
     return Text(
       '\$${product.basePrice.toStringAsFixed(2)}',
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Tokens.textPrimary,
+        color: sem.textPrimary,
       ),
     );
   }
 
-  Widget _buildJpnPrices() {
+  Widget _buildJpnPrices(SemanticColors sem, bool isDark) {
     if (product.quoteRequired &&
         product.boxPriceUsd == null &&
         product.casePriceUsd == null) {
-      return const Text(
+      return Text(
         'Price: Ask for quote',
-        style: TextStyle(fontSize: 14, color: Tokens.textSecondary),
+        style: TextStyle(fontSize: 14, color: sem.textSecondary),
       );
     }
 
@@ -395,15 +395,15 @@ class _ProductCard extends StatelessWidget {
 
     if (product.boxPriceUsd != null) {
       chips.add(_priceChip('Box', product.boxPriceUsd!,
-          tariff: product.boxPriceUsdWithTariff));
+          tariff: product.boxPriceUsdWithTariff, sem: sem, isDark: isDark));
     }
     if (product.noShrinkPriceUsd != null) {
       chips.add(_priceChip('No Shrink', product.noShrinkPriceUsd!,
-          tariff: product.noShrinkPriceUsdWithTariff));
+          tariff: product.noShrinkPriceUsdWithTariff, sem: sem, isDark: isDark));
     }
     if (product.casePriceUsd != null) {
       chips.add(_priceChip('Case', product.casePriceUsd!,
-          tariff: product.casePriceUsdWithTariff));
+          tariff: product.casePriceUsdWithTariff, sem: sem, isDark: isDark));
     }
 
     if (chips.isEmpty && product.basePrice > 0) {
@@ -416,11 +416,11 @@ class _ProductCard extends StatelessWidget {
     return Wrap(spacing: Tokens.space8, runSpacing: 4, children: chips);
   }
 
-  Widget _priceChip(String label, double price, {double? tariff}) {
+  Widget _priceChip(String label, double price, {double? tariff, required SemanticColors sem, required bool isDark}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Tokens.stone100,
+        color: isDark ? Tokens.stone800 : Tokens.stone100,
         borderRadius: BorderRadius.circular(Tokens.radiusMd),
       ),
       child: Column(
@@ -428,12 +428,12 @@ class _ProductCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(label,
-              style: const TextStyle(fontSize: 10, color: Tokens.textSecondary)),
+              style: TextStyle(fontSize: 10, color: sem.textSecondary)),
           Text('\$${price.toStringAsFixed(2)}',
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
           if (tariff != null)
             Text('+tariff: \$${tariff.toStringAsFixed(2)}',
-                style: const TextStyle(fontSize: 10, color: Tokens.textTertiary)),
+                style: TextStyle(fontSize: 10, color: sem.textTertiary)),
         ],
       ),
     );

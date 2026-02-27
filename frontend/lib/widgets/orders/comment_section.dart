@@ -271,7 +271,7 @@ class _CommentBubble extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Tokens.userColor(comment.userId),
+            color: SemanticColors.userColor(comment.userId, Theme.of(context).brightness),
             borderRadius: BorderRadius.circular(Tokens.radiusLg),
           ),
           child: Column(

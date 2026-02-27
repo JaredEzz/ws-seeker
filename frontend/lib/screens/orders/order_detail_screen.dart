@@ -407,6 +407,7 @@ class _PricingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sem = SemanticColors.of(context);
     if (order.quoteRequired) {
       return Card(
         child: Padding(
@@ -419,14 +420,13 @@ class _PricingCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Tokens.feedbackWarningBg,
-                  border: Border.all(color: Tokens.feedbackWarningBorder),
+                  color: sem.warningBg,
+                  border: Border.all(color: sem.warningBorder),
                   borderRadius: BorderRadius.circular(Tokens.radiusLg),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.request_quote,
-                        color: Tokens.feedbackWarningIcon),
+                    Icon(Icons.request_quote, color: sem.warningIcon),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(
@@ -436,7 +436,7 @@ class _PricingCard extends StatelessWidget {
                               style: Theme.of(context)
                                   .textTheme
                                   .titleSmall
-                                  ?.copyWith(color: Tokens.feedbackWarningText)),
+                                  ?.copyWith(color: sem.warningText)),
                           const SizedBox(height: 4),
                           Text(
                             'This order contains products that require a supplier quote. '
@@ -444,7 +444,7 @@ class _PricingCard extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall
-                                ?.copyWith(color: Tokens.feedbackWarningText),
+                                ?.copyWith(color: sem.warningText),
                           ),
                         ],
                       ),

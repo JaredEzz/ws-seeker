@@ -69,7 +69,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ## P1 — Agreed Features (Included in Initial Scope)
 
-### 4. Remove `submitted` status — default all orders to `awaitingQuote`
+### 4. ~~Remove `submitted` status — default all orders to `awaitingQuote`~~ ✅ DONE
 
 **Transcript ref:** ~2031s — "I'll just get rid of this submitted status and we'll just start with awaiting quote as the first status"
 
@@ -93,7 +93,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 5. Hide markup from customers — keep for admin pricing
+### 5. ~~Hide markup from customers — keep for admin pricing~~ ✅ DONE
 
 **Transcript ref:** ~393s — "Can we hide that number?" / ~424s — "let's keep the markup... that saves us work"
 
@@ -112,7 +112,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 6. Add "prices are not final" disclaimer to ALL order forms
+### 6. ~~Add "prices are not final" disclaimer to ALL order forms~~ ✅ DONE
 
 **Transcript ref:** ~1060s — "somewhere on the order form, we could say, like this is not the final price" / ~1094s — "I think we'll do that for all three languages"
 
@@ -562,9 +562,9 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 1. ~~P0: Fix jump-to-bottom button (#1)~~ ✅
 2. ~~P0: Fix admin chats view (#2)~~ ✅
 3. ~~P0: Fix supplier login (#3)~~ ✅
-4. P1: Remove `submitted` status → default `awaitingQuote` (#4)
-5. P1: Hide markup from customers (#5)
-6. P1: Add "prices not final" disclaimer (#6)
+4. ~~P1: Remove `submitted` status → default `awaitingQuote` (#4)~~ ✅
+5. ~~P1: Hide markup from customers (#5)~~ ✅
+6. ~~P1: Add "prices not final" disclaimer (#6)~~ ✅
 7. ~~P1: Dark mode (#13)~~ ✅
 
 **Week 2 (invoicing + notifications):**

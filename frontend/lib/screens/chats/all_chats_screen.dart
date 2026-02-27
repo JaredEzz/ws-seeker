@@ -188,27 +188,39 @@ class _ConversationCardState extends State<_ConversationCard> {
           // Collapsed: preview of recent messages
           if (!_expanded) ...[
             const Divider(height: 1),
-            Padding(
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (final comment in previewComments)
-                    _CompactCommentRow(comment: comment),
-                  if (comments.length > _collapsedPreviewCount)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 4),
-                      child: Text(
-                        '${comments.length - _collapsedPreviewCount} more message${comments.length - _collapsedPreviewCount == 1 ? '' : 's'}...',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w500,
+            if (comments.isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Text(
+                  'No messages yet',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.outline,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final comment in previewComments)
+                      _CompactCommentRow(comment: comment),
+                    if (comments.length > _collapsedPreviewCount)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          '${comments.length - _collapsedPreviewCount} more message${comments.length - _collapsedPreviewCount == 1 ? '' : 's'}...',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
-            ),
           ],
           // Expanded: full conversation + input
           if (_expanded) ...[

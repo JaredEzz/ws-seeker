@@ -95,15 +95,30 @@ class AllChatsBloc extends Bloc<AllChatsEvent, AllChatsState> {
         return;
       }
 
+      // Pre-populate empty comment lists so orders with 0 comments still
+      // appear in the aggregated view immediately.
+      for (final order in orders) {
+        _commentsByOrder[order.id] = [];
+      }
+
       // Watch comments for each order individually — uses per-document
       // subcollection reads which respect Firestore security rules.
+      // Errors on individual orders are isolated to avoid poisoning the
+      // entire view.
       for (final order in orders) {
         final sub = _orderRepository.watchComments(order.id).listen(
           (comments) => add(_AllChatsOrderCommentsUpdated(order.id, comments)),
-          onError: (e) => add(_AllChatsError(e.toString())),
+          onError: (e) {
+            // Isolate per-order errors — log but don't kill the whole view.
+            print('Failed to watch comments for order ${order.id}: $e');
+          },
         );
         _commentSubscriptions.add(sub);
       }
+
+      // Emit initial state with all orders (0 comments each) so the UI
+      // doesn't stay on Loading until the first comment stream fires.
+      _rebuildConversations(emit);
     } catch (e) {
       emit(AllChatsFailure(message: e.toString()));
     }
@@ -123,7 +138,7 @@ class AllChatsBloc extends Bloc<AllChatsEvent, AllChatsState> {
     final conversations = <OrderConversation>[];
     for (final entry in _commentsByOrder.entries) {
       final order = orderMap[entry.key];
-      if (order != null && entry.value.isNotEmpty) {
+      if (order != null) {
         // watchComments returns ascending; reverse for most-recent-first
         final sorted = List<OrderComment>.from(entry.value)
           ..sort((a, b) => b.createdAt.compareTo(a.createdAt));

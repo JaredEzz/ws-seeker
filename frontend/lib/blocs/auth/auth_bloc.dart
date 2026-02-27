@@ -32,10 +32,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     if (event.user != null) {
       final incoming = event.user!;
+      final current = state;
+
+      // During AuthLoading, a verifyMagicLink or login is in-flight.
+      // The authStateChanges stream fires because signInWithCustomToken
+      // completed, but _fetchUserProfile may return a stale/default role.
+      // Ignore these events — the verify handler will emit the correct state.
+      if (current is AuthLoading) {
+        return;
+      }
+
       // Don't let authStateChanges overwrite a known role with the default
       // wholesaler fallback. verifyMagicLink returns the authoritative role;
       // _fetchUserProfile may fall back to wholesaler if Firestore read fails.
-      final current = state;
       if (current is AuthAuthenticated &&
           current.user.id == incoming.id &&
           current.user.role != UserRole.wholesaler &&

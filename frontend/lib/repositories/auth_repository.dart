@@ -23,6 +23,12 @@ class FirebaseAuthRepository implements AuthRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static const _emailKey = 'pending_magic_link_email';
 
+  /// Cached role from the most recent verifyMagicLink call. Used as fallback
+  /// in _fetchUserProfile when Firestore read fails or returns no role,
+  /// preventing the race condition where authStateChanges overwrites a
+  /// supplier/superUser role with the default wholesaler fallback.
+  UserRole? _lastVerifiedRole;
+
   @override
   Future<AppUser?> getCurrentUser() async {
     final user = _firebaseAuth.currentUser;
@@ -108,8 +114,10 @@ class FirebaseAuthRepository implements AuthRepository {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_emailKey);
 
-      // Parse role and address from enriched backend response
+      // Parse role and address from enriched backend response.
+      // Cache the role so _fetchUserProfile can use it as fallback.
       final role = _parseRole(data['role'] as String?, email);
+      _lastVerifiedRole = role;
       ShippingAddress? savedAddress;
       if (data['savedAddress'] != null) {
         savedAddress = ShippingAddress.fromJson(
@@ -159,9 +167,10 @@ class FirebaseAuthRepository implements AuthRepository {
   }
 
   /// Fetch user profile from Firestore for returning users (app restart).
-  /// Falls back to default wholesaler role if Firestore read fails.
+  /// Falls back to cached verified role if available, otherwise default
+  /// wholesaler role, when Firestore read fails.
   Future<AppUser> _fetchUserProfile(User user) async {
-    UserRole role = _parseRole(null, user.email);
+    UserRole role = _lastVerifiedRole ?? _parseRole(null, user.email);
     ShippingAddress? savedAddress;
     String? discordName;
     String? phone;

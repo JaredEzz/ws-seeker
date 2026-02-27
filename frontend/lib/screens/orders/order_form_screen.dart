@@ -46,7 +46,6 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   bool _addressInitialized = false;
   final _reviewFormKey = GlobalKey<FormState>();
   final _addressFormKey = GlobalKey<FormState>();
-  final _bottomAnchorKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +125,6 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                 content: Column(
                   children: [
                     _ProductSelector(state: state),
-                    SizedBox(key: _bottomAnchorKey),
                   ],
                 ),
                 isActive: _currentStep >= 1,
@@ -153,14 +151,20 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   }
 
   void _scrollToBottom() {
-    final keyContext = _bottomAnchorKey.currentContext;
-    if (keyContext != null) {
-      Scrollable.ensureVisible(
-        keyContext,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeOut,
-      );
-    }
+    // Use a post-frame callback to ensure layout is complete before scrolling.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Find the nearest Scrollable ancestor (the Stepper's internal scroll view)
+      // and scroll to the bottom.
+      final scrollable = Scrollable.maybeOf(context);
+      final position = scrollable?.position;
+      if (position != null) {
+        position.animateTo(
+          position.maxScrollExtent,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   void _onStepContinue(BuildContext context, OrderFormState state) {

@@ -58,8 +58,9 @@ class OrderService {
   /// and writes the order to Firestore.
   Future<Map<String, dynamic>> createOrder(
     String userId,
-    CreateOrderRequest request,
-  ) async {
+    CreateOrderRequest request, {
+    String? accountManagerId,
+  }) async {
     // Validate items not empty
     if (request.items.isEmpty) {
       throw ArgumentError('Order must contain at least one item');
@@ -155,6 +156,8 @@ class OrderService {
         'paymentMethod': request.paymentMethod,
       if (request.discordName != null)
         'discordName': request.discordName,
+      if (accountManagerId != null)
+        'accountManagerId': accountManagerId,
       'createdAt': FieldValue.serverTimestamp,
       'updatedAt': FieldValue.serverTimestamp,
     };
@@ -203,6 +206,10 @@ class OrderService {
     }
     if (filter?.language != null) {
       query = query.where('language', WhereFilter.equal, filter!.language!.name);
+    }
+    if (filter?.accountManagerId != null) {
+      query = query.where(
+          'accountManagerId', WhereFilter.equal, filter!.accountManagerId!);
     }
 
     query = query.orderBy('createdAt', descending: true);

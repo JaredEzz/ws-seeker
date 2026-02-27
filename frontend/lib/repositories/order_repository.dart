@@ -256,6 +256,7 @@ class HttpOrderRepository implements OrderRepository {
       displayOrderNumber: map['displayOrderNumber'] as String?,
       airShippingCost: (map['airShippingCost'] as num?)?.toDouble(),
       oceanShippingCost: (map['oceanShippingCost'] as num?)?.toDouble(),
+      accountManagerId: map['accountManagerId'] as String?,
       quoteRequired: map['quoteRequired'] as bool? ?? false,
       createdAt: _parseDateTime(map['createdAt']),
       updatedAt: _parseDateTime(map['updatedAt']),

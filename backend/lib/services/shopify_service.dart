@@ -123,6 +123,123 @@ class ShopifyService {
     }
   }
 
+  /// Fetch all members of a Shopify customer segment (paginated).
+  /// Returns a list of (email, shopifyId, address?) records.
+  Future<List<({String email, String shopifyId, ShippingAddress? address})>>
+      getAllSegmentMembers(String segmentName) async {
+    if (!isConfigured) return [];
+
+    final uri = Uri.https(_shopDomain, '/admin/api/2024-01/graphql.json');
+    final headers = {
+      'Content-Type': 'application/json',
+      'X-Shopify-Access-Token': _adminToken,
+    };
+
+    // Ensure segment ID is cached
+    if (_wholesaleSegmentId == null) {
+      // Call isEmailInSegment with a dummy to populate the cache
+      await isEmailInSegment('__init__@noop.com', segmentName);
+      if (_wholesaleSegmentId == null) return [];
+    }
+
+    final results =
+        <({String email, String shopifyId, ShippingAddress? address})>[];
+    String? cursor;
+    var hasNextPage = true;
+
+    while (hasNextPage) {
+      final afterClause = cursor != null ? ', after: "$cursor"' : '';
+      final query = '''
+        query {
+          customerSegmentMembers(
+            segmentId: "$_wholesaleSegmentId",
+            first: 50$afterClause
+          ) {
+            edges {
+              cursor
+              node {
+                id
+                firstName
+                lastName
+                defaultEmailAddress { emailAddress }
+                defaultAddress {
+                  address1
+                  address2
+                  city
+                  provinceCode
+                  zip
+                  country
+                  phone
+                }
+              }
+            }
+            pageInfo { hasNextPage }
+          }
+        }
+      ''';
+
+      try {
+        final response = await http.post(
+          uri,
+          headers: headers,
+          body: jsonEncode({'query': query}),
+        );
+
+        if (response.statusCode != 200) {
+          print('Shopify segment members query failed: ${response.body}');
+          break;
+        }
+
+        final data = jsonDecode(response.body);
+        final members = data['data']?['customerSegmentMembers'];
+        if (members == null) break;
+
+        final edges = members['edges'] as List? ?? [];
+        for (final edge in edges) {
+          final node = edge['node'] as Map<String, dynamic>;
+          cursor = edge['cursor'] as String?;
+
+          final emailObj = node['defaultEmailAddress'] as Map<String, dynamic>?;
+          final email = emailObj?['emailAddress'] as String?;
+          if (email == null || email.isEmpty) continue;
+
+          final shopifyId = node['id'] as String;
+          final addr = node['defaultAddress'] as Map<String, dynamic>?;
+
+          ShippingAddress? address;
+          if (addr != null) {
+            final firstName = node['firstName'] as String? ?? '';
+            final lastName = node['lastName'] as String? ?? '';
+            address = ShippingAddress(
+              fullName: '$firstName $lastName'.trim(),
+              addressLine1: addr['address1'] as String? ?? '',
+              addressLine2: addr['address2'] as String?,
+              city: addr['city'] as String? ?? '',
+              state: addr['provinceCode'] as String? ?? '',
+              postalCode: addr['zip'] as String? ?? '',
+              country: addr['country'] as String? ?? '',
+              phone: addr['phone'] as String?,
+            );
+          }
+
+          results.add((
+            email: email,
+            shopifyId: shopifyId,
+            address: address,
+          ));
+        }
+
+        hasNextPage =
+            members['pageInfo']?['hasNextPage'] as bool? ?? false;
+      } catch (e) {
+        print('Shopify segment members pagination error: $e');
+        break;
+      }
+    }
+
+    return results;
+  }
+
   /// Check if an email belongs to a Shopify customer segment by name.
   Future<bool> isEmailInSegment(String email, String segmentName) async {
     if (!isConfigured) return false;

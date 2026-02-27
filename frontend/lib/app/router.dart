@@ -11,6 +11,7 @@ import '../screens/orders/order_detail_screen.dart';
 import '../screens/admin/order_management_screen.dart';
 import '../screens/admin/product_management_screen.dart';
 import '../screens/admin/invoice_management_screen.dart';
+import '../screens/admin/customer_management_screen.dart';
 import '../screens/admin/admin_chats_screen.dart';
 import '../screens/admin/audit_logs_screen.dart';
 import '../screens/chats/all_chats_screen.dart';
@@ -91,6 +92,10 @@ class AppRouter {
       GoRoute(
         path: '/admin/invoices',
         builder: (context, state) => const InvoiceManagementScreen(),
+      ),
+      GoRoute(
+        path: '/admin/customers',
+        builder: (context, state) => const CustomerManagementScreen(),
       ),
       GoRoute(
         path: '/admin/chats',

@@ -17,7 +17,7 @@ class AuditLogsScreen extends StatelessWidget {
         repository: context.read<AuditLogRepository>(),
       )..add(const AuditLogsFetchRequested(query: AuditLogQuery())),
       child: const AdminShell(
-        selectedIndex: 4,
+        selectedIndex: 5,
         child: _AuditLogsContent(),
       ),
     );

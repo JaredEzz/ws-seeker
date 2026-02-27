@@ -87,8 +87,9 @@ void main() async {
 
   // Initialize Handlers
   final syncHandler = SyncHandler(
-    shopifyService: shopifyService, 
+    shopifyService: shopifyService,
     userService: userService,
+    auth: auth,
   );
   final productHandler = ProductHandler(
     productService: productService,

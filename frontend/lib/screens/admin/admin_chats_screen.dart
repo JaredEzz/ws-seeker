@@ -15,7 +15,7 @@ class AdminChatsScreen extends StatelessWidget {
         orderRepository: context.read<OrderRepository>(),
       )..add(const AllChatsFetchRequested()),
       child: const AdminShell(
-        selectedIndex: 3,
+        selectedIndex: 4,
         child: AllChatsContent(),
       ),
     );

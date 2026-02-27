@@ -63,6 +63,7 @@ class Order with _$Order {
     String? displayOrderNumber,
     double? airShippingCost,
     double? oceanShippingCost,
+    String? accountManagerId,
     @Default(false) bool quoteRequired,
     required DateTime createdAt,
     required DateTime updatedAt,
@@ -98,6 +99,7 @@ class OrderFilter with _$OrderFilter {
     DateTime? endDate,
     OrderStatus? status,
     ProductLanguage? language,
+    String? accountManagerId,
     @Default(12) int monthsToShow,
   }) = _OrderFilter;
 

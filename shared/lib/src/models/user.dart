@@ -35,6 +35,7 @@ class AppUser with _$AppUser {
     String? wiseEmail,
     String? venmoHandle,
     String? paypalEmail,
+    String? accountManagerId,
     required DateTime createdAt,
     DateTime? updatedAt,
   }) = _AppUser;

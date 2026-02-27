@@ -62,4 +62,5 @@ abstract final class ApiRoutes {
   static const String userProfile = '/api/users/me';
   static const String auditLogs = '/api/audit-logs';
   static const String exchangeRate = '/api/exchange-rate';
+  static const String shopifyImportAll = '/api/sync/shopify/import-all';
 }

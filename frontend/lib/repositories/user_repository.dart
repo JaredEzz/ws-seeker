@@ -14,6 +14,9 @@ abstract interface class UserRepository {
     String? paypalEmail,
     ShippingAddress? savedAddress,
   });
+  Future<List<AppUser>> listUsers();
+  Future<void> assignAccountManager(String userId, String? managerId);
+  Future<({int created, int updated, int skipped})> syncShopifyUsers();
 }
 
 class HttpUserRepository implements UserRepository {
@@ -82,6 +85,56 @@ class HttpUserRepository implements UserRepository {
     return _userFromMap(data['user'] as Map<String, dynamic>);
   }
 
+  @override
+  Future<List<AppUser>> listUsers() async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl${ApiRoutes.users}'),
+      headers: await _authHeaders,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to list users: ${response.body}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final usersJson = data['users'] as List<dynamic>;
+    return usersJson
+        .map((json) => _userFromMap(json as Map<String, dynamic>))
+        .toList();
+  }
+
+  @override
+  Future<void> assignAccountManager(String userId, String? managerId) async {
+    final response = await http.patch(
+      Uri.parse('$_baseUrl${ApiRoutes.users}/$userId/account-manager'),
+      headers: await _authHeaders,
+      body: jsonEncode({'accountManagerId': managerId}),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to assign account manager: ${response.body}');
+    }
+  }
+
+  @override
+  Future<({int created, int updated, int skipped})> syncShopifyUsers() async {
+    final response = await http.post(
+      Uri.parse('$_baseUrl${ApiRoutes.shopifyImportAll}'),
+      headers: await _authHeaders,
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to sync Shopify users: ${response.body}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    return (
+      created: data['created'] as int? ?? 0,
+      updated: data['updated'] as int? ?? 0,
+      skipped: data['skipped'] as int? ?? 0,
+    );
+  }
+
   AppUser _userFromMap(Map<String, dynamic> map) {
     ShippingAddress? savedAddress;
     if (map['savedAddress'] != null) {
@@ -101,6 +154,7 @@ class HttpUserRepository implements UserRepository {
       wiseEmail: map['wiseEmail'] as String?,
       venmoHandle: map['venmoHandle'] as String?,
       paypalEmail: map['paypalEmail'] as String?,
+      accountManagerId: map['accountManagerId'] as String?,
       createdAt: _parseDateTime(map['createdAt']),
       updatedAt: _parseDateTime(map['updatedAt']),
     );

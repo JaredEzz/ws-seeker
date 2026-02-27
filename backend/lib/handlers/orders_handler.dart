@@ -75,7 +75,18 @@ class OrdersHandler {
       final data = jsonDecode(body) as Map<String, dynamic>;
       final createRequest = CreateOrderRequest.fromJson(data);
 
-      final order = await _orderService.createOrder(userId, createRequest);
+      // Look up user's accountManagerId to stamp on the order
+      String? accountManagerId;
+      if (_userService != null) {
+        final userData = await _userService.getUser(userId);
+        accountManagerId = userData?['accountManagerId'] as String?;
+      }
+
+      final order = await _orderService.createOrder(
+        userId,
+        createRequest,
+        accountManagerId: accountManagerId,
+      );
 
       // Send order confirmation email (fire-and-forget)
       _sendOrderConfirmationEmail(userId, order);
@@ -126,11 +137,13 @@ class OrdersHandler {
 
       final statusParam = params['status'];
       final languageParam = params['language'];
+      final accountManagerParam = params['accountManagerId'];
 
-      if (statusParam != null || languageParam != null) {
+      if (statusParam != null || languageParam != null || accountManagerParam != null) {
         filter = OrderFilter(
           status: statusParam != null ? _parseStatus(statusParam) : null,
           language: languageParam != null ? _parseLanguage(languageParam) : null,
+          accountManagerId: accountManagerParam,
         );
       }
 

@@ -55,6 +55,66 @@ class UserService {
     }
   }
 
+  /// List all users, optionally filtered by role.
+  Future<List<Map<String, dynamic>>> listUsers({UserRole? roleFilter}) async {
+    Query<Map<String, dynamic>> query = _usersRef;
+
+    if (roleFilter != null) {
+      query = query.where('role', WhereFilter.equal, roleFilter.name);
+    }
+
+    final snapshot = await query.get();
+    return snapshot.docs.map((doc) {
+      final data = sanitizeDoc(doc.data());
+      data['id'] = doc.id;
+      return data;
+    }).toList();
+  }
+
+  /// Assign (or clear) an account manager for a user.
+  Future<void> assignAccountManager(
+    String userId,
+    String? accountManagerId,
+  ) async {
+    await _usersRef.doc(userId).update({
+      'accountManagerId': accountManagerId ?? FieldValue.delete,
+      'updatedAt': FieldValue.serverTimestamp,
+    });
+  }
+
+  /// Create or update a user doc from Shopify import.
+  /// Returns 'created' or 'updated'.
+  Future<String> upsertFromShopifyImport({
+    required String firestoreUserId,
+    required String email,
+    ShippingAddress? address,
+  }) async {
+    final docRef = _usersRef.doc(firestoreUserId);
+    final doc = await docRef.get();
+
+    if (doc.exists) {
+      final updates = <String, dynamic>{
+        'shopifySyncAt': FieldValue.serverTimestamp,
+        'updatedAt': FieldValue.serverTimestamp,
+      };
+      if (address != null) {
+        updates['savedAddress'] = address.toJson();
+      }
+      await docRef.update(updates);
+      return 'updated';
+    } else {
+      await docRef.set({
+        'email': email,
+        'role': UserRole.wholesaler.name,
+        if (address != null) 'savedAddress': address.toJson(),
+        'shopifySyncAt': FieldValue.serverTimestamp,
+        'createdAt': FieldValue.serverTimestamp,
+        'updatedAt': FieldValue.serverTimestamp,
+      });
+      return 'created';
+    }
+  }
+
   Future<void> updateUserFromShopify({
     required String userId,
     required UserRole role,

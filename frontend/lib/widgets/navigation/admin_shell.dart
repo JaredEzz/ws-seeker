@@ -36,6 +36,12 @@ class AdminShell extends StatelessWidget {
       path: '/admin/invoices',
     ),
     _AdminDestination(
+      icon: Icons.people_outlined,
+      selectedIcon: Icons.people,
+      label: 'Customers',
+      path: '/admin/customers',
+    ),
+    _AdminDestination(
       icon: Icons.chat_outlined,
       selectedIcon: Icons.chat,
       label: 'Chats',

@@ -294,7 +294,7 @@ class _CommentBubble extends StatelessWidget {
                     child: Text(
                       _formatTime(comment.createdAt),
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: Colors.grey.shade700,
+                        color: theme.colorScheme.outline,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -331,7 +331,7 @@ class _CommentBubble extends StatelessWidget {
                           return Container(
                             width: 200,
                             height: 100,
-                            color: Colors.grey.shade200,
+                            color: theme.colorScheme.surfaceContainerHighest,
                             child: const Center(
                                 child: Icon(Icons.broken_image_outlined)),
                           );

@@ -601,7 +601,7 @@ class _CommentBubble extends StatelessWidget {
                       return Container(
                         width: 200,
                         height: 100,
-                        color: Colors.grey.shade200,
+                        color: Theme.of(context).colorScheme.surfaceContainerHighest,
                         child: const Center(
                             child: Icon(Icons.broken_image_outlined)),
                       );

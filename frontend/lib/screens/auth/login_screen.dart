@@ -144,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
         title: const Text('Debug: Magic Link'),
         content: SelectableText(
           link,
-          style: const TextStyle(fontSize: 14, color: Colors.blue),
+          style: TextStyle(fontSize: 14, color: Theme.of(ctx).colorScheme.primary),
         ),
         actions: [
           TextButton(

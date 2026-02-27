@@ -838,17 +838,18 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final (label, color) = switch (status) {
-      InvoiceStatus.draft => ('Draft', Colors.grey),
-      InvoiceStatus.sent => ('Sent', Colors.blue),
-      InvoiceStatus.paid => ('Paid', Colors.green),
-      InvoiceStatus.voided => ('Void', Colors.red),
+      InvoiceStatus.draft => ('Draft', isDark ? Colors.grey.shade300 : Colors.grey.shade700),
+      InvoiceStatus.sent => ('Sent', isDark ? Colors.blue.shade300 : Colors.blue.shade700),
+      InvoiceStatus.paid => ('Paid', isDark ? Colors.green.shade300 : Colors.green.shade700),
+      InvoiceStatus.voided => ('Void', isDark ? Colors.red.shade300 : Colors.red.shade700),
     };
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
+        color: color.withValues(alpha: isDark ? 0.2 : 0.15),
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(label,

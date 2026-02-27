@@ -111,31 +111,33 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           if (order.status == OrderStatus.submitted ||
               order.status == OrderStatus.awaitingQuote) ...[
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Tokens.feedbackInfoBg,
-                border: Border.all(color: Tokens.feedbackInfoBorder),
-                borderRadius: BorderRadius.circular(Tokens.radiusLg),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.info_outline,
-                      color: Tokens.feedbackInfoIcon, size: 20),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      'Prices shown are estimates and may change. '
-                      'Final pricing will be confirmed on your invoice.',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodySmall
-                          ?.copyWith(color: Tokens.feedbackInfoText),
+            Builder(builder: (context) {
+              final sem = SemanticColors.of(context);
+              return Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: sem.infoBg,
+                  border: Border.all(color: sem.infoBorder),
+                  borderRadius: BorderRadius.circular(Tokens.radiusLg),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.info_outline, color: sem.infoIcon, size: 20),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Prices shown are estimates and may change. '
+                        'Final pricing will be confirmed on your invoice.',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodySmall
+                            ?.copyWith(color: sem.infoText),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
+                  ],
+                ),
+              );
+            }),
           ],
           const SizedBox(height: 16),
           _ShippingCard(order: order),
@@ -675,12 +677,12 @@ class _InvoiceCardState extends State<_InvoiceCard> {
               FilledButton.icon(
                 onPressed: _generating ? null : _generateInvoice,
                 icon: _generating
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                         ),
                       )
                     : const Icon(Icons.receipt),
@@ -904,14 +906,14 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
             if (hasProof) ...[
               Row(
                 children: [
-                  const Icon(Icons.check_circle,
-                      color: Colors.green, size: 20),
+                  Icon(Icons.check_circle,
+                      color: SemanticColors.of(context).successIcon, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'Payment proof submitted',
                       style: theme.textTheme.bodyMedium
-                          ?.copyWith(color: Colors.green),
+                          ?.copyWith(color: SemanticColors.of(context).successIcon),
                     ),
                   ),
                 ],
@@ -1124,7 +1126,7 @@ class _ActivityLogEntry extends StatelessWidget {
 
     return ListTile(
       dense: true,
-      leading: _actionIcon(log.action),
+      leading: _actionIcon(context, log.action),
       title: Text(_actionLabel(log.action),
           style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
       subtitle: Column(
@@ -1222,14 +1224,15 @@ class _ActivityLogEntry extends StatelessWidget {
     return parts.join(' \u00b7 ');
   }
 
-  Widget _actionIcon(String action) {
+  Widget _actionIcon(BuildContext context, String action) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final (icon, color) = switch (action) {
-      'order.created' => (Icons.add_circle_outline, Colors.blue),
-      'order.updated' => (Icons.edit_outlined, Colors.orange),
-      'order.deleted' => (Icons.delete_outline, Colors.red),
-      'comment.created' => (Icons.comment_outlined, Colors.indigo),
-      'invoice.generated' => (Icons.description_outlined, Colors.green),
-      _ => (Icons.info_outline, Colors.grey),
+      'order.created' => (Icons.add_circle_outline, isDark ? Colors.blue.shade300 : Colors.blue),
+      'order.updated' => (Icons.edit_outlined, isDark ? Colors.orange.shade300 : Colors.orange),
+      'order.deleted' => (Icons.delete_outline, isDark ? Colors.red.shade300 : Colors.red),
+      'comment.created' => (Icons.comment_outlined, isDark ? Colors.indigo.shade300 : Colors.indigo),
+      'invoice.generated' => (Icons.description_outlined, isDark ? Colors.green.shade300 : Colors.green),
+      _ => (Icons.info_outline, isDark ? Colors.grey.shade300 : Colors.grey),
     };
 
     return CircleAvatar(

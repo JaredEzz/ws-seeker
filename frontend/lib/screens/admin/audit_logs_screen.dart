@@ -256,7 +256,7 @@ class _AuditLogTile extends StatelessWidget {
     final resourceLabel = _resourceLabel(log);
 
     return ListTile(
-      leading: _actionIcon(log.action),
+      leading: _actionIcon(context, log.action),
       title: Text(_actionLabel(log.action),
           style: const TextStyle(fontWeight: FontWeight.w500)),
       subtitle: Column(
@@ -357,19 +357,20 @@ class _AuditLogTile extends StatelessWidget {
     return parts.join(' · ');
   }
 
-  Widget _actionIcon(String action) {
+  Widget _actionIcon(BuildContext context, String action) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final (icon, color) = switch (action.split('.').first) {
-      'order' => (Icons.receipt_long, Colors.blue),
-      'product' => (Icons.inventory_2, Colors.green),
-      'invoice' => (Icons.description, Colors.orange),
-      'user' => (Icons.person, Colors.purple),
-      'auth' => (Icons.login, Colors.teal),
-      'comment' => (Icons.comment, Colors.indigo),
-      _ => (Icons.info, Colors.grey),
+      'order' => (Icons.receipt_long, isDark ? Colors.blue.shade300 : Colors.blue),
+      'product' => (Icons.inventory_2, isDark ? Colors.green.shade300 : Colors.green),
+      'invoice' => (Icons.description, isDark ? Colors.orange.shade300 : Colors.orange),
+      'user' => (Icons.person, isDark ? Colors.purple.shade300 : Colors.purple),
+      'auth' => (Icons.login, isDark ? Colors.teal.shade300 : Colors.teal),
+      'comment' => (Icons.comment, isDark ? Colors.indigo.shade300 : Colors.indigo),
+      _ => (Icons.info, isDark ? Colors.grey.shade300 : Colors.grey),
     };
 
     return CircleAvatar(
-      backgroundColor: color.withValues(alpha: 0.12),
+      backgroundColor: color.withValues(alpha: isDark ? 0.2 : 0.12),
       child: Icon(icon, color: color, size: 20),
     );
   }

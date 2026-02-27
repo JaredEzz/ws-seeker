@@ -440,7 +440,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 2),
                               decoration: BoxDecoration(
-                                color: Colors.orange.shade100,
+                                color: SemanticColors.of(context).warningBg,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
@@ -448,7 +448,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.orange.shade900,
+                                  color: SemanticColors.of(context).warningText,
                                 ),
                               ),
                             ),
@@ -650,28 +650,31 @@ class _ReviewStepState extends State<_ReviewStep> {
           ),
         ),
         const SizedBox(height: 12),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Tokens.feedbackInfoBg,
-            border: Border.all(color: Tokens.feedbackInfoBorder),
-            borderRadius: BorderRadius.circular(Tokens.radiusLg),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.info_outline, color: Tokens.feedbackInfoIcon, size: 20),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
-                  'Prices shown are estimates and may change. '
-                  'Final pricing will be confirmed on your invoice.',
-                  style: theme.textTheme.bodySmall
-                      ?.copyWith(color: Tokens.feedbackInfoText),
+        Builder(builder: (context) {
+          final sem = SemanticColors.of(context);
+          return Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: sem.infoBg,
+              border: Border.all(color: sem.infoBorder),
+              borderRadius: BorderRadius.circular(Tokens.radiusLg),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: sem.infoIcon, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Prices shown are estimates and may change. '
+                    'Final pricing will be confirmed on your invoice.',
+                    style: theme.textTheme.bodySmall
+                        ?.copyWith(color: sem.infoText),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
+              ],
+            ),
+          );
+        }),
         const SizedBox(height: 16),
 
         // Validated fields (discord, shipping, payment)

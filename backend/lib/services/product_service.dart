@@ -126,6 +126,7 @@ class ProductService {
     String? specifications,
     String? notes,
     bool quoteRequired = false,
+    double? exchangeRateUsed,
   }) async {
     final docRef = await _productsRef.add({
       'name': name,
@@ -144,6 +145,7 @@ class ProductService {
       if (noShrinkPriceUsdWithTariff != null) 'noShrinkPriceUsdWithTariff': noShrinkPriceUsdWithTariff,
       if (casePriceUsd != null) 'casePriceUsd': casePriceUsd,
       if (casePriceUsdWithTariff != null) 'casePriceUsdWithTariff': casePriceUsdWithTariff,
+      if (exchangeRateUsed != null) 'exchangeRateUsed': exchangeRateUsed,
       if (category != null) 'category': category,
       if (specifications != null) 'specifications': specifications,
       if (notes != null) 'notes': notes,
@@ -175,6 +177,7 @@ class ProductService {
     String? specifications,
     String? notes,
     bool? quoteRequired,
+    double? exchangeRateUsed,
   }) async {
     final updates = <String, dynamic>{
       'updatedAt': FieldValue.serverTimestamp,
@@ -195,6 +198,7 @@ class ProductService {
     if (noShrinkPriceUsdWithTariff != null) updates['noShrinkPriceUsdWithTariff'] = noShrinkPriceUsdWithTariff;
     if (casePriceUsd != null) updates['casePriceUsd'] = casePriceUsd;
     if (casePriceUsdWithTariff != null) updates['casePriceUsdWithTariff'] = casePriceUsdWithTariff;
+    if (exchangeRateUsed != null) updates['exchangeRateUsed'] = exchangeRateUsed;
     if (category != null) updates['category'] = category;
     if (specifications != null) updates['specifications'] = specifications;
     if (notes != null) updates['notes'] = notes;

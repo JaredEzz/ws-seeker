@@ -27,8 +27,10 @@ import 'package:ws_seeker_backend/services/email_service.dart';
 import 'package:ws_seeker_backend/handlers/invoices_handler.dart';
 import 'package:ws_seeker_backend/handlers/users_handler.dart';
 import 'package:ws_seeker_backend/handlers/audit_handler.dart';
+import 'package:ws_seeker_backend/handlers/exchange_rate_handler.dart';
 import 'package:ws_seeker_backend/middleware/auth_middleware.dart';
 import 'package:ws_seeker_backend/services/audit_service.dart';
+import 'package:ws_seeker_backend/services/exchange_rate_service.dart';
 
 void main() async {
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -107,6 +109,8 @@ void main() async {
     userService: userService,
     auditService: auditService,
   );
+  final exchangeRateService = ExchangeRateService();
+  final exchangeRateHandler = ExchangeRateHandler(service: exchangeRateService);
   final authHandler = AuthHandler(authService, auditService: auditService);
   final auditHandler = auditService != null
       ? AuditHandler(auditService: auditService)
@@ -148,6 +152,11 @@ void main() async {
       .addMiddleware(authMw)
       .addHandler(usersHandler.router.call);
   router.mount('/api/users', protectedUsers);
+
+  final protectedExchangeRate = const Pipeline()
+      .addMiddleware(authMw)
+      .addHandler(exchangeRateHandler.router.call);
+  router.mount('/api/exchange-rate', protectedExchangeRate);
 
   if (auditHandler != null) {
     final protectedAuditLogs = const Pipeline()

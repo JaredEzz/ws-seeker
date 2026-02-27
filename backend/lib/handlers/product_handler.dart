@@ -131,6 +131,7 @@ class ProductHandler {
         specifications: data['specifications'] as String?,
         notes: data['notes'] as String?,
         quoteRequired: data['quoteRequired'] as bool? ?? false,
+        exchangeRateUsed: (data['exchangeRateUsed'] as num?)?.toDouble(),
       );
 
       // Audit log
@@ -247,6 +248,7 @@ class ProductHandler {
         specifications: data['specifications'] as String?,
         notes: data['notes'] as String?,
         quoteRequired: data['quoteRequired'] as bool?,
+        exchangeRateUsed: (data['exchangeRateUsed'] as num?)?.toDouble(),
       );
 
       // Audit log

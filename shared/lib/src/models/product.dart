@@ -34,6 +34,9 @@ class Product with _$Product {
     double? casePriceUsd,
     double? casePriceUsdWithTariff,
 
+    // Exchange rate used for JPY → USD conversion (for auditability)
+    double? exchangeRateUsed,
+
     // Chinese category: "official" or "fan_art"
     String? category,
 

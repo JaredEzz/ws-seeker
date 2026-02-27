@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
+import '../../services/exchange_rate_service.dart';
 import '../../services/storage_service.dart';
 
 /// Dialog for creating or editing a product.
@@ -45,6 +46,11 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
   // Image
   late final TextEditingController _imageUrlCtrl;
   bool _uploadingImage = false;
+
+  // Exchange rate conversion
+  bool _convertingRate = false;
+  double? _exchangeRateUsed;
+  String? _exchangeRateSource;
 
   // CN fields
   String? _category;
@@ -288,6 +294,10 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
   }
 
   List<Widget> _buildJpnFields() {
+    final hasAnyJpy = _boxJpyCtrl.text.trim().isNotEmpty ||
+        _noShrinkJpyCtrl.text.trim().isNotEmpty ||
+        _caseJpyCtrl.text.trim().isNotEmpty;
+
     return [
       const SizedBox(height: Tokens.space20),
       const Text('JPY Prices', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
@@ -299,6 +309,38 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
         const SizedBox(width: 8),
         Expanded(child: _priceField(_caseJpyCtrl, 'Case (JPY)')),
       ]),
+
+      // Convert JPY → USD button
+      const SizedBox(height: Tokens.space12),
+      Row(
+        children: [
+          _convertingRate
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : OutlinedButton.icon(
+                  onPressed: hasAnyJpy ? _convertJpyToUsd : null,
+                  icon: const Icon(Icons.currency_exchange, size: 16),
+                  label: const Text('Convert JPY → USD'),
+                ),
+          if (_exchangeRateUsed != null) ...[
+            const SizedBox(width: 12),
+            Text(
+              'Rate: ${_exchangeRateUsed!.toStringAsFixed(5)} '
+              '(${_exchangeRateSource == 'fallback' ? 'fallback' : 'live'})',
+              style: TextStyle(
+                fontSize: 12,
+                color: _exchangeRateSource == 'fallback'
+                    ? Theme.of(context).colorScheme.error
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ],
+      ),
+
       const SizedBox(height: Tokens.space16),
       const Text('USD Prices', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       const SizedBox(height: Tokens.space8),
@@ -320,6 +362,39 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
         Expanded(child: _priceField(_caseUsdTariffCtrl, 'Case +Tariff')),
       ]),
     ];
+  }
+
+  Future<void> _convertJpyToUsd() async {
+    setState(() => _convertingRate = true);
+    try {
+      final result = await ExchangeRateService().getRate();
+      final rate = result.rate;
+
+      // Convert each non-empty JPY field to plain USD (not +Tariff)
+      final boxJpy = double.tryParse(_boxJpyCtrl.text.trim());
+      final noShrinkJpy = double.tryParse(_noShrinkJpyCtrl.text.trim());
+      final caseJpy = double.tryParse(_caseJpyCtrl.text.trim());
+
+      if (boxJpy != null) {
+        _boxUsdCtrl.text = (boxJpy * rate).toStringAsFixed(2);
+      }
+      if (noShrinkJpy != null) {
+        _noShrinkUsdCtrl.text = (noShrinkJpy * rate).toStringAsFixed(2);
+      }
+      if (caseJpy != null) {
+        _caseUsdCtrl.text = (caseJpy * rate).toStringAsFixed(2);
+      }
+
+      _exchangeRateUsed = rate;
+      _exchangeRateSource = result.source;
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to fetch exchange rate: $e')),
+        );
+      }
+    }
+    if (mounted) setState(() => _convertingRate = false);
   }
 
   List<Widget> _buildCnFields() {
@@ -426,6 +501,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
       if (nut != null) data['noShrinkPriceUsdWithTariff'] = nut;
       if (cu != null) data['casePriceUsd'] = cu;
       if (cut != null) data['casePriceUsdWithTariff'] = cut;
+      if (_exchangeRateUsed != null) data['exchangeRateUsed'] = _exchangeRateUsed;
     }
 
     if (_language == ProductLanguage.chinese) {

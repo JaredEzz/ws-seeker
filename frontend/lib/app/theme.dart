@@ -95,9 +95,14 @@ class AppTheme {
     required Color outlinedBtnFg,
     required Color textBtnFg,
   }) {
+    final semanticColors = brightness == Brightness.light
+        ? SemanticColors.light
+        : SemanticColors.dark;
+
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
+      extensions: [semanticColors],
 
       // 1. Typography (Inter)
       fontFamily: GoogleFonts.inter().fontFamily,

@@ -133,9 +133,7 @@ class OrderService {
                 if (item.imageUrl != null) 'imageUrl': item.imageUrl,
               })
           .toList(),
-      'status': hasQuoteRequired
-          ? OrderStatus.awaitingQuote.name
-          : OrderStatus.submitted.name,
+      'status': OrderStatus.awaitingQuote.name,
       if (hasQuoteRequired) 'quoteRequired': true,
       'shippingAddress': {
         'fullName': request.shippingAddress.fullName,
@@ -305,7 +303,6 @@ class OrderService {
 
     // Forward-only progression (excluding cancelled which is last in the enum)
     const statusOrder = [
-      OrderStatus.submitted,
       OrderStatus.awaitingQuote,
       OrderStatus.invoiced,
       OrderStatus.paymentPending,

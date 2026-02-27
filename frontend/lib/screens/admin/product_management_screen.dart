@@ -198,15 +198,16 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
   }
 
   Widget _buildEmptyState() {
+    final sem = SemanticColors.of(context);
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.inventory_2_outlined, size: 64, color: Tokens.textTertiary),
+          Icon(Icons.inventory_2_outlined, size: 64, color: sem.textTertiary),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'No products found in this catalog.',
-            style: TextStyle(fontSize: 16, color: Tokens.textTertiary),
+            style: TextStyle(fontSize: 16, color: sem.textTertiary),
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
@@ -248,6 +249,8 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final sem = SemanticColors.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
       margin: const EdgeInsets.only(bottom: Tokens.space8),
       child: Padding(
@@ -269,8 +272,8 @@ class _ProductCard extends StatelessWidget {
                       errorBuilder: (_, __, ___) => Container(
                         width: 48,
                         height: 48,
-                        color: Tokens.stone100,
-                        child: const Icon(Icons.broken_image, size: 20, color: Tokens.textTertiary),
+                        color: isDark ? Tokens.stone800 : Tokens.stone100,
+                        child: Icon(Icons.broken_image, size: 20, color: sem.textTertiary),
                       ),
                     ),
                   ),
@@ -291,9 +294,9 @@ class _ProductCard extends StatelessWidget {
                       if (product.sku != null)
                         Text(
                           'SKU: ${product.sku}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
-                            color: Tokens.textSecondary,
+                            color: sem.textSecondary,
                           ),
                         ),
                     ],
@@ -304,17 +307,16 @@ class _ProductCard extends StatelessWidget {
                   spacing: 6,
                   children: [
                     if (product.quoteRequired)
-                      _badge('Ask for Quote', Tokens.feedbackWarningBg,
-                          Tokens.feedbackWarningText),
+                      _badge('Ask for Quote', sem.warningBg, sem.warningText),
                     if (product.category != null)
                       _badge(
                         product.category == 'official' ? 'Official' : 'Fan Art',
                         product.category == 'official'
-                            ? Tokens.feedbackInfoBg
-                            : const Color(0xFFF3E8FF),
+                            ? sem.infoBg
+                            : (isDark ? const Color(0xFF3B0764) : const Color(0xFFF3E8FF)),
                         product.category == 'official'
-                            ? Tokens.feedbackInfoText
-                            : const Color(0xFF6B21A8),
+                            ? sem.infoText
+                            : (isDark ? const Color(0xFFD8B4FE) : const Color(0xFF6B21A8)),
                       ),
                   ],
                 ),

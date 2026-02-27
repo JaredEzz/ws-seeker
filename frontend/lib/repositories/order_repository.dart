@@ -307,7 +307,7 @@ class MockOrderRepository implements OrderRepository {
           totalPrice: 500.0,
         ),
       ],
-      status: OrderStatus.submitted,
+      status: OrderStatus.awaitingQuote,
       shippingAddress: const ShippingAddress(
         fullName: 'John Doe',
         addressLine1: '123 Poke Lane',
@@ -380,7 +380,7 @@ class MockOrderRepository implements OrderRepository {
         unitPrice: 10.0,
         totalPrice: i.quantity * 10.0,
       )).toList(),
-      status: OrderStatus.submitted,
+      status: OrderStatus.awaitingQuote,
       shippingAddress: request.shippingAddress,
       subtotal: 100.0,
       markup: request.language == ProductLanguage.japanese ? 0 : 13.0,

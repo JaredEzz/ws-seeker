@@ -8,6 +8,7 @@ import '../../blocs/orders/order_form_bloc.dart';
 import '../../blocs/orders/orders_bloc.dart';
 import '../../repositories/order_repository.dart';
 import '../../repositories/product_repository.dart';
+import '../../app/design_tokens.dart';
 import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/forms/address_form.dart';
 
@@ -644,22 +645,31 @@ class _ReviewStepState extends State<_ReviewStep> {
                     ),
                   ],
                 ),
-                if (state.language != ProductLanguage.japanese) ...[
-                  const SizedBox(height: 4),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Markup (13%):',
-                          style: theme.textTheme.bodySmall),
-                      Text(
-                        '\$${(state.estimatedSubtotal * 0.13).toStringAsFixed(2)}',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ],
               ],
             ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Tokens.feedbackInfoBg,
+            border: Border.all(color: Tokens.feedbackInfoBorder),
+            borderRadius: BorderRadius.circular(Tokens.radiusLg),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.info_outline, color: Tokens.feedbackInfoIcon, size: 20),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  'Prices shown are estimates and may change. '
+                  'Final pricing will be confirmed on your invoice.',
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: Tokens.feedbackInfoText),
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),

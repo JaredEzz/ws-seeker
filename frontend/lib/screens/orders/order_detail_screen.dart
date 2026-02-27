@@ -107,7 +107,36 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           const SizedBox(height: 16),
           _ItemsCard(order: order),
           const SizedBox(height: 16),
-          _PricingCard(order: order),
+          _PricingCard(order: order, isAdmin: isAdmin),
+          if (order.status == OrderStatus.submitted ||
+              order.status == OrderStatus.awaitingQuote) ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Tokens.feedbackInfoBg,
+                border: Border.all(color: Tokens.feedbackInfoBorder),
+                borderRadius: BorderRadius.circular(Tokens.radiusLg),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline,
+                      color: Tokens.feedbackInfoIcon, size: 20),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'Prices shown are estimates and may change. '
+                      'Final pricing will be confirmed on your invoice.',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: Tokens.feedbackInfoText),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           _ShippingCard(order: order),
           if (order.shippingMethod != null) ...[
@@ -373,7 +402,8 @@ class _ProductImageDialog extends StatelessWidget {
 
 class _PricingCard extends StatelessWidget {
   final Order order;
-  const _PricingCard({required this.order});
+  final bool isAdmin;
+  const _PricingCard({required this.order, this.isAdmin = false});
 
   @override
   Widget build(BuildContext context) {
@@ -437,7 +467,7 @@ class _PricingCard extends StatelessWidget {
             Text('Pricing', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             _PricingRow(label: 'Subtotal', value: order.subtotal),
-            if (order.markup > 0)
+            if (order.markup > 0 && isAdmin)
               _PricingRow(label: 'Markup (13%)', value: order.markup),
             if (order.estimatedTariff > 0)
               _PricingRow(label: 'Estimated Tariff', value: order.estimatedTariff),

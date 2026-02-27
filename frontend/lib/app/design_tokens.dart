@@ -46,7 +46,7 @@ abstract final class Tokens {
   static const statusCancelled       = Color(0xFF6b7280); // Gray
 
   static Color statusColor(OrderStatus status) => switch (status) {
-    OrderStatus.submitted       => statusSubmitted,
+    OrderStatus.submitted       => statusAwaitingQuote,
     OrderStatus.awaitingQuote   => statusAwaitingQuote,
     OrderStatus.invoiced        => statusInvoiced,
     OrderStatus.paymentPending  => statusPaymentPending,
@@ -57,7 +57,7 @@ abstract final class Tokens {
   };
 
   static String statusLabel(OrderStatus status) => switch (status) {
-    OrderStatus.submitted       => 'Submitted',
+    OrderStatus.submitted       => 'Awaiting Quote',
     OrderStatus.awaitingQuote   => 'Awaiting Quote',
     OrderStatus.invoiced        => 'Invoice Sent',
     OrderStatus.paymentPending  => 'Payment Pending',
@@ -153,4 +153,232 @@ abstract final class Tokens {
   static const double radiusMd = 6;
   static const double radiusLg = 8;
   static const double radiusXl = 12;
+}
+
+// ---------------------------------------------------------------------------
+// Theme-aware semantic colors (adapts to light/dark mode)
+// ---------------------------------------------------------------------------
+
+/// Access via `SemanticColors.of(context)` in widgets.
+class SemanticColors extends ThemeExtension<SemanticColors> {
+  const SemanticColors({
+    // Feedback – Info
+    required this.infoBg,
+    required this.infoBorder,
+    required this.infoIcon,
+    required this.infoText,
+    // Feedback – Success
+    required this.successBg,
+    required this.successBorder,
+    required this.successIcon,
+    required this.successText,
+    // Feedback – Warning
+    required this.warningBg,
+    required this.warningBorder,
+    required this.warningIcon,
+    required this.warningText,
+    // Feedback – Error
+    required this.errorBg,
+    required this.errorBorder,
+    required this.errorIcon,
+    required this.errorText,
+    // Text hierarchy
+    required this.textDisplay,
+    required this.textPrimary,
+    required this.textSecondary,
+    required this.textTertiary,
+    required this.textPlaceholder,
+    // Borders
+    required this.borderDefault,
+    required this.borderFocus,
+    // Surfaces
+    required this.surfaceComment,
+  });
+
+  // Feedback – Info
+  final Color infoBg;
+  final Color infoBorder;
+  final Color infoIcon;
+  final Color infoText;
+  // Feedback – Success
+  final Color successBg;
+  final Color successBorder;
+  final Color successIcon;
+  final Color successText;
+  // Feedback – Warning
+  final Color warningBg;
+  final Color warningBorder;
+  final Color warningIcon;
+  final Color warningText;
+  // Feedback – Error
+  final Color errorBg;
+  final Color errorBorder;
+  final Color errorIcon;
+  final Color errorText;
+  // Text hierarchy
+  final Color textDisplay;
+  final Color textPrimary;
+  final Color textSecondary;
+  final Color textTertiary;
+  final Color textPlaceholder;
+  // Borders
+  final Color borderDefault;
+  final Color borderFocus;
+  // Surfaces
+  final Color surfaceComment;
+
+  /// Convenience accessor.
+  static SemanticColors of(BuildContext context) =>
+      Theme.of(context).extension<SemanticColors>()!;
+
+  /// User color that adapts to brightness.
+  static Color userColor(String key, Brightness brightness) {
+    var hash = 0;
+    for (final c in key.codeUnits) {
+      hash = ((hash << 5) - hash + c) & 0x7FFFFFFF;
+    }
+    final hue = (hash % 360).toDouble();
+    if (brightness == Brightness.light) {
+      final saturation = 0.25 + (hash % 11) / 100; // 0.25–0.35
+      final lightness = 0.85 + (hash % 8) / 100;   // 0.85–0.92
+      return HSLColor.fromAHSL(1, hue, saturation, lightness).toColor();
+    } else {
+      final saturation = 0.30 + (hash % 11) / 100; // 0.30–0.40
+      final lightness = 0.20 + (hash % 8) / 100;   // 0.20–0.27
+      return HSLColor.fromAHSL(1, hue, saturation, lightness).toColor();
+    }
+  }
+
+  // ---- Light preset ----
+  static const light = SemanticColors(
+    infoBg:     Tokens.feedbackInfoBg,
+    infoBorder: Tokens.feedbackInfoBorder,
+    infoIcon:   Tokens.feedbackInfoIcon,
+    infoText:   Tokens.feedbackInfoText,
+    successBg:     Tokens.feedbackSuccessBg,
+    successBorder: Tokens.feedbackSuccessBorder,
+    successIcon:   Tokens.feedbackSuccessIcon,
+    successText:   Tokens.feedbackSuccessText,
+    warningBg:     Tokens.feedbackWarningBg,
+    warningBorder: Tokens.feedbackWarningBorder,
+    warningIcon:   Tokens.feedbackWarningIcon,
+    warningText:   Tokens.feedbackWarningText,
+    errorBg:     Tokens.feedbackErrorBg,
+    errorBorder: Tokens.feedbackErrorBorder,
+    errorIcon:   Tokens.feedbackErrorIcon,
+    errorText:   Tokens.feedbackErrorText,
+    textDisplay:     Tokens.textDisplay,
+    textPrimary:     Tokens.textPrimary,
+    textSecondary:   Tokens.textSecondary,
+    textTertiary:    Tokens.textTertiary,
+    textPlaceholder: Tokens.textPlaceholder,
+    borderDefault: Tokens.borderDefault,
+    borderFocus:   Tokens.borderFocus,
+    surfaceComment: Tokens.surfaceComment,
+  );
+
+  // ---- Dark preset ----
+  static const dark = SemanticColors(
+    // Info – deep navy bg, light blue text
+    infoBg:     Color(0xFF172554), // blue-950
+    infoBorder: Color(0xFF1e40af), // blue-800
+    infoIcon:   Color(0xFF93c5fd), // blue-300
+    infoText:   Color(0xFFbfdbfe), // blue-200
+    // Success – deep emerald bg, light green text
+    successBg:     Color(0xFF022c22), // emerald-950
+    successBorder: Color(0xFF047857), // emerald-700
+    successIcon:   Color(0xFF6ee7b7), // emerald-300
+    successText:   Color(0xFFa7f3d0), // emerald-200
+    // Warning – deep amber bg, light amber text
+    warningBg:     Color(0xFF451a03), // amber-950
+    warningBorder: Color(0xFFb45309), // amber-700
+    warningIcon:   Color(0xFFfcd34d), // amber-300
+    warningText:   Color(0xFFfde68a), // amber-200
+    // Error – deep rose bg, light rose text
+    errorBg:     Color(0xFF4c0519), // rose-950
+    errorBorder: Color(0xFFbe123c), // rose-700
+    errorIcon:   Color(0xFFfda4af), // rose-300
+    errorText:   Color(0xFFfecdd3), // rose-200
+    // Text – light on dark
+    textDisplay:     Tokens.stone50,
+    textPrimary:     Tokens.stone100,
+    textSecondary:   Tokens.stone400,
+    textTertiary:    Tokens.stone500,
+    textPlaceholder: Tokens.stone600,
+    // Borders
+    borderDefault: Tokens.stone700,
+    borderFocus:   Tokens.stone300,
+    // Surfaces
+    surfaceComment: Tokens.stone800,
+  );
+
+  @override
+  SemanticColors copyWith({
+    Color? infoBg, Color? infoBorder, Color? infoIcon, Color? infoText,
+    Color? successBg, Color? successBorder, Color? successIcon, Color? successText,
+    Color? warningBg, Color? warningBorder, Color? warningIcon, Color? warningText,
+    Color? errorBg, Color? errorBorder, Color? errorIcon, Color? errorText,
+    Color? textDisplay, Color? textPrimary, Color? textSecondary,
+    Color? textTertiary, Color? textPlaceholder,
+    Color? borderDefault, Color? borderFocus,
+    Color? surfaceComment,
+  }) {
+    return SemanticColors(
+      infoBg: infoBg ?? this.infoBg,
+      infoBorder: infoBorder ?? this.infoBorder,
+      infoIcon: infoIcon ?? this.infoIcon,
+      infoText: infoText ?? this.infoText,
+      successBg: successBg ?? this.successBg,
+      successBorder: successBorder ?? this.successBorder,
+      successIcon: successIcon ?? this.successIcon,
+      successText: successText ?? this.successText,
+      warningBg: warningBg ?? this.warningBg,
+      warningBorder: warningBorder ?? this.warningBorder,
+      warningIcon: warningIcon ?? this.warningIcon,
+      warningText: warningText ?? this.warningText,
+      errorBg: errorBg ?? this.errorBg,
+      errorBorder: errorBorder ?? this.errorBorder,
+      errorIcon: errorIcon ?? this.errorIcon,
+      errorText: errorText ?? this.errorText,
+      textDisplay: textDisplay ?? this.textDisplay,
+      textPrimary: textPrimary ?? this.textPrimary,
+      textSecondary: textSecondary ?? this.textSecondary,
+      textTertiary: textTertiary ?? this.textTertiary,
+      textPlaceholder: textPlaceholder ?? this.textPlaceholder,
+      borderDefault: borderDefault ?? this.borderDefault,
+      borderFocus: borderFocus ?? this.borderFocus,
+      surfaceComment: surfaceComment ?? this.surfaceComment,
+    );
+  }
+
+  @override
+  SemanticColors lerp(covariant SemanticColors? other, double t) {
+    if (other == null) return this;
+    return SemanticColors(
+      infoBg: Color.lerp(infoBg, other.infoBg, t)!,
+      infoBorder: Color.lerp(infoBorder, other.infoBorder, t)!,
+      infoIcon: Color.lerp(infoIcon, other.infoIcon, t)!,
+      infoText: Color.lerp(infoText, other.infoText, t)!,
+      successBg: Color.lerp(successBg, other.successBg, t)!,
+      successBorder: Color.lerp(successBorder, other.successBorder, t)!,
+      successIcon: Color.lerp(successIcon, other.successIcon, t)!,
+      successText: Color.lerp(successText, other.successText, t)!,
+      warningBg: Color.lerp(warningBg, other.warningBg, t)!,
+      warningBorder: Color.lerp(warningBorder, other.warningBorder, t)!,
+      warningIcon: Color.lerp(warningIcon, other.warningIcon, t)!,
+      warningText: Color.lerp(warningText, other.warningText, t)!,
+      errorBg: Color.lerp(errorBg, other.errorBg, t)!,
+      errorBorder: Color.lerp(errorBorder, other.errorBorder, t)!,
+      errorIcon: Color.lerp(errorIcon, other.errorIcon, t)!,
+      errorText: Color.lerp(errorText, other.errorText, t)!,
+      textDisplay: Color.lerp(textDisplay, other.textDisplay, t)!,
+      textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
+      textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
+      textTertiary: Color.lerp(textTertiary, other.textTertiary, t)!,
+      textPlaceholder: Color.lerp(textPlaceholder, other.textPlaceholder, t)!,
+      borderDefault: Color.lerp(borderDefault, other.borderDefault, t)!,
+      borderFocus: Color.lerp(borderFocus, other.borderFocus, t)!,
+      surfaceComment: Color.lerp(surfaceComment, other.surfaceComment, t)!,
+    );
+  }
 }

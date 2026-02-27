@@ -66,24 +66,25 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
   }
 
   Widget _buildInstructions() {
+    final sem = SemanticColors.of(context);
     return Container(
       padding: const EdgeInsets.all(Tokens.space16),
       decoration: BoxDecoration(
-        color: Tokens.feedbackInfoBg,
+        color: sem.infoBg,
         borderRadius: BorderRadius.circular(Tokens.radiusLg),
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, color: Tokens.feedbackInfoIcon),
-              SizedBox(width: Tokens.space8),
+              Icon(Icons.info_outline, color: sem.infoIcon),
+              const SizedBox(width: Tokens.space8),
               Text(
                 'CSV Format Requirements',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: Tokens.feedbackInfoText,
+                  color: sem.infoText,
                 ),
               ),
             ],
@@ -127,7 +128,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Tokens.borderDefault),
+                border: Border.all(color: SemanticColors.of(context).borderDefault),
                 borderRadius: BorderRadius.circular(Tokens.radiusSm),
               ),
               child: ListView.builder(
@@ -190,15 +191,14 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
     final failed = result['failed'] as int;
     final errors = result['errors'] as List<dynamic>;
 
+    final sem = SemanticColors.of(context);
     return Container(
       padding: const EdgeInsets.all(Tokens.space16),
       decoration: BoxDecoration(
-        color: failed > 0 ? Tokens.feedbackWarningBg : Tokens.feedbackSuccessBg,
+        color: failed > 0 ? sem.warningBg : sem.successBg,
         borderRadius: BorderRadius.circular(Tokens.radiusLg),
         border: Border.all(
-          color: failed > 0
-              ? Tokens.feedbackWarningBorder
-              : Tokens.feedbackSuccessBorder,
+          color: failed > 0 ? sem.warningBorder : sem.successBorder,
         ),
       ),
       child: Column(
@@ -208,18 +208,14 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
             children: [
               Icon(
                 failed > 0 ? Icons.warning : Icons.check_circle,
-                color: failed > 0
-                    ? Tokens.feedbackWarningIcon
-                    : Tokens.feedbackSuccessIcon,
+                color: failed > 0 ? sem.warningIcon : sem.successIcon,
               ),
               const SizedBox(width: Tokens.space8),
               Text(
                 'Import Complete',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: failed > 0
-                      ? Tokens.feedbackWarningText
-                      : Tokens.feedbackSuccessText,
+                  color: failed > 0 ? sem.warningText : sem.successText,
                 ),
               ),
             ],

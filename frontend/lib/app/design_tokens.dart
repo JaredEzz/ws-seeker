@@ -243,8 +243,8 @@ class SemanticColors extends ThemeExtension<SemanticColors> {
       final lightness = 0.85 + (hash % 8) / 100;   // 0.85–0.92
       return HSLColor.fromAHSL(1, hue, saturation, lightness).toColor();
     } else {
-      final saturation = 0.30 + (hash % 11) / 100; // 0.30–0.40
-      final lightness = 0.20 + (hash % 8) / 100;   // 0.20–0.27
+      final saturation = 0.25 + (hash % 11) / 100; // 0.25–0.35
+      final lightness = 0.28 + (hash % 8) / 100;   // 0.28–0.35
       return HSLColor.fromAHSL(1, hue, saturation, lightness).toColor();
     }
   }

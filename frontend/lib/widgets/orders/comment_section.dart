@@ -261,6 +261,11 @@ class _CommentBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final bubbleBg = SemanticColors.userColor(comment.userId, theme.brightness);
+    // On custom-colored bubbles, always use explicit text colors for contrast
+    final textColor = isDark ? Tokens.stone100 : Tokens.stone900;
+    final mutedColor = isDark ? Tokens.stone400 : Tokens.stone500;
 
     return Padding(
       padding: isMe
@@ -271,8 +276,9 @@ class _CommentBubble extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: SemanticColors.userColor(comment.userId, Theme.of(context).brightness),
+            color: bubbleBg,
             borderRadius: BorderRadius.circular(Tokens.radiusLg),
+            border: isDark ? Border.all(color: Tokens.stone700, width: 0.5) : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,6 +291,7 @@ class _CommentBubble extends StatelessWidget {
                       comment.userName,
                       style: theme.textTheme.labelMedium?.copyWith(
                         fontWeight: FontWeight.bold,
+                        color: textColor,
                       ),
                     ),
                   ),
@@ -294,7 +301,7 @@ class _CommentBubble extends StatelessWidget {
                     child: Text(
                       _formatTime(comment.createdAt),
                       style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.outline,
+                        color: mutedColor,
                         fontStyle: FontStyle.italic,
                       ),
                     ),
@@ -303,7 +310,7 @@ class _CommentBubble extends StatelessWidget {
               ),
               if (comment.content.isNotEmpty) ...[
                 const SizedBox(height: 4),
-                Text(comment.content),
+                Text(comment.content, style: TextStyle(color: textColor)),
               ],
               if (comment.imageUrl != null) ...[
                 const SizedBox(height: 8),

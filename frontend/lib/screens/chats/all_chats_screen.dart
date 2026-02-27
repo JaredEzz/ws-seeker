@@ -246,6 +246,7 @@ class _CompactCommentRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final sem = SemanticColors.of(context);
     final hasImage = comment.imageUrl != null;
     final text = comment.content.isNotEmpty
         ? comment.content
@@ -262,6 +263,7 @@ class _CompactCommentRow extends StatelessWidget {
               comment.userName,
               style: theme.textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w600,
+                color: sem.textPrimary,
               ),
               overflow: TextOverflow.ellipsis,
             ),
@@ -270,7 +272,9 @@ class _CompactCommentRow extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: theme.textTheme.bodySmall,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: sem.textSecondary,
+              ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -279,7 +283,7 @@ class _CompactCommentRow extends StatelessWidget {
           Text(
             _formatTime(comment.createdAt),
             style: theme.textTheme.labelSmall?.copyWith(
-              color: theme.colorScheme.outline,
+              color: sem.textTertiary,
             ),
           ),
         ],
@@ -546,11 +550,18 @@ class _CommentBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final bubbleBg = SemanticColors.userColor(comment.userId, Theme.of(context).brightness);
+    // On custom-colored bubbles, always use explicit text colors for contrast
+    final textColor = isDark ? Tokens.stone100 : Tokens.stone900;
+    final mutedColor = isDark ? Tokens.stone400 : Tokens.stone500;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: SemanticColors.userColor(comment.userId, Theme.of(context).brightness),
+        color: bubbleBg,
         borderRadius: BorderRadius.circular(Tokens.radiusLg),
+        border: isDark ? Border.all(color: Tokens.stone700, width: 0.5) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -561,20 +572,21 @@ class _CommentBubble extends StatelessWidget {
                 comment.userName,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: textColor,
                     ),
               ),
               const Spacer(),
               Text(
                 _formatTime(comment.createdAt),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.outline,
+                      color: mutedColor,
                     ),
               ),
             ],
           ),
           if (comment.content.isNotEmpty) ...[
             const SizedBox(height: 4),
-            Text(comment.content),
+            Text(comment.content, style: TextStyle(color: textColor)),
           ],
           if (comment.imageUrl != null) ...[
             const SizedBox(height: 8),

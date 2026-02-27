@@ -61,7 +61,7 @@ class AllChatsContent extends StatelessWidget {
                   children: [
                     Icon(Icons.chat_bubble_outline,
                         size: 64,
-                        color: Theme.of(context).colorScheme.outline),
+                        color: SemanticColors.of(context).textSecondary),
                     const SizedBox(height: 16),
                     Text('No conversations yet',
                         style: Theme.of(context).textTheme.titleMedium),
@@ -69,7 +69,7 @@ class AllChatsContent extends StatelessWidget {
                     Text(
                       'Comments on orders will appear here',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
+                            color: SemanticColors.of(context).textSecondary,
                           ),
                     ),
                   ],
@@ -167,7 +167,7 @@ class _ConversationCardState extends State<_ConversationCard> {
                           '- ${Tokens.statusLabel(order.status)} '
                           '- ${comments.length} message${comments.length == 1 ? '' : 's'}',
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.outline,
+                            color: SemanticColors.of(context).textSecondary,
                           ),
                         ),
                       ],
@@ -181,7 +181,7 @@ class _ConversationCardState extends State<_ConversationCard> {
                     _expanded
                         ? Icons.keyboard_arrow_up
                         : Icons.keyboard_arrow_down,
-                    color: theme.colorScheme.outline,
+                    color: SemanticColors.of(context).textSecondary,
                   ),
                 ],
               ),
@@ -196,7 +196,7 @@ class _ConversationCardState extends State<_ConversationCard> {
                 child: Text(
                   'No messages yet',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.outline,
+                    color: SemanticColors.of(context).textSecondary,
                     fontStyle: FontStyle.italic,
                   ),
                 ),

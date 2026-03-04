@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   
   # Shared package
   ws_seeker_shared:
@@ -31,7 +33,7 @@ dependencies:
   google_fonts: ^6.2.1
   
   # Utilities
-  intl: ^0.19.0
+  intl: ^0.20.2
   shared_preferences: ^2.2.2
   http: ^1.2.0
   
@@ -53,4 +55,5 @@ dev_dependencies:
   json_serializable: ^6.8.0
 
 flutter:
+  generate: true
   uses-material-design: true

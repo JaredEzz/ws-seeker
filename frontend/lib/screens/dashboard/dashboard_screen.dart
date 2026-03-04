@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
@@ -26,6 +27,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final authState = context.watch<AuthBloc>().state;
     final user = authState is AuthAuthenticated ? authState.user : null;
 
@@ -43,37 +45,37 @@ class _DashboardScreenState extends State<DashboardScreen> {
           }
         },
         destinations: [
-          const NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+          NavigationDestination(
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard),
+            label: l10n.navDashboard,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.add_shopping_cart_outlined),
-            selectedIcon: Icon(Icons.add_shopping_cart),
-            label: 'New Order',
+          NavigationDestination(
+            icon: const Icon(Icons.add_shopping_cart_outlined),
+            selectedIcon: const Icon(Icons.add_shopping_cart),
+            label: l10n.navNewOrder,
           ),
-          const NavigationDestination(
-            icon: Icon(Icons.chat_outlined),
-            selectedIcon: Icon(Icons.chat),
-            label: 'Chats',
+          NavigationDestination(
+            icon: const Icon(Icons.chat_outlined),
+            selectedIcon: const Icon(Icons.chat),
+            label: l10n.navChats,
           ),
           if (user?.role == UserRole.superUser || user?.role == UserRole.supplier)
-            const NavigationDestination(
-              icon: Icon(Icons.admin_panel_settings_outlined),
-              selectedIcon: Icon(Icons.admin_panel_settings),
-              label: 'Admin',
+            NavigationDestination(
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              selectedIcon: const Icon(Icons.admin_panel_settings),
+              label: l10n.navAdmin,
             )
           else
-            const NavigationDestination(
-              icon: Icon(Icons.person_outlined),
-              selectedIcon: Icon(Icons.person),
-              label: 'Profile',
+            NavigationDestination(
+              icon: const Icon(Icons.person_outlined),
+              selectedIcon: const Icon(Icons.person),
+              label: l10n.navProfile,
             ),
         ],
         child: Scaffold(
           appBar: AppBar(
-            title: Text(user?.role == UserRole.superUser ? 'Super User Dashboard' : 'Wholesale Dashboard'),
+            title: Text(user?.role == UserRole.superUser ? l10n.superUserDashboard : l10n.wholesaleDashboard),
             actions: [
               const ThemeToggleButton(),
               Builder(
@@ -86,7 +88,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               IconButton(
                 icon: const Icon(Icons.logout),
-                tooltip: 'Logout',
+                tooltip: l10n.actionLogout,
                 onPressed: () {
                   context.read<AuthBloc>().add(const AuthLogoutRequested());
                 },
@@ -100,7 +102,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Welcome, ${user?.email ?? "User"}',
+                  l10n.welcomeUser(user?.email ?? 'User'),
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: 24),
@@ -114,7 +116,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         return _OrderList(orders: state.orders);
                       }
                       if (state is OrdersFailure) {
-                        return Center(child: Text('Error: ${state.message}'));
+                        return Center(child: Text(l10n.errorWithMessage(state.message)));
                       }
                       return const SizedBox.shrink();
                     },
@@ -151,6 +153,7 @@ class _OrderList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (orders.isEmpty) {
       return Center(
         child: Column(
@@ -158,12 +161,12 @@ class _OrderList extends StatelessWidget {
           children: [
             Icon(Icons.inbox_outlined, size: 64, color: SemanticColors.of(context).textTertiary),
             const SizedBox(height: 16),
-            Text('No orders yet', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.noOrdersYet, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             FilledButton.icon(
               onPressed: () => context.push('/place-order'),
               icon: const Icon(Icons.add),
-              label: const Text('Place Order'),
+              label: Text(l10n.placeOrder),
             ),
           ],
         ),
@@ -177,8 +180,8 @@ class _OrderList extends StatelessWidget {
         return Card(
           margin: const EdgeInsets.only(bottom: 12),
           child: ListTile(
-            title: Text('Order ${order.displayOrderNumber ?? order.id} - ${order.language.name.toUpperCase()}'),
-            subtitle: Text('${Tokens.statusLabel(order.status)} • ${order.quoteRequired ? 'Quote Needed' : '\$${order.totalAmount.toStringAsFixed(2)}'}'),
+            title: Text(l10n.orderWithLanguage(order.displayOrderNumber ?? order.id, order.language.name.toUpperCase())),
+            subtitle: Text('${localizedStatusLabel(order.status, l10n)} • ${order.quoteRequired ? l10n.quoteNeeded : '\$${order.totalAmount.toStringAsFixed(2)}'}'),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [

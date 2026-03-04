@@ -44,6 +44,9 @@ class HttpOrderRepository implements OrderRepository {
     if (filter?.language != null) {
       queryParams['language'] = filter!.language!.name;
     }
+    if (filter?.accountManagerId != null) {
+      queryParams['accountManagerId'] = filter!.accountManagerId!;
+    }
 
     final uri = Uri.parse('$_baseUrl${ApiRoutes.orders}')
         .replace(queryParameters: queryParams.isNotEmpty ? queryParams : null);

@@ -1,11 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_event.dart';
+import 'blocs/auth/auth_state.dart';
+import 'blocs/locale/locale_cubit.dart';
 import 'blocs/orders/orders_bloc.dart';
 import 'blocs/theme/theme_cubit.dart';
 import 'firebase_options.dart';
@@ -59,6 +63,7 @@ void main() async {
             ),
           ),
           BlocProvider<ThemeCubit>(create: (_) => ThemeCubit()),
+          BlocProvider<LocaleCubit>(create: (_) => LocaleCubit()),
         ],
         child: WSSeekerApp(authBloc: authBloc),
       ),
@@ -86,17 +91,38 @@ class _WSSeekerAppState extends State<WSSeekerApp> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ThemeCubit, ThemeMode>(
-      builder: (context, themeMode) {
-        return MaterialApp.router(
-          title: 'WS-Seeker',
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
-          routerConfig: _appRouter.router,
-          debugShowCheckedModeBanner: false,
-        );
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          context.read<LocaleCubit>().setFromUserPreference(
+            state.user.preferredLocale,
+          );
+        }
       },
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return BlocBuilder<LocaleCubit, Locale>(
+            builder: (context, locale) {
+              return MaterialApp.router(
+                title: 'WS-Seeker',
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeMode,
+                locale: locale,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                supportedLocales: AppLocalizations.supportedLocales,
+                routerConfig: _appRouter.router,
+                debugShowCheckedModeBanner: false,
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

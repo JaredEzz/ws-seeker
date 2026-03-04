@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
@@ -9,6 +10,7 @@ import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
 import '../../blocs/orders/orders_bloc.dart';
 import '../../repositories/order_repository.dart';
+import '../../repositories/user_repository.dart';
 import '../../widgets/common/theme_toggle_button.dart';
 import '../../widgets/navigation/admin_shell.dart';
 
@@ -40,11 +42,40 @@ class _OrderManagementContent extends StatefulWidget {
 class _OrderManagementContentState extends State<_OrderManagementContent> {
   ProductLanguage? _languageFilter;
   OrderStatus? _statusFilter;
+  String? _accountManagerFilter;
   String _searchQuery = '';
   int? _sortColumnIndex;
   bool _sortAscending = true;
   bool _filtersExpanded = true;
   final _searchController = TextEditingController();
+
+  /// Map of managerId → display name for account managers
+  Map<String, String> _managerNames = {};
+  bool _managersLoaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadManagers();
+  }
+
+  Future<void> _loadManagers() async {
+    try {
+      final userRepo = context.read<UserRepository>();
+      final users = await userRepo.listUsers();
+      if (!mounted) return;
+      setState(() {
+        _managerNames = {
+          for (final u in users.where((u) =>
+              u.role == UserRole.superUser || u.role == UserRole.supplier))
+            u.id: u.discordName ?? u.email,
+        };
+        _managersLoaded = true;
+      });
+    } catch (_) {
+      // Silently fail — filter just won't appear
+    }
+  }
 
   @override
   void dispose() {
@@ -55,12 +86,14 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
   bool get _hasActiveFilters =>
       _languageFilter != null ||
       _statusFilter != null ||
+      _accountManagerFilter != null ||
       _searchQuery.isNotEmpty;
 
   void _clearAllFilters() {
     setState(() {
       _languageFilter = null;
       _statusFilter = null;
+      _accountManagerFilter = null;
       _searchQuery = '';
       _searchController.clear();
     });
@@ -68,6 +101,7 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final authState = context.watch<AuthBloc>().state;
     final user = authState is AuthAuthenticated ? authState.user : null;
 
@@ -89,13 +123,13 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
       child: Scaffold(
       appBar: AppBar(
         title: Text(user?.role == UserRole.supplier
-            ? 'Japanese Orders'
-            : 'Order Management'),
+            ? l10n.japaneseOrders
+            : l10n.orderManagement),
         actions: [
           const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
+            tooltip: l10n.actionRefresh,
             onPressed: () {
               context
                   .read<OrdersBloc>()
@@ -104,7 +138,7 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            tooltip: 'Logout',
+            tooltip: l10n.actionLogout,
             onPressed: () {
               context.read<AuthBloc>().add(const AuthLogoutRequested());
             },
@@ -121,10 +155,15 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
                 setState(() => _filtersExpanded = !_filtersExpanded),
             activeFilterCount: (_languageFilter != null ? 1 : 0) +
                 (_statusFilter != null ? 1 : 0) +
+                (_accountManagerFilter != null ? 1 : 0) +
                 (_searchQuery.isNotEmpty ? 1 : 0),
             child: _FilterBar(
               languageFilter: _languageFilter,
               statusFilter: _statusFilter,
+              accountManagerFilter: _accountManagerFilter,
+              managerNames: _managerNames,
+              showManagerFilter:
+                  user?.role == UserRole.superUser && _managersLoaded,
               searchController: _searchController,
               showLanguageFilter: user?.role != UserRole.supplier,
               hasActiveFilters: _hasActiveFilters,
@@ -132,6 +171,8 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
                   setState(() => _languageFilter = lang),
               onStatusChanged: (status) =>
                   setState(() => _statusFilter = status),
+              onAccountManagerChanged: (id) =>
+                  setState(() => _accountManagerFilter = id),
               onSearchChanged: (query) =>
                   setState(() => _searchQuery = query),
               onClearAll: _clearAllFilters,
@@ -146,17 +187,19 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
                   return const Center(child: CircularProgressIndicator());
                 }
                 if (state is OrdersFailure) {
-                  return Center(child: Text('Error: ${state.message}'));
+                  return Center(
+                      child: Text(l10n.errorWithMessage(state.message)));
                 }
                 if (state is OrdersLoaded) {
                   var filtered = _applyFilters(state.orders);
                   filtered = _sortOrders(filtered);
                   if (filtered.isEmpty) {
-                    return const Center(child: Text('No orders match filters'));
+                    return Center(child: Text(l10n.noOrdersMatchFilters));
                   }
                   return _OrdersTable(
                     orders: filtered,
                     currentUserRole: user?.role,
+                    managerNames: _managerNames,
                     sortColumnIndex: _sortColumnIndex,
                     sortAscending: _sortAscending,
                     onSort: (colIdx, asc) {
@@ -184,6 +227,11 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
     }
     if (_statusFilter != null) {
       result = result.where((o) => o.status == _statusFilter).toList();
+    }
+    if (_accountManagerFilter != null) {
+      result = result
+          .where((o) => o.accountManagerId == _accountManagerFilter)
+          .toList();
     }
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
@@ -215,18 +263,20 @@ class _OrderManagementContentState extends State<_OrderManagementContent> {
       case 3:
         keyOf = (o) => o.discordName ?? '';
       case 4:
-        keyOf = (o) => o.items.length;
+        keyOf = (o) => _managerNames[o.accountManagerId] ?? '';
       case 5:
-        keyOf = (o) => o.totalAmount;
+        keyOf = (o) => o.items.length;
       case 6:
-        keyOf = (o) => o.status.index;
+        keyOf = (o) => o.totalAmount;
       case 7:
-        keyOf = (o) => o.shippingMethod ?? '';
+        keyOf = (o) => o.status.index;
       case 8:
-        keyOf = (o) => o.trackingNumber ?? '';
+        keyOf = (o) => o.shippingMethod ?? '';
       case 9:
-        keyOf = (o) => o.createdAt;
+        keyOf = (o) => o.trackingNumber ?? '';
       case 10:
+        keyOf = (o) => o.createdAt;
+      case 11:
         keyOf = (o) => o.updatedAt;
       default:
         return orders;
@@ -255,6 +305,7 @@ class _CollapsibleFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     return Column(
@@ -275,7 +326,7 @@ class _CollapsibleFilterBar extends StatelessWidget {
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  'Search & Filters',
+                  l10n.searchAndFilters,
                   style: theme.textTheme.labelLarge?.copyWith(
                     color: theme.colorScheme.onSurfaceVariant,
                   ),
@@ -324,28 +375,37 @@ class _CollapsibleFilterBar extends StatelessWidget {
 class _FilterBar extends StatelessWidget {
   final ProductLanguage? languageFilter;
   final OrderStatus? statusFilter;
+  final String? accountManagerFilter;
+  final Map<String, String> managerNames;
+  final bool showManagerFilter;
   final TextEditingController searchController;
   final bool showLanguageFilter;
   final bool hasActiveFilters;
   final ValueChanged<ProductLanguage?> onLanguageChanged;
   final ValueChanged<OrderStatus?> onStatusChanged;
+  final ValueChanged<String?> onAccountManagerChanged;
   final ValueChanged<String> onSearchChanged;
   final VoidCallback onClearAll;
 
   const _FilterBar({
     required this.languageFilter,
     required this.statusFilter,
+    this.accountManagerFilter,
+    this.managerNames = const {},
+    this.showManagerFilter = false,
     required this.searchController,
     this.showLanguageFilter = true,
     required this.hasActiveFilters,
     required this.onLanguageChanged,
     required this.onStatusChanged,
+    required this.onAccountManagerChanged,
     required this.onSearchChanged,
     required this.onClearAll,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Column(
@@ -359,12 +419,12 @@ class _FilterBar extends StatelessWidget {
                 child: TextField(
                   controller: searchController,
                   decoration: InputDecoration(
-                    hintText: 'Search orders...',
+                    hintText: l10n.searchOrders,
                     prefixIcon: const Icon(Icons.search, size: 20),
                     suffixIcon: searchController.text.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.close, size: 18),
-                            tooltip: 'Clear search',
+                            tooltip: l10n.clearSearch,
                             onPressed: () {
                               searchController.clear();
                               onSearchChanged('');
@@ -383,7 +443,7 @@ class _FilterBar extends StatelessWidget {
                 const SizedBox(width: 12),
                 TextButton.icon(
                   icon: const Icon(Icons.clear_all, size: 18),
-                  label: const Text('Clear filters'),
+                  label: Text(l10n.clearFilters),
                   onPressed: onClearAll,
                 ),
               ],
@@ -396,7 +456,8 @@ class _FilterBar extends StatelessWidget {
               runSpacing: 4,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                const Text('Language:', style: TextStyle(fontSize: 12)),
+                Text(l10n.filterLanguage,
+                    style: const TextStyle(fontSize: 12)),
                 ...ProductLanguage.values.map(
                   (lang) => FilterChip(
                     label: Text(lang.name.toUpperCase()),
@@ -415,10 +476,10 @@ class _FilterBar extends StatelessWidget {
             runSpacing: 4,
             crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              const Text('Status:', style: TextStyle(fontSize: 12)),
+              Text(l10n.filterStatus, style: const TextStyle(fontSize: 12)),
               ...OrderStatus.values.map(
                 (status) => FilterChip(
-                  label: Text(Tokens.statusLabel(status)),
+                  label: Text(localizedStatusLabel(status, l10n)),
                   selected: statusFilter == status,
                   selectedColor:
                       Tokens.statusColor(status).withValues(alpha: 0.25),
@@ -429,6 +490,33 @@ class _FilterBar extends StatelessWidget {
               ),
             ],
           ),
+          if (showManagerFilter && managerNames.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text(l10n.filterAccountManager,
+                    style: const TextStyle(fontSize: 12)),
+                FilterChip(
+                  label: Text(l10n.filterAll),
+                  selected: accountManagerFilter == null,
+                  onSelected: (_) => onAccountManagerChanged(null),
+                  visualDensity: VisualDensity.compact,
+                ),
+                ...managerNames.entries.map(
+                  (entry) => FilterChip(
+                    label: Text(entry.value),
+                    selected: accountManagerFilter == entry.key,
+                    onSelected: (selected) =>
+                        onAccountManagerChanged(selected ? entry.key : null),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -438,6 +526,7 @@ class _FilterBar extends StatelessWidget {
 class _OrdersTable extends StatefulWidget {
   final List<Order> orders;
   final UserRole? currentUserRole;
+  final Map<String, String> managerNames;
   final int? sortColumnIndex;
   final bool sortAscending;
   final void Function(int columnIndex, bool ascending) onSort;
@@ -445,6 +534,7 @@ class _OrdersTable extends StatefulWidget {
   const _OrdersTable({
     required this.orders,
     this.currentUserRole,
+    this.managerNames = const {},
     required this.sortColumnIndex,
     required this.sortAscending,
     required this.onSort,
@@ -467,6 +557,7 @@ class _OrdersTableState extends State<_OrdersTable> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     DataColumn sortableColumn(String label, {bool numeric = false}) {
@@ -509,18 +600,19 @@ class _OrdersTableState extends State<_OrdersTable> {
                 dataRowColor:
                     WidgetStateProperty.resolveWith((states) => null),
                 columns: [
-                  sortableColumn('Order #'),
-                  sortableColumn('Language'),
-                  sortableColumn('Customer'),
-                  sortableColumn('Discord'),
-                  sortableColumn('Items'),
-                  sortableColumn('Total', numeric: true),
-                  sortableColumn('Status'),
-                  sortableColumn('Shipping'),
-                  sortableColumn('Tracking'),
-                  sortableColumn('Created'),
-                  sortableColumn('Modified'),
-                  const DataColumn(label: Text('Actions')),
+                  sortableColumn(l10n.columnOrderNumber),
+                  sortableColumn(l10n.columnLanguage),
+                  sortableColumn(l10n.columnCustomer),
+                  sortableColumn(l10n.columnDiscord),
+                  sortableColumn(l10n.columnAcctManager),
+                  sortableColumn(l10n.columnItems),
+                  sortableColumn(l10n.columnTotal, numeric: true),
+                  sortableColumn(l10n.columnStatus),
+                  sortableColumn(l10n.columnShipping),
+                  sortableColumn(l10n.columnTracking),
+                  sortableColumn(l10n.columnCreated),
+                  sortableColumn(l10n.columnModified),
+                  DataColumn(label: Text(l10n.columnActions)),
                 ],
                 rows: widget.orders
                     .asMap()
@@ -540,6 +632,7 @@ class _OrdersTableState extends State<_OrdersTable> {
   }
 
   DataRow _buildRow(BuildContext context, Order order, {Color? stripe}) {
+    final l10n = AppLocalizations.of(context);
     final displayId = order.displayOrderNumber ?? order.id;
 
     return DataRow(
@@ -554,9 +647,11 @@ class _OrdersTableState extends State<_OrdersTable> {
         DataCell(_LanguageBadge(language: order.language)),
         DataCell(Text(order.shippingAddress.fullName)),
         DataCell(Text(order.discordName ?? '-')),
+        DataCell(Text(
+            widget.managerNames[order.accountManagerId] ?? '-')),
         DataCell(Text('${order.items.length}')),
         DataCell(Text(order.quoteRequired
-            ? 'Quote Needed'
+            ? l10n.quoteNeeded
             : '\$${order.totalAmount.toStringAsFixed(2)}')),
         DataCell(_StatusChip(
           order: order,
@@ -599,15 +694,16 @@ class _LanguageBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final (label, bg, fg) = switch (language) {
-      ProductLanguage.japanese => ('JPN',
+      ProductLanguage.japanese => (l10n.langJPN,
           isDark ? Colors.red.shade900 : Colors.red.shade100,
           isDark ? Colors.red.shade100 : Colors.red.shade900),
-      ProductLanguage.chinese => ('CN',
+      ProductLanguage.chinese => (l10n.langCN,
           isDark ? Colors.amber.shade900 : Colors.amber.shade100,
           isDark ? Colors.amber.shade100 : Colors.amber.shade900),
-      ProductLanguage.korean => ('KR',
+      ProductLanguage.korean => (l10n.langKR,
           isDark ? Colors.blue.shade900 : Colors.blue.shade100,
           isDark ? Colors.blue.shade100 : Colors.blue.shade900),
     };
@@ -632,10 +728,11 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (onStatusChanged == null) {
       // Read-only chip
       return Chip(
-        label: Text(Tokens.statusLabel(order.status),
+        label: Text(localizedStatusLabel(order.status, l10n),
             style: const TextStyle(fontSize: 12)),
         backgroundColor: Tokens.statusColor(order.status).withValues(alpha: 0.15),
         side: BorderSide.none,
@@ -646,12 +743,12 @@ class _StatusChip extends StatelessWidget {
 
     // Admin: dropdown to change status
     return PopupMenuButton<OrderStatus>(
-      tooltip: 'Change status',
+      tooltip: l10n.changeStatus,
       child: Chip(
         label: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(Tokens.statusLabel(order.status),
+            Text(localizedStatusLabel(order.status, l10n),
                 style: const TextStyle(fontSize: 12)),
             const SizedBox(width: 4),
             const Icon(Icons.arrow_drop_down, size: 16),
@@ -664,6 +761,7 @@ class _StatusChip extends StatelessWidget {
         visualDensity: VisualDensity.compact,
       ),
       itemBuilder: (context) {
+        final innerL10n = AppLocalizations.of(context);
         // Show next valid statuses
         return _nextStatuses(order.status)
             .map((s) => PopupMenuItem(
@@ -679,7 +777,7 @@ class _StatusChip extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Text(Tokens.statusLabel(s)),
+                      Text(localizedStatusLabel(s, innerL10n)),
                     ],
                   ),
                 ))
@@ -700,25 +798,29 @@ class _ActionButtons extends StatelessWidget {
   const _ActionButtons({required this.order});
 
   void _confirmDelete(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final displayId = order.displayOrderNumber ?? order.id;
     showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete Order'),
-        content: Text('Are you sure you want to delete order "$displayId"? '
-            'This action cannot be undone.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: Tokens.destructive),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+      builder: (ctx) {
+        final dialogL10n = AppLocalizations.of(ctx);
+        return AlertDialog(
+          title: Text(dialogL10n.deleteOrder),
+          content: Text(dialogL10n.deleteOrderConfirmation(displayId)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(dialogL10n.actionCancel),
+            ),
+            FilledButton(
+              style:
+                  FilledButton.styleFrom(backgroundColor: Tokens.destructive),
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(dialogL10n.actionDelete),
+            ),
+          ],
+        );
+      },
     ).then((confirmed) {
       if (confirmed == true && context.mounted) {
         context.read<OrdersBloc>().add(
@@ -730,18 +832,19 @@ class _ActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         IconButton(
           icon: const Icon(Icons.visibility, size: 18),
-          tooltip: 'View details',
+          tooltip: l10n.viewDetails,
           visualDensity: VisualDensity.compact,
           onPressed: () => context.push('/orders/${order.id}'),
         ),
         IconButton(
           icon: Icon(Icons.delete_outline, size: 18, color: Tokens.destructive),
-          tooltip: 'Delete order',
+          tooltip: l10n.deleteOrderTooltip,
           visualDensity: VisualDensity.compact,
           onPressed: () => _confirmDelete(context),
         ),

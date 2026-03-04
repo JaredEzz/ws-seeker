@@ -1,5 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
+
+/// Locale-aware status label — replaces [Tokens.statusLabel] everywhere a
+/// BuildContext (and therefore AppLocalizations) is available.
+String localizedStatusLabel(OrderStatus status, AppLocalizations l10n) =>
+    switch (status) {
+      OrderStatus.submitted       => l10n.statusSubmitted,
+      OrderStatus.awaitingQuote   => l10n.statusAwaitingQuote,
+      OrderStatus.invoiced        => l10n.statusInvoiceSent,
+      OrderStatus.paymentPending  => l10n.statusPaymentPending,
+      OrderStatus.paymentReceived => l10n.statusPaymentReceived,
+      OrderStatus.shipped         => l10n.statusShipped,
+      OrderStatus.delivered       => l10n.statusDelivered,
+      OrderStatus.cancelled       => l10n.statusCancelled,
+    };
 
 /// Single source of truth for the WS-Seeker design system.
 ///

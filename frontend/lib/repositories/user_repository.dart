@@ -13,6 +13,7 @@ abstract interface class UserRepository {
     String? venmoHandle,
     String? paypalEmail,
     ShippingAddress? savedAddress,
+    String? preferredLocale,
   });
   Future<List<AppUser>> listUsers();
   Future<void> assignAccountManager(String userId, String? managerId);
@@ -59,6 +60,7 @@ class HttpUserRepository implements UserRepository {
     String? venmoHandle,
     String? paypalEmail,
     ShippingAddress? savedAddress,
+    String? preferredLocale,
   }) async {
     final body = <String, dynamic>{};
     if (discordName != null) body['discordName'] = discordName;
@@ -70,6 +72,7 @@ class HttpUserRepository implements UserRepository {
     if (venmoHandle != null) body['venmoHandle'] = venmoHandle;
     if (paypalEmail != null) body['paypalEmail'] = paypalEmail;
     if (savedAddress != null) body['savedAddress'] = savedAddress.toJson();
+    if (preferredLocale != null) body['preferredLocale'] = preferredLocale;
 
     final response = await http.patch(
       Uri.parse('$_baseUrl${ApiRoutes.userProfile}'),
@@ -154,6 +157,7 @@ class HttpUserRepository implements UserRepository {
       wiseEmail: map['wiseEmail'] as String?,
       venmoHandle: map['venmoHandle'] as String?,
       paypalEmail: map['paypalEmail'] as String?,
+      preferredLocale: map['preferredLocale'] as String?,
       accountManagerId: map['accountManagerId'] as String?,
       createdAt: _parseDateTime(map['createdAt']),
       updatedAt: _parseDateTime(map['updatedAt']),

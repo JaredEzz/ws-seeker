@@ -407,7 +407,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ## P2 — New Features (Billable Separately)
 
-### 17. Account manager / customer ownership system
+### 17. ~~Account manager / customer ownership system~~ ✅ DONE
 
 **Transcript ref:** ~2139s — "I want to be able to have these orders separated between the different callers" / ~2160s — "she signed five distinct people, those five stay with her"
 
@@ -447,7 +447,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 18. Japanese internationalization (i18n) for supplier view
+### 18. ~~Japanese internationalization (i18n) for supplier view~~ ✅ DONE
 
 **Transcript ref:** ~1611s — "Could you make it so that it is Japanese native?" / ~1618s — "I can try... internationalization is a beast"
 
@@ -494,7 +494,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 
 ---
 
-### 19. Shopify user auto-import
+### 19. ~~Shopify user auto-import~~ ✅ DONE
 
 **Transcript ref:** ~2288s — "I could automatically import all of the users from the Shopify just regularly"
 
@@ -581,7 +581,7 @@ Categorized by priority: **P0** = bugs/broken things, **P1** = agreed features (
 16. P1: CSV import format adaptation (#16)
 
 **Post-March (billable separately):**
-17. P2: Account manager system (#17)
-18. P2: Japanese i18n (#18)
-19. P2: Shopify auto-import (#19)
+17. ~~P2: Account manager system (#17)~~ ✅
+18. ~~P2: Japanese i18n (#18)~~ ✅
+19. ~~P2: Shopify auto-import (#19)~~ ✅
 20. P2: Push notifications / digest (#20)

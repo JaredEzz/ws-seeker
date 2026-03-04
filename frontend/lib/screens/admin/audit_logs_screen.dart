@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 import '../../app/design_tokens.dart';
@@ -81,14 +82,15 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Audit Logs'),
+        title: Text(l10n.auditLogs),
         actions: [
           const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
+            tooltip: l10n.actionRefresh,
             onPressed: _applyFilters,
           ),
           const SizedBox(width: 8),
@@ -112,7 +114,7 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
                   :final isLoadingMore
                 ) =>
                   logs.isEmpty
-                      ? const Center(child: Text('No audit logs found.'))
+                      ? Center(child: Text(l10n.noAuditLogsFound))
                       : _buildLogsList(context, logs, total, isLoadingMore),
               },
             ),
@@ -123,6 +125,7 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
   }
 
   Widget _buildFilterBar(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Wrap(
@@ -134,12 +137,12 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
             width: 220,
             child: TextField(
               controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: 'Search...',
-                prefixIcon: Icon(Icons.search, size: 20),
-                border: OutlineInputBorder(),
+              decoration: InputDecoration(
+                hintText: l10n.searchPlaceholder,
+                prefixIcon: const Icon(Icons.search, size: 20),
+                border: const OutlineInputBorder(),
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 isDense: true,
               ),
               onSubmitted: (_) => _applyFilters(),
@@ -147,10 +150,10 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
           ),
           DropdownButton<String?>(
             value: _actionFilter,
-            hint: const Text('All Actions'),
+            hint: Text(l10n.allActions),
             underline: const SizedBox.shrink(),
             items: [
-              const DropdownMenuItem(value: null, child: Text('All Actions')),
+              DropdownMenuItem(value: null, child: Text(l10n.allActions)),
               ..._actionOptions
                   .map((a) => DropdownMenuItem(value: a, child: Text(a))),
             ],
@@ -161,11 +164,11 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
           ),
           DropdownButton<String?>(
             value: _resourceTypeFilter,
-            hint: const Text('All Resources'),
+            hint: Text(l10n.allResources),
             underline: const SizedBox.shrink(),
             items: [
-              const DropdownMenuItem(
-                  value: null, child: Text('All Resources')),
+              DropdownMenuItem(
+                  value: null, child: Text(l10n.allResources)),
               ..._resourceTypes.map((r) => DropdownMenuItem(
                     value: r,
                     child: Text(r[0].toUpperCase() + r.substring(1)),
@@ -180,7 +183,7 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
             icon: const Icon(Icons.date_range, size: 18),
             label: Text(_dateRange != null
                 ? '${_formatDate(_dateRange!.start)} - ${_formatDate(_dateRange!.end)}'
-                : 'Date Range'),
+                : l10n.dateRange),
             onPressed: () async {
               final range = await showDateRangePicker(
                 context: context,
@@ -197,7 +200,7 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
           if (_dateRange != null)
             IconButton(
               icon: const Icon(Icons.clear, size: 18),
-              tooltip: 'Clear date range',
+              tooltip: l10n.clearDateRange,
               onPressed: () {
                 setState(() => _dateRange = null);
                 _applyFilters();
@@ -214,6 +217,7 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
     int total,
     bool isLoadingMore,
   ) {
+    final l10n = AppLocalizations.of(context);
     final hasMore = logs.length < total;
     return ListView.builder(
       itemCount: logs.length + (hasMore ? 1 : 0),
@@ -230,7 +234,7 @@ class _AuditLogsContentState extends State<_AuditLogsContent> {
                             .read<AuditLogsBloc>()
                             .add(const AuditLogsNextPageRequested());
                       },
-                      child: Text('Load More (${logs.length}/$total)'),
+                      child: Text(l10n.loadMore(logs.length, total)),
                     ),
             ),
           );
@@ -251,14 +255,15 @@ class _AuditLogTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final detailStr = _formatDetails(log.action, log.details);
+    final detailStr = _formatDetails(l10n, log.action, log.details);
 
     final resourceLabel = _resourceLabel(log);
 
     return ListTile(
       leading: _actionIcon(context, log.action),
-      title: Text(_actionLabel(log.action),
+      title: Text(_actionLabel(l10n, log.action),
           style: const TextStyle(fontWeight: FontWeight.w500)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,36 +300,25 @@ class _AuditLogTile extends StatelessWidget {
     return '';
   }
 
-  static String _actionLabel(String action) {
+  static String _actionLabel(AppLocalizations l10n, String action) {
     return switch (action) {
-      'order.created' => 'Order Created',
-      'order.updated' => 'Order Updated',
-      'order.deleted' => 'Order Deleted',
-      'comment.created' => 'Comment Added',
-      'product.created' => 'Product Created',
-      'product.updated' => 'Product Updated',
-      'product.deleted' => 'Product Deleted',
-      'product.imported' => 'Products Imported',
-      'invoice.generated' => 'Invoice Generated',
-      'invoice.statusUpdated' => 'Invoice Status Updated',
-      'user.profileUpdated' => 'Profile Updated',
-      'auth.login' => 'User Logged In',
+      'order.created' => l10n.actionOrderCreated,
+      'order.updated' => l10n.actionOrderUpdated,
+      'order.deleted' => l10n.actionOrderDeleted,
+      'comment.created' => l10n.actionCommentAdded,
+      'product.created' => l10n.actionProductCreated,
+      'product.updated' => l10n.actionProductUpdated,
+      'product.deleted' => l10n.actionProductDeleted,
+      'product.imported' => l10n.actionProductsImported,
+      'invoice.generated' => l10n.actionInvoiceGenerated,
+      'invoice.statusUpdated' => l10n.actionInvoiceStatusUpdated,
+      'user.profileUpdated' => l10n.actionProfileUpdated,
+      'auth.login' => l10n.actionUserLoggedIn,
       _ => action,
     };
   }
 
-  static const _statusLabels = {
-    'submitted': 'Submitted',
-    'awaiting_quote': 'Awaiting Quote',
-    'invoiced': 'Invoice Sent',
-    'payment_pending': 'Payment Pending',
-    'payment_received': 'Payment Received',
-    'shipped': 'Shipped',
-    'delivered': 'Delivered',
-    'cancelled': 'Cancelled',
-  };
-
-  static String _formatDetails(String action, Map<String, dynamic>? details) {
+  static String _formatDetails(AppLocalizations l10n, String action, Map<String, dynamic>? details) {
     if (details == null || details.isEmpty) return '';
 
     final parts = <String>[];
@@ -334,9 +328,9 @@ class _AuditLogTile extends StatelessWidget {
           final raw = entry.value.toString();
           final arrow = raw.split(' -> ');
           if (arrow.length == 2) {
-            final from = _statusLabels[arrow[0]] ?? arrow[0];
-            final to = _statusLabels[arrow[1]] ?? arrow[1];
-            parts.add('$from → $to');
+            final from = _localizedStatusLabel(l10n, arrow[0]);
+            final to = _localizedStatusLabel(l10n, arrow[1]);
+            parts.add('$from \u2192 $to');
           } else {
             parts.add(raw);
           }
@@ -355,7 +349,21 @@ class _AuditLogTile extends StatelessWidget {
           parts.add('${entry.key}: ${entry.value}');
       }
     }
-    return parts.join(' · ');
+    return parts.join(' \u00b7 ');
+  }
+
+  static String _localizedStatusLabel(AppLocalizations l10n, String status) {
+    return switch (status) {
+      'submitted' => l10n.statusSubmitted,
+      'awaiting_quote' => l10n.statusAwaitingQuote,
+      'invoiced' => l10n.statusInvoiceSent,
+      'payment_pending' => l10n.statusPaymentPending,
+      'payment_received' => l10n.statusPaymentReceived,
+      'shipped' => l10n.statusShipped,
+      'delivered' => l10n.statusDelivered,
+      'cancelled' => l10n.statusCancelled,
+      _ => status,
+    };
   }
 
   Widget _actionIcon(BuildContext context, String action) {

@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../services/exchange_rate_service.dart';
@@ -114,6 +115,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Dialog(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 600, maxHeight: 700),
@@ -127,7 +129,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                 Icon(_isEditMode ? Icons.edit : Icons.add_circle_outline, size: 28),
                 const SizedBox(width: 12),
                 Text(
-                  _isEditMode ? 'Edit Product' : 'Create Product',
+                  _isEditMode ? l10n.editProduct : l10n.createProduct,
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
@@ -161,8 +163,8 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                     // Common fields
                     TextFormField(
                       controller: _nameCtrl,
-                      decoration: const InputDecoration(labelText: 'Product Name *'),
-                      validator: (v) => v == null || v.trim().isEmpty ? 'Required' : null,
+                      decoration: InputDecoration(labelText: l10n.productNameLabel),
+                      validator: (v) => v == null || v.trim().isEmpty ? l10n.fieldRequired : null,
                     ),
                     const SizedBox(height: Tokens.space12),
                     Row(
@@ -170,13 +172,13 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                         Expanded(
                           child: TextFormField(
                             controller: _basePriceCtrl,
-                            decoration: const InputDecoration(
-                              labelText: 'Base Price (USD) *',
+                            decoration: InputDecoration(
+                              labelText: l10n.basePriceLabel,
                               prefixText: '\$ ',
                             ),
                             keyboardType: TextInputType.number,
                             validator: (v) {
-                              if (v == null || v.isEmpty) return 'Required';
+                              if (v == null || v.isEmpty) return l10n.fieldRequired;
                               if (double.tryParse(v) == null) return 'Invalid number';
                               return null;
                             },
@@ -186,7 +188,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                         Expanded(
                           child: TextFormField(
                             controller: _skuCtrl,
-                            decoration: const InputDecoration(labelText: 'SKU'),
+                            decoration: InputDecoration(labelText: l10n.skuFieldLabel),
                           ),
                         ),
                       ],
@@ -194,13 +196,13 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                     const SizedBox(height: Tokens.space12),
                     TextFormField(
                       controller: _descriptionCtrl,
-                      decoration: const InputDecoration(labelText: 'Description'),
+                      decoration: InputDecoration(labelText: l10n.descriptionLabel),
                       maxLines: 2,
                     ),
                     const SizedBox(height: Tokens.space12),
                     TextFormField(
                       controller: _notesCtrl,
-                      decoration: const InputDecoration(labelText: 'Notes / Remarks'),
+                      decoration: InputDecoration(labelText: l10n.notesLabel),
                     ),
 
                     // Image URL
@@ -210,9 +212,9 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                         Expanded(
                           child: TextFormField(
                             controller: _imageUrlCtrl,
-                            decoration: const InputDecoration(
-                              labelText: 'Image URL',
-                              hintText: 'https://...',
+                            decoration: InputDecoration(
+                              labelText: l10n.imageUrlLabel,
+                              hintText: l10n.imageUrlHint,
                             ),
                             onChanged: (_) => setState(() {}),
                           ),
@@ -229,7 +231,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                               )
                             : IconButton(
                                 icon: const Icon(Icons.upload_file),
-                                tooltip: 'Upload image',
+                                tooltip: l10n.uploadImage,
                                 onPressed: _pickAndUploadImage,
                               ),
                       ],
@@ -250,7 +252,7 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                                 color: Theme.of(context).colorScheme.errorContainer,
                                 borderRadius: BorderRadius.circular(Tokens.radiusSm),
                               ),
-                              child: const Text('Could not load image'),
+                              child: Text(l10n.couldNotLoadImage),
                             ),
                           ),
                         ),
@@ -258,12 +260,12 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
                     ],
 
                     // Language-specific fields
-                    if (_language == ProductLanguage.japanese) ..._buildJpnFields(),
-                    if (_language == ProductLanguage.chinese) ..._buildCnFields(),
+                    if (_language == ProductLanguage.japanese) ..._buildJpnFields(l10n),
+                    if (_language == ProductLanguage.chinese) ..._buildCnFields(l10n),
 
                     const SizedBox(height: Tokens.space12),
                     CheckboxListTile(
-                      title: const Text('Quote Required (price is "ask")'),
+                      title: Text(l10n.quoteRequiredCheckbox),
                       value: _quoteRequired,
                       onChanged: (v) => setState(() => _quoteRequired = v ?? false),
                       contentPadding: EdgeInsets.zero,
@@ -278,12 +280,12 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
               children: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Cancel'),
+                  child: Text(l10n.actionCancel),
                 ),
                 const SizedBox(width: 8),
                 FilledButton(
                   onPressed: _submit,
-                  child: Text(_isEditMode ? 'Save Changes' : 'Create Product'),
+                  child: Text(_isEditMode ? l10n.saveChanges : l10n.createProduct),
                 ),
               ],
             ),
@@ -293,21 +295,21 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
     );
   }
 
-  List<Widget> _buildJpnFields() {
+  List<Widget> _buildJpnFields(AppLocalizations l10n) {
     final hasAnyJpy = _boxJpyCtrl.text.trim().isNotEmpty ||
         _noShrinkJpyCtrl.text.trim().isNotEmpty ||
         _caseJpyCtrl.text.trim().isNotEmpty;
 
     return [
       const SizedBox(height: Tokens.space20),
-      const Text('JPY Prices', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+      Text(l10n.jpyPrices, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       const SizedBox(height: Tokens.space8),
       Row(children: [
-        Expanded(child: _priceField(_boxJpyCtrl, 'Box (JPY)')),
+        Expanded(child: _priceField(_boxJpyCtrl, l10n.boxJpy)),
         const SizedBox(width: 8),
-        Expanded(child: _priceField(_noShrinkJpyCtrl, 'No Shrink (JPY)')),
+        Expanded(child: _priceField(_noShrinkJpyCtrl, l10n.noShrinkJpy)),
         const SizedBox(width: 8),
-        Expanded(child: _priceField(_caseJpyCtrl, 'Case (JPY)')),
+        Expanded(child: _priceField(_caseJpyCtrl, l10n.caseJpy)),
       ]),
 
       // Convert JPY → USD button
@@ -323,13 +325,15 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
               : OutlinedButton.icon(
                   onPressed: hasAnyJpy ? _convertJpyToUsd : null,
                   icon: const Icon(Icons.currency_exchange, size: 16),
-                  label: const Text('Convert JPY → USD'),
+                  label: Text(l10n.convertJpyToUsd),
                 ),
           if (_exchangeRateUsed != null) ...[
             const SizedBox(width: 12),
             Text(
-              'Rate: ${_exchangeRateUsed!.toStringAsFixed(5)} '
-              '(${_exchangeRateSource == 'fallback' ? 'fallback' : 'live'})',
+              l10n.exchangeRate(
+                _exchangeRateUsed!.toStringAsFixed(5),
+                _exchangeRateSource == 'fallback' ? l10n.exchangeRateFallback : l10n.exchangeRateLive,
+              ),
               style: TextStyle(
                 fontSize: 12,
                 color: _exchangeRateSource == 'fallback'
@@ -342,24 +346,24 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
       ),
 
       const SizedBox(height: Tokens.space16),
-      const Text('USD Prices', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+      Text(l10n.usdPrices, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
       const SizedBox(height: Tokens.space8),
       Row(children: [
-        Expanded(child: _priceField(_boxUsdCtrl, 'Box')),
+        Expanded(child: _priceField(_boxUsdCtrl, l10n.productTypeBox)),
         const SizedBox(width: 8),
-        Expanded(child: _priceField(_boxUsdTariffCtrl, 'Box +Tariff')),
+        Expanded(child: _priceField(_boxUsdTariffCtrl, l10n.priceBoxTariff)),
       ]),
       const SizedBox(height: Tokens.space8),
       Row(children: [
-        Expanded(child: _priceField(_noShrinkUsdCtrl, 'No Shrink')),
+        Expanded(child: _priceField(_noShrinkUsdCtrl, l10n.productTypeNoShrink)),
         const SizedBox(width: 8),
-        Expanded(child: _priceField(_noShrinkUsdTariffCtrl, 'No Shrink +Tariff')),
+        Expanded(child: _priceField(_noShrinkUsdTariffCtrl, l10n.priceNoShrinkTariff)),
       ]),
       const SizedBox(height: Tokens.space8),
       Row(children: [
-        Expanded(child: _priceField(_caseUsdCtrl, 'Case')),
+        Expanded(child: _priceField(_caseUsdCtrl, l10n.productTypeCase)),
         const SizedBox(width: 8),
-        Expanded(child: _priceField(_caseUsdTariffCtrl, 'Case +Tariff')),
+        Expanded(child: _priceField(_caseUsdTariffCtrl, l10n.priceCaseTariff)),
       ]),
     ];
   }
@@ -389,32 +393,33 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
       _exchangeRateSource = result.source;
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch exchange rate: $e')),
+          SnackBar(content: Text(l10n.fetchExchangeRateError(e.toString()))),
         );
       }
     }
     if (mounted) setState(() => _convertingRate = false);
   }
 
-  List<Widget> _buildCnFields() {
+  List<Widget> _buildCnFields(AppLocalizations l10n) {
     return [
       const SizedBox(height: Tokens.space20),
       DropdownButtonFormField<String>(
         value: _category,
-        decoration: const InputDecoration(labelText: 'Category'),
-        items: const [
-          DropdownMenuItem(value: 'official', child: Text('Official')),
-          DropdownMenuItem(value: 'fan_art', child: Text('Fan Art')),
+        decoration: InputDecoration(labelText: l10n.categoryLabel),
+        items: [
+          DropdownMenuItem(value: 'official', child: Text(l10n.categoryOfficial)),
+          DropdownMenuItem(value: 'fan_art', child: Text(l10n.categoryFanArt)),
         ],
         onChanged: (v) => setState(() => _category = v),
       ),
       const SizedBox(height: Tokens.space12),
       TextFormField(
         controller: _specificationsCtrl,
-        decoration: const InputDecoration(
-          labelText: 'Specifications',
-          hintText: 'e.g. 1 Case = 20 Boxes, 1 Box = 15 Packs',
+        decoration: InputDecoration(
+          labelText: l10n.specificationsLabel,
+          hintText: l10n.specificationsHint,
         ),
         maxLines: 2,
       ),
@@ -460,8 +465,9 @@ class _ProductFormDialogState extends State<ProductFormDialog> {
       setState(() {});
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e')),
+          SnackBar(content: Text(l10n.uploadFailed(e.toString()))),
         );
       }
     }

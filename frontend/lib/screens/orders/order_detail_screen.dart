@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
@@ -56,11 +57,12 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text(_order != null
-            ? 'Order ${_order!.displayOrderNumber ?? _order!.id}'
-            : 'Order Details'),
+            ? l10n.orderTitle(_order!.displayOrderNumber ?? _order!.id)
+            : l10n.orderDetails),
         actions: [
           const ThemeToggleButton(),
           IconButton(
@@ -74,6 +76,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
   }
 
   Widget _buildBody() {
+    final l10n = AppLocalizations.of(context);
     if (_loading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -82,15 +85,15 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Error: $_error'),
+            Text(l10n.errorWithMessage(_error!)),
             const SizedBox(height: 16),
-            FilledButton(onPressed: _loadOrder, child: const Text('Retry')),
+            FilledButton(onPressed: _loadOrder, child: Text(l10n.actionRetry)),
           ],
         ),
       );
     }
     if (_order == null) {
-      return const Center(child: Text('Order not found'));
+      return Center(child: Text(l10n.orderNotFound));
     }
 
     final order = _order!;
@@ -112,6 +115,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
               order.status == OrderStatus.awaitingQuote) ...[
             const SizedBox(height: 12),
             Builder(builder: (context) {
+              final l10n = AppLocalizations.of(context);
               final sem = SemanticColors.of(context);
               return Container(
                 padding: const EdgeInsets.all(12),
@@ -126,8 +130,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Prices shown are estimates and may change. '
-                        'Final pricing will be confirmed on your invoice.',
+                        l10n.priceEstimateNotice,
                         style: Theme.of(context)
                             .textTheme
                             .bodySmall
@@ -144,7 +147,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           if (order.shippingMethod != null) ...[
             const SizedBox(height: 16),
             _InfoCard(
-              title: 'Shipping Method',
+              titleKey: _InfoCardTitleKey.shippingMethod,
               icon: Icons.local_shipping,
               value: order.shippingMethod!,
             ),
@@ -152,7 +155,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           if (order.discordName != null) ...[
             const SizedBox(height: 16),
             _InfoCard(
-              title: 'Discord',
+              titleKey: _InfoCardTitleKey.discord,
               icon: Icons.chat,
               value: order.discordName!,
             ),
@@ -186,7 +189,7 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
           if (isAdmin && order.adminNotes != null) ...[
             const SizedBox(height: 16),
             _InfoCard(
-              title: 'Admin Notes',
+              titleKey: _InfoCardTitleKey.adminNotes,
               icon: Icons.note,
               value: order.adminNotes!,
             ),
@@ -209,6 +212,7 @@ class _StatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -218,7 +222,7 @@ class _StatusCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Status', style: Theme.of(context).textTheme.titleSmall),
+                  Text(l10n.sectionStatus, style: Theme.of(context).textTheme.titleSmall),
                   const SizedBox(height: 8),
                   _OrderStatusChip(status: order.status),
                 ],
@@ -227,7 +231,7 @@ class _StatusCard extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text('Origin', style: Theme.of(context).textTheme.titleSmall),
+                Text(l10n.sectionOrigin, style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: 8),
                 Chip(
                   label: Text(order.language.name.toUpperCase()),
@@ -248,8 +252,9 @@ class _OrderStatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final color = Tokens.statusColor(status);
-    final label = Tokens.statusLabel(status);
+    final label = localizedStatusLabel(status, l10n);
 
     return Chip(
       avatar: Icon(Icons.circle, size: 12, color: color),
@@ -265,13 +270,14 @@ class _ItemsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Items (${order.items.length})',
+            Text(l10n.sectionItems(order.items.length),
                 style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             ...order.items.map((item) => Padding(
@@ -298,7 +304,7 @@ class _ItemsCard extends StatelessWidget {
                                 ],
                               ],
                             ),
-                            Text('Qty: ${item.quantity} x \$${item.unitPrice.toStringAsFixed(2)}',
+                            Text(l10n.itemQtyPrice(item.quantity, item.unitPrice.toStringAsFixed(2)),
                                 style: Theme.of(context).textTheme.bodySmall),
                           ],
                         ),
@@ -331,6 +337,7 @@ class _ProductImageDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Dialog(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 600, maxHeight: 600),
@@ -386,7 +393,7 @@ class _ProductImageDialog extends StatelessWidget {
                         Icon(Icons.broken_image,
                             color: Theme.of(context).colorScheme.onErrorContainer),
                         const SizedBox(height: 4),
-                        Text('Could not load image',
+                        Text(l10n.couldNotLoadImage,
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.onErrorContainer)),
                       ],
@@ -409,6 +416,7 @@ class _PricingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final sem = SemanticColors.of(context);
     if (order.quoteRequired) {
       return Card(
@@ -417,7 +425,7 @@ class _PricingCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Pricing', style: Theme.of(context).textTheme.titleMedium),
+              Text(l10n.sectionPricing, style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
@@ -434,15 +442,14 @@ class _PricingCard extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Quote Needed',
+                          Text(l10n.quoteNeededTitle,
                               style: Theme.of(context)
                                   .textTheme
                                   .titleSmall
                                   ?.copyWith(color: sem.warningText)),
                           const SizedBox(height: 4),
                           Text(
-                            'This order contains products that require a supplier quote. '
-                            'Pricing will be confirmed once the quote is provided.',
+                            l10n.quoteNeededDescription,
                             style: Theme.of(context)
                                 .textTheme
                                 .bodySmall
@@ -466,16 +473,16 @@ class _PricingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Pricing', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.sectionPricing, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
-            _PricingRow(label: 'Subtotal', value: order.subtotal),
+            _PricingRow(label: l10n.pricingSubtotal, value: order.subtotal),
             if (order.markup > 0 && isAdmin)
-              _PricingRow(label: 'Markup (13%)', value: order.markup),
+              _PricingRow(label: l10n.pricingMarkup, value: order.markup),
             if (order.estimatedTariff > 0)
-              _PricingRow(label: 'Estimated Tariff', value: order.estimatedTariff),
+              _PricingRow(label: l10n.pricingEstimatedTariff, value: order.estimatedTariff),
             const Divider(),
             _PricingRow(
-              label: 'Total',
+              label: l10n.pricingTotal,
               value: order.totalAmount,
               bold: true,
             ),
@@ -522,6 +529,7 @@ class _ShippingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final addr = order.shippingAddress;
     return Card(
       child: Padding(
@@ -529,7 +537,7 @@ class _ShippingCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Shipping Address', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.shippingAddress, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             Text(addr.fullName),
             Text(addr.addressLine1),
@@ -550,19 +558,21 @@ class _TrackingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Tracking', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.sectionTracking, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             Row(
               children: [
                 const Icon(Icons.local_shipping, size: 20),
                 const SizedBox(width: 8),
-                Text('${order.trackingCarrier ?? "Carrier"}: ${order.trackingNumber}'),
+                Text(l10n.trackingInfo(
+                    order.trackingCarrier ?? 'Carrier', order.trackingNumber ?? '')),
               ],
             ),
           ],
@@ -597,14 +607,16 @@ class _InvoiceCardState extends State<_InvoiceCard> {
       await context.read<InvoiceRepository>().generateInvoice(widget.order.id);
       widget.onChanged();
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invoice generated')),
+          SnackBar(content: Text(l10n.invoiceGenerated)),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to generate invoice: $e')),
+          SnackBar(content: Text(l10n.failedToGenerateInvoice(e.toString()))),
         );
       }
     }
@@ -632,8 +644,9 @@ class _InvoiceCardState extends State<_InvoiceCard> {
       web.URL.revokeObjectURL(url);
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to download PDF: $e')),
+          SnackBar(content: Text(l10n.failedToDownloadPdf(e.toString()))),
         );
       }
     }
@@ -642,6 +655,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final hasInvoice = widget.order.invoiceId != null;
 
     return Card(
@@ -650,7 +664,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Invoice', style: Theme.of(context).textTheme.titleMedium),
+            Text(l10n.sectionInvoice, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             if (hasInvoice) ...[
               Row(
@@ -658,7 +672,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
                   const Icon(Icons.receipt_long, size: 20),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: Text('Invoice #${widget.order.invoiceId}'),
+                    child: Text(l10n.invoiceHashId(widget.order.invoiceId!)),
                   ),
                   OutlinedButton.icon(
                     onPressed: _downloadingPdf ? null : _downloadPdf,
@@ -669,7 +683,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.picture_as_pdf, size: 18),
-                    label: const Text('Download PDF'),
+                    label: Text(l10n.downloadPdf),
                   ),
                 ],
               ),
@@ -686,7 +700,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
                         ),
                       )
                     : const Icon(Icons.receipt),
-                label: Text(_generating ? 'Generating...' : 'Generate Invoice'),
+                label: Text(_generating ? l10n.generating : l10n.generateInvoice),
               ),
             ],
           ],
@@ -717,22 +731,20 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
   String? _uploadedFileName;
 
   Future<void> _confirmRemove() async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Remove Proof of Payment?'),
-        content: const Text(
-          'The uploaded file will be preserved in the activity log '
-          'and can still be accessed from there.',
-        ),
+        title: Text(l10n.removeProofTitle),
+        content: Text(l10n.removeProofContent),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.actionCancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Remove'),
+            child: Text(l10n.actionRemove),
           ),
         ],
       ),
@@ -744,14 +756,16 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
     try {
       await widget.onRemoved();
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Proof of payment removed')),
+          SnackBar(content: Text(l10n.proofRemoved)),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to remove: $e')),
+          SnackBar(content: Text(l10n.failedToRemove(e.toString()))),
         );
       }
     }
@@ -783,14 +797,16 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
       );
       await widget.onUploaded(downloadUrl);
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Payment proof uploaded')),
+          SnackBar(content: Text(l10n.paymentProofUploaded)),
         );
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Upload failed: $e')),
+          SnackBar(content: Text(l10n.failedToUpload(e.toString()))),
         );
       }
     }
@@ -811,6 +827,7 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
   }
 
   Widget _buildProofViewer(ThemeData theme, String url) {
+    final l10n = AppLocalizations.of(context);
     if (_isImageUrl(url)) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(8),
@@ -847,7 +864,7 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                       Icon(Icons.broken_image,
                           color: theme.colorScheme.onErrorContainer),
                       const SizedBox(height: 4),
-                      Text('Could not load image',
+                      Text(l10n.couldNotLoadImage,
                           style: theme.textTheme.bodySmall?.copyWith(
                               color: theme.colorScheme.onErrorContainer)),
                     ],
@@ -876,10 +893,10 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('PDF Document',
+                Text(l10n.pdfDocument,
                     style: theme.textTheme.titleSmall),
                 const SizedBox(height: 2),
-                Text('Tap "Open / Download" to view',
+                Text(l10n.tapToView,
                     style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurfaceVariant)),
               ],
@@ -892,6 +909,7 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final hasProof = widget.order.proofOfPaymentUrl != null;
 
@@ -901,7 +919,7 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Proof of Payment', style: theme.textTheme.titleMedium),
+            Text(l10n.proofOfPayment, style: theme.textTheme.titleMedium),
             const SizedBox(height: 12),
             if (hasProof) ...[
               Row(
@@ -911,7 +929,7 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Payment proof submitted',
+                      l10n.paymentProofSubmitted,
                       style: theme.textTheme.bodyMedium
                           ?.copyWith(color: SemanticColors.of(context).successIcon),
                     ),
@@ -932,12 +950,12 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                       web.window.open(widget.order.proofOfPaymentUrl!, '_blank');
                     },
                     icon: const Icon(Icons.open_in_new, size: 18),
-                    label: const Text('Open / Download'),
+                    label: Text(l10n.openDownload),
                   ),
                   OutlinedButton.icon(
                     onPressed: _uploading ? null : _pickAndUpload,
                     icon: const Icon(Icons.upload_file, size: 18),
-                    label: const Text('Upload New'),
+                    label: Text(l10n.uploadNew),
                   ),
                   OutlinedButton.icon(
                     onPressed: _removing ? null : _confirmRemove,
@@ -949,14 +967,14 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                           )
                         : Icon(Icons.delete_outline,
                             size: 18, color: theme.colorScheme.error),
-                    label: Text('Remove',
+                    label: Text(l10n.actionRemove,
                         style: TextStyle(color: theme.colorScheme.error)),
                   ),
                 ],
               ),
             ] else ...[
               Text(
-                'Upload a screenshot of your payment confirmation.',
+                l10n.uploadPaymentProof,
                 style: theme.textTheme.bodySmall,
               ),
               const SizedBox(height: 12),
@@ -970,7 +988,7 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                     ),
                     const SizedBox(width: 12),
                     Text(
-                      'Uploading ${_uploadedFileName ?? "file"}...',
+                      l10n.uploadingFile(_uploadedFileName ?? 'file'),
                       style: theme.textTheme.bodySmall,
                     ),
                   ],
@@ -979,7 +997,7 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
                 FilledButton.icon(
                   onPressed: _pickAndUpload,
                   icon: const Icon(Icons.upload_file),
-                  label: const Text('Upload Screenshot'),
+                  label: Text(l10n.uploadScreenshot),
                 ),
             ],
           ],
@@ -989,19 +1007,27 @@ class _ProofOfPaymentCardState extends State<_ProofOfPaymentCard> {
   }
 }
 
+enum _InfoCardTitleKey { shippingMethod, discord, adminNotes }
+
 class _InfoCard extends StatelessWidget {
-  final String title;
+  final _InfoCardTitleKey titleKey;
   final IconData icon;
   final String value;
 
   const _InfoCard({
-    required this.title,
+    required this.titleKey,
     required this.icon,
     required this.value,
   });
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final title = switch (titleKey) {
+      _InfoCardTitleKey.shippingMethod => l10n.shippingMethod,
+      _InfoCardTitleKey.discord => l10n.sectionDiscord,
+      _InfoCardTitleKey.adminNotes => l10n.adminNotes,
+    };
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -1062,13 +1088,14 @@ class _ActivityLogSectionState extends State<_ActivityLogSection> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     return Card(
       clipBehavior: Clip.antiAlias,
       child: ExpansionTile(
         leading: const Icon(Icons.history, size: 20),
-        title: Text('Activity Log', style: theme.textTheme.titleMedium),
+        title: Text(l10n.activityLog, style: theme.textTheme.titleMedium),
         initiallyExpanded: false,
         onExpansionChanged: (expanded) {
           if (expanded && _logs == null && !_loading) {
@@ -1084,13 +1111,13 @@ class _ActivityLogSectionState extends State<_ActivityLogSection> {
           else if (_error != null)
             Padding(
               padding: const EdgeInsets.all(16),
-              child: Text('Error: $_error',
+              child: Text(l10n.errorWithMessage(_error!),
                   style: TextStyle(color: theme.colorScheme.error)),
             )
           else if (_logs != null && _logs!.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('No activity recorded.'),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(l10n.noActivityRecorded),
             )
           else if (_logs != null)
             ConstrainedBox(
@@ -1119,15 +1146,16 @@ class _ActivityLogEntry extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
-    final detailStr = _formatDetails(log.action, log.details);
+    final detailStr = _formatDetails(l10n, log.action, log.details);
 
     final proofUrl = log.details?['proofOfPaymentUrl'] as String?;
 
     return ListTile(
       dense: true,
       leading: _actionIcon(context, log.action),
-      title: Text(_actionLabel(log.action),
+      title: Text(_actionLabel(l10n, log.action),
           style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13)),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1145,7 +1173,7 @@ class _ActivityLogEntry extends StatelessWidget {
             GestureDetector(
               onTap: () => web.window.open(proofUrl, '_blank'),
               child: Text(
-                'View file',
+                l10n.viewFile,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.primary,
                   decoration: TextDecoration.underline,
@@ -1162,30 +1190,19 @@ class _ActivityLogEntry extends StatelessWidget {
     );
   }
 
-  static String _actionLabel(String action) {
+  static String _actionLabel(AppLocalizations l10n, String action) {
     return switch (action) {
-      'order.created' => 'Order Created',
-      'order.updated' => 'Order Updated',
-      'order.deleted' => 'Order Deleted',
-      'comment.created' => 'Comment Added',
-      'invoice.generated' => 'Invoice Generated',
-      'invoice.statusUpdated' => 'Invoice Status Updated',
+      'order.created' => l10n.actionOrderCreated,
+      'order.updated' => l10n.actionOrderUpdated,
+      'order.deleted' => l10n.actionOrderDeleted,
+      'comment.created' => l10n.actionCommentAdded,
+      'invoice.generated' => l10n.actionInvoiceGenerated,
+      'invoice.statusUpdated' => l10n.actionInvoiceStatusUpdated,
       _ => action,
     };
   }
 
-  static const _statusLabels = {
-    'submitted': 'Submitted',
-    'awaitingQuote': 'Awaiting Quote',
-    'invoiced': 'Invoice Sent',
-    'paymentPending': 'Payment Pending',
-    'paymentReceived': 'Payment Received',
-    'shipped': 'Shipped',
-    'delivered': 'Delivered',
-    'cancelled': 'Cancelled',
-  };
-
-  static String _formatDetails(String action, Map<String, dynamic>? details) {
+  static String _formatDetails(AppLocalizations l10n, String action, Map<String, dynamic>? details) {
     if (details == null || details.isEmpty) return '';
 
     final parts = <String>[];
@@ -1202,11 +1219,11 @@ class _ActivityLogEntry extends StatelessWidget {
             parts.add(raw);
           }
         case 'trackingNumber':
-          parts.add('Tracking: ${entry.value}');
+          parts.add(l10n.trackingLog(entry.value.toString()));
         case 'proofOfPaymentUploaded':
-          parts.add('Proof of payment uploaded');
+          parts.add(l10n.proofOfPaymentUploadedLog);
         case 'proofOfPaymentRemoved':
-          parts.add('Proof of payment removed');
+          parts.add(l10n.proofOfPaymentRemovedLog);
         case 'proofOfPaymentUrl':
           // Handled separately as a clickable link
           break;
@@ -1223,6 +1240,17 @@ class _ActivityLogEntry extends StatelessWidget {
     }
     return parts.join(' \u00b7 ');
   }
+
+  static const _statusLabels = {
+    'submitted': 'Submitted',
+    'awaitingQuote': 'Awaiting Quote',
+    'invoiced': 'Invoice Sent',
+    'paymentPending': 'Payment Pending',
+    'paymentReceived': 'Payment Received',
+    'shipped': 'Shipped',
+    'delivered': 'Delivered',
+    'cancelled': 'Cancelled',
+  };
 
   Widget _actionIcon(BuildContext context, String action) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 class AddressForm extends StatefulWidget {
@@ -73,42 +74,44 @@ class _AddressFormState extends State<AddressForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Form(
       key: widget.formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Shipping Address *', style: Theme.of(context).textTheme.titleMedium),
+          Text(l10n.shippingAddressRequired, style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
-          _buildField(_fullNameController, 'Full Name', required: true),
+          _buildField(context, _fullNameController, l10n.fullName, required: true),
           const SizedBox(height: 12),
-          _buildField(_addressLine1Controller, 'Address Line 1', required: true),
+          _buildField(context, _addressLine1Controller, l10n.addressLine1, required: true),
           const SizedBox(height: 12),
-          _buildField(_addressLine2Controller, 'Address Line 2 (optional)'),
+          _buildField(context, _addressLine2Controller, l10n.addressLine2Optional),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildField(_cityController, 'City', required: true)),
+              Expanded(child: _buildField(context, _cityController, l10n.city, required: true)),
               const SizedBox(width: 12),
-              Expanded(child: _buildField(_stateController, 'State', required: true)),
+              Expanded(child: _buildField(context, _stateController, l10n.state, required: true)),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildField(_postalCodeController, 'Postal Code', required: true)),
+              Expanded(child: _buildField(context, _postalCodeController, l10n.postalCode, required: true)),
               const SizedBox(width: 12),
-              Expanded(child: _buildField(_countryController, 'Country', required: true)),
+              Expanded(child: _buildField(context, _countryController, l10n.country, required: true)),
             ],
           ),
           const SizedBox(height: 12),
-          _buildField(_phoneController, 'Phone', required: true),
+          _buildField(context, _phoneController, l10n.phone, required: true),
         ],
       ),
     );
   }
 
   Widget _buildField(
+    BuildContext context,
     TextEditingController controller,
     String label, {
     bool required = false,
@@ -121,7 +124,7 @@ class _AddressFormState extends State<AddressForm> {
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),
       validator: required
-          ? (value) => (value == null || value.trim().isEmpty) ? '$label is required' : null
+          ? (value) => (value == null || value.trim().isEmpty) ? AppLocalizations.of(context).fieldIsRequired(label) : null
           : null,
       onChanged: (_) => _notifyChanged(),
     );

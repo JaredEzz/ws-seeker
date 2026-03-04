@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 import '../../blocs/customers/customers_bloc.dart';
@@ -44,14 +45,14 @@ class _CustomerManagementContentState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return BlocConsumer<CustomersBloc, CustomersState>(
       listener: (context, state) {
         if (state is ShopifySyncComplete) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                'Shopify sync complete: ${state.created} created, '
-                '${state.updated} updated, ${state.skipped} skipped',
+                l10n.shopifySyncComplete(state.created, state.updated, state.skipped),
               ),
               duration: const Duration(seconds: 5),
             ),
@@ -69,11 +70,11 @@ class _CustomerManagementContentState
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Customer Management'),
+            title: Text(l10n.customerManagement),
             actions: [
               IconButton(
                 icon: const Icon(Icons.sync),
-                tooltip: 'Sync from Shopify',
+                tooltip: l10n.syncFromShopify,
                 onPressed: state is CustomersLoading
                     ? null
                     : () => context
@@ -82,7 +83,7 @@ class _CustomerManagementContentState
               ),
               IconButton(
                 icon: const Icon(Icons.refresh),
-                tooltip: 'Refresh',
+                tooltip: l10n.actionRefresh,
                 onPressed: state is CustomersLoading
                     ? null
                     : () => context
@@ -111,6 +112,7 @@ class _CustomerManagementContentState
     List<AppUser> customers,
     List<AppUser> managers,
   ) {
+    final l10n = AppLocalizations.of(context);
     final filtered = _searchQuery.isEmpty
         ? customers
         : customers.where((c) {
@@ -127,7 +129,7 @@ class _CustomerManagementContentState
           child: TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Search by email, discord, or phone...',
+              hintText: l10n.searchCustomers,
               prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
@@ -147,24 +149,24 @@ class _CustomerManagementContentState
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            '${filtered.length} customer${filtered.length == 1 ? '' : 's'}',
+            l10n.customerCount(filtered.length),
             style: Theme.of(context).textTheme.bodySmall,
           ),
         ),
         const SizedBox(height: 8),
         Expanded(
           child: filtered.isEmpty
-              ? const Center(child: Text('No customers found'))
+              ? Center(child: Text(l10n.noCustomersFound))
               : SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SingleChildScrollView(
                     child: DataTable(
-                      columns: const [
-                        DataColumn(label: Text('Email')),
-                        DataColumn(label: Text('Discord')),
-                        DataColumn(label: Text('Phone')),
-                        DataColumn(label: Text('Account Manager')),
-                        DataColumn(label: Text('Created')),
+                      columns: [
+                        DataColumn(label: Text(l10n.columnEmail)),
+                        DataColumn(label: Text(l10n.columnDiscord)),
+                        DataColumn(label: Text(l10n.phone)),
+                        DataColumn(label: Text(l10n.accountManager)),
+                        DataColumn(label: Text(l10n.columnCreated)),
                       ],
                       rows: filtered.map((customer) {
                         return DataRow(
@@ -204,15 +206,16 @@ class _AccountManagerDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return DropdownButton<String?>(
       value: customer.accountManagerId,
-      hint: const Text('Unassigned'),
+      hint: Text(l10n.unassigned),
       underline: const SizedBox.shrink(),
       isDense: true,
       items: [
-        const DropdownMenuItem<String?>(
+        DropdownMenuItem<String?>(
           value: null,
-          child: Text('Unassigned'),
+          child: Text(l10n.unassigned),
         ),
         ...managers.map((m) => DropdownMenuItem<String?>(
               value: m.id,

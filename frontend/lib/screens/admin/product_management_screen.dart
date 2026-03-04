@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/products/products_bloc.dart';
@@ -80,20 +81,21 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
   }
 
   void _confirmDelete(Product product) {
+    final l10n = AppLocalizations.of(context);
     showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Product'),
-        content: Text('Are you sure you want to delete "${product.name}"?'),
+        title: Text(l10n.deleteProduct),
+        content: Text(l10n.deleteProductConfirmation(product.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(l10n.actionCancel),
           ),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: Tokens.destructive),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete'),
+            child: Text(l10n.actionDelete),
           ),
         ],
       ),
@@ -108,14 +110,15 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Product Management'),
+        title: Text(l10n.productManagement),
         actions: [
           const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.upload_file),
-            tooltip: 'Import CSV',
+            tooltip: l10n.importCsv,
             onPressed: _showImportDialog,
           ),
           IconButton(
@@ -129,7 +132,7 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showCreateDialog,
         icon: const Icon(Icons.add),
-        label: const Text('New Product'),
+        label: Text(l10n.newProduct),
       ),
       body: Column(
         children: [
@@ -168,7 +171,7 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
                           onPressed: () => context.read<ProductsBloc>().add(
                             ProductsFetchRequested(language: _selectedLanguage),
                           ),
-                          child: const Text('Retry'),
+                          child: Text(l10n.actionRetry),
                         ),
                       ],
                     ),
@@ -183,13 +186,14 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
   }
 
   Widget _buildLanguageSelector() {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(16),
       child: SegmentedButton<ProductLanguage>(
-        segments: const [
-          ButtonSegment(value: ProductLanguage.japanese, label: Text('Japanese')),
-          ButtonSegment(value: ProductLanguage.chinese, label: Text('Chinese')),
-          ButtonSegment(value: ProductLanguage.korean, label: Text('Korean')),
+        segments: [
+          ButtonSegment(value: ProductLanguage.japanese, label: Text(l10n.langJapanese)),
+          ButtonSegment(value: ProductLanguage.chinese, label: Text(l10n.langChinese)),
+          ButtonSegment(value: ProductLanguage.korean, label: Text(l10n.langKorean)),
         ],
         selected: {_selectedLanguage},
         onSelectionChanged: (v) => _onLanguageChanged(v.first),
@@ -198,6 +202,7 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
   }
 
   Widget _buildEmptyState() {
+    final l10n = AppLocalizations.of(context);
     final sem = SemanticColors.of(context);
     return Center(
       child: Column(
@@ -206,14 +211,14 @@ class _ProductManagementContentState extends State<_ProductManagementContent> {
           Icon(Icons.inventory_2_outlined, size: 64, color: sem.textTertiary),
           const SizedBox(height: 16),
           Text(
-            'No products found in this catalog.',
+            l10n.noProductsFound,
             style: TextStyle(fontSize: 16, color: sem.textTertiary),
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: _showImportDialog,
             icon: const Icon(Icons.upload_file),
-            label: const Text('Import Products'),
+            label: Text(l10n.importProducts),
           ),
         ],
       ),
@@ -249,6 +254,7 @@ class _ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final sem = SemanticColors.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Card(
@@ -293,7 +299,7 @@ class _ProductCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       if (product.sku != null)
                         Text(
-                          'SKU: ${product.sku}',
+                          l10n.skuLabel(product.sku!),
                           style: TextStyle(
                             fontSize: 12,
                             color: sem.textSecondary,
@@ -307,10 +313,10 @@ class _ProductCard extends StatelessWidget {
                   spacing: 6,
                   children: [
                     if (product.quoteRequired)
-                      _badge('Ask for Quote', sem.warningBg, sem.warningText),
+                      _badge(l10n.askForQuote, sem.warningBg, sem.warningText),
                     if (product.category != null)
                       _badge(
-                        product.category == 'official' ? 'Official' : 'Fan Art',
+                        product.category == 'official' ? l10n.categoryOfficial : l10n.categoryFanArt,
                         product.category == 'official'
                             ? sem.infoBg
                             : (isDark ? const Color(0xFF3B0764) : const Color(0xFFF3E8FF)),
@@ -326,8 +332,8 @@ class _ProductCard extends StatelessWidget {
                     if (v == 'delete') onDelete();
                   },
                   itemBuilder: (_) => [
-                    const PopupMenuItem(value: 'edit', child: Text('Edit')),
-                    const PopupMenuItem(value: 'delete', child: Text('Delete')),
+                    PopupMenuItem(value: 'edit', child: Text(l10n.actionEdit)),
+                    PopupMenuItem(value: 'delete', child: Text(l10n.actionDelete)),
                   ],
                 ),
               ],
@@ -335,7 +341,7 @@ class _ProductCard extends StatelessWidget {
             const SizedBox(height: Tokens.space8),
 
             // Price information
-            _buildPriceInfo(sem, isDark),
+            _buildPriceInfo(l10n, sem, isDark),
 
             // Specifications
             if (product.specifications != null) ...[
@@ -366,9 +372,9 @@ class _ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildPriceInfo(SemanticColors sem, bool isDark) {
+  Widget _buildPriceInfo(AppLocalizations l10n, SemanticColors sem, bool isDark) {
     if (product.language == ProductLanguage.japanese) {
-      return _buildJpnPrices(sem, isDark);
+      return _buildJpnPrices(l10n, sem, isDark);
     }
     // CN and KR: show base price
     return Text(
@@ -381,12 +387,12 @@ class _ProductCard extends StatelessWidget {
     );
   }
 
-  Widget _buildJpnPrices(SemanticColors sem, bool isDark) {
+  Widget _buildJpnPrices(AppLocalizations l10n, SemanticColors sem, bool isDark) {
     if (product.quoteRequired &&
         product.boxPriceUsd == null &&
         product.casePriceUsd == null) {
       return Text(
-        'Price: Ask for quote',
+        l10n.priceAskForQuote,
         style: TextStyle(fontSize: 14, color: sem.textSecondary),
       );
     }
@@ -394,16 +400,16 @@ class _ProductCard extends StatelessWidget {
     final chips = <Widget>[];
 
     if (product.boxPriceUsd != null) {
-      chips.add(_priceChip('Box', product.boxPriceUsd!,
-          tariff: product.boxPriceUsdWithTariff, sem: sem, isDark: isDark));
+      chips.add(_priceChip(l10n.productTypeBox, product.boxPriceUsd!,
+          tariff: product.boxPriceUsdWithTariff, l10n: l10n, sem: sem, isDark: isDark));
     }
     if (product.noShrinkPriceUsd != null) {
-      chips.add(_priceChip('No Shrink', product.noShrinkPriceUsd!,
-          tariff: product.noShrinkPriceUsdWithTariff, sem: sem, isDark: isDark));
+      chips.add(_priceChip(l10n.productTypeNoShrink, product.noShrinkPriceUsd!,
+          tariff: product.noShrinkPriceUsdWithTariff, l10n: l10n, sem: sem, isDark: isDark));
     }
     if (product.casePriceUsd != null) {
-      chips.add(_priceChip('Case', product.casePriceUsd!,
-          tariff: product.casePriceUsdWithTariff, sem: sem, isDark: isDark));
+      chips.add(_priceChip(l10n.productTypeCase, product.casePriceUsd!,
+          tariff: product.casePriceUsdWithTariff, l10n: l10n, sem: sem, isDark: isDark));
     }
 
     if (chips.isEmpty && product.basePrice > 0) {
@@ -416,7 +422,7 @@ class _ProductCard extends StatelessWidget {
     return Wrap(spacing: Tokens.space8, runSpacing: 4, children: chips);
   }
 
-  Widget _priceChip(String label, double price, {double? tariff, required SemanticColors sem, required bool isDark}) {
+  Widget _priceChip(String label, double price, {double? tariff, required AppLocalizations l10n, required SemanticColors sem, required bool isDark}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
@@ -432,7 +438,7 @@ class _ProductCard extends StatelessWidget {
           Text('\$${price.toStringAsFixed(2)}',
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
           if (tariff != null)
-            Text('+tariff: \$${tariff.toStringAsFixed(2)}',
+            Text(l10n.pricePlusTariff(tariff.toStringAsFixed(2)),
                 style: TextStyle(fontSize: 10, color: sem.textTertiary)),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../blocs/auth/auth_bloc.dart';
@@ -51,9 +52,10 @@ class _OrderFormContentState extends State<_OrderFormContent> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Place Wholesale Order'),
+        title: Text(l10n.placeWholesaleOrder),
         actions: const [ThemeToggleButton()],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
@@ -61,21 +63,23 @@ class _OrderFormContentState extends State<_OrderFormContent> {
           ? FloatingActionButton.extended(
               onPressed: _scrollToBottom,
               icon: const Icon(Icons.keyboard_double_arrow_down),
-              label: const Text('Jump to Bottom'),
+              label: Text(l10n.jumpToBottom),
             )
           : null,
       body: BlocConsumer<OrderFormBloc, OrderFormState>(
         listener: (context, state) {
           if (state.status == OrderFormStatus.success) {
+            final l10n = AppLocalizations.of(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Order placed successfully!')),
+              SnackBar(content: Text(l10n.orderPlacedSuccess)),
             );
             context.read<OrdersBloc>().add(const OrdersFetchRequested());
             context.go('/dashboard');
           }
           if (state.status == OrderFormStatus.failure) {
+            final l10n = AppLocalizations.of(context);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${state.errorMessage}')),
+              SnackBar(content: Text(l10n.errorWithMessage(state.errorMessage ?? ''))),
             );
           }
           // Initialize address from profile once
@@ -85,6 +89,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
           }
         },
         builder: (context, state) {
+          final l10n = AppLocalizations.of(context);
           return Stepper(
             currentStep: _currentStep,
             onStepContinue: () => _onStepContinue(context, state),
@@ -96,6 +101,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
               }
             },
             controlsBuilder: (context, details) {
+              final l10n = AppLocalizations.of(context);
               final isLastStep = _currentStep == 2;
               return Padding(
                 padding: const EdgeInsets.only(top: 16),
@@ -105,12 +111,12 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                       onPressed: state.status == OrderFormStatus.loading
                           ? null
                           : details.onStepContinue,
-                      child: Text(isLastStep ? 'Place Order' : 'Continue'),
+                      child: Text(isLastStep ? l10n.placeOrderButton : l10n.actionContinue),
                     ),
                     const SizedBox(width: 8),
                     OutlinedButton(
                       onPressed: details.onStepCancel,
-                      child: Text(_currentStep == 0 ? 'Cancel' : 'Back'),
+                      child: Text(_currentStep == 0 ? l10n.actionCancel : l10n.actionBack),
                     ),
                   ],
                 ),
@@ -118,7 +124,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
             },
             steps: [
               Step(
-                title: const Text('Select Origin'),
+                title: Text(l10n.stepSelectOrigin),
                 content: _LanguageSelector(state: state),
                 isActive: _currentStep >= 0,
                 state: state.language != null
@@ -126,7 +132,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                     : StepState.indexed,
               ),
               Step(
-                title: const Text('Select Products'),
+                title: Text(l10n.stepSelectProducts),
                 content: Column(
                   children: [
                     _ProductSelector(state: state),
@@ -138,7 +144,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                     : StepState.indexed,
               ),
               Step(
-                title: const Text('Review & Submit'),
+                title: Text(l10n.stepReviewSubmit),
                 content: _ReviewStep(
                   state: state,
                   initialAddress: _shippingAddress,
@@ -173,16 +179,17 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   }
 
   void _onStepContinue(BuildContext context, OrderFormState state) {
+    final l10n = AppLocalizations.of(context);
     if (_currentStep == 0 && state.language == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select an origin')),
+        SnackBar(content: Text(l10n.pleaseSelectOrigin)),
       );
       return;
     }
     if (_currentStep == 1) {
       if (state.itemRequests.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select at least one product')),
+          SnackBar(content: Text(l10n.pleaseSelectProduct)),
         );
         return;
       }
@@ -198,8 +205,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
               !state.selectedProductTypes.containsKey(entry.key)) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text(
-                      'Please select a product type for ${product.name}')),
+                  content: Text(l10n.pleaseSelectProductType(product.name))),
             );
             return;
           }
@@ -220,10 +226,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
       if (state.language == ProductLanguage.japanese &&
           (state.wiseEmail == null || state.wiseEmail!.isEmpty)) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-                'Please set your Wise email in your Profile before placing a JPN order.'),
-          ),
+          SnackBar(content: Text(l10n.pleaseSetWiseEmail)),
         );
         return;
       }
@@ -241,16 +244,17 @@ class _LanguageSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Which region are you ordering from?'),
+        Text(l10n.whichRegion),
         const SizedBox(height: 8),
         ...ProductLanguage.values.map((lang) {
           final displayName = switch (lang) {
-            ProductLanguage.japanese => 'Japanese (JPN)',
-            ProductLanguage.chinese => 'Chinese (CN)',
-            ProductLanguage.korean => 'Korean (KR)',
+            ProductLanguage.japanese => l10n.originJapanese,
+            ProductLanguage.chinese => l10n.originChinese,
+            ProductLanguage.korean => l10n.originKorean,
           };
           return RadioListTile<ProductLanguage>(
             title: Text(displayName),
@@ -325,14 +329,14 @@ class _ProductSelectorState extends State<_ProductSelector> {
                       child: Center(child: CircularProgressIndicator()),
                     );
                   },
-                  errorBuilder: (_, __, ___) => Container(
+                  errorBuilder: (ctx, _, __) => Container(
                     height: 150,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.errorContainer,
+                      color: Theme.of(ctx).colorScheme.errorContainer,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text('Could not load image'),
+                    child: Text(AppLocalizations.of(ctx).couldNotLoadImage),
                   ),
                 ),
               ),
@@ -355,6 +359,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = widget.state;
 
     if (state.status == OrderFormStatus.loading) {
@@ -369,16 +374,16 @@ class _ProductSelectorState extends State<_ProductSelector> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (state.availableProducts.isEmpty)
-          const Padding(
-            padding: EdgeInsets.all(16),
-            child: Text('No products available for this origin.'),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Text(l10n.noProductsForOrigin),
           ),
         if (state.availableProducts.isNotEmpty) ...[
           Padding(
             padding: const EdgeInsets.only(bottom: 8),
             child: Text(
-              '$selectedCount product${selectedCount == 1 ? '' : 's'} selected'
-              '${state.estimatedSubtotal > 0 ? ' — Subtotal: \$${state.estimatedSubtotal.toStringAsFixed(2)}' : ''}',
+              '${l10n.productsSelected(selectedCount)}'
+              '${state.estimatedSubtotal > 0 ? ' — ${l10n.estimatedSubtotal(state.estimatedSubtotal.toStringAsFixed(2))}' : ''}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),
@@ -387,7 +392,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
           TextField(
             controller: _searchController,
             decoration: InputDecoration(
-              hintText: 'Search products...',
+              hintText: l10n.searchProducts,
               prefixIcon: const Icon(Icons.search),
               suffixIcon: _searchQuery.isNotEmpty
                   ? IconButton(
@@ -407,9 +412,9 @@ class _ProductSelectorState extends State<_ProductSelector> {
           ),
           const SizedBox(height: 8),
           if (filtered.isEmpty && _searchQuery.isNotEmpty)
-            const Padding(
-              padding: EdgeInsets.all(16),
-              child: Text('No products match your search.'),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(l10n.noProductsMatchSearch),
             ),
           ...filtered.map((p) {
             final qty = state.selectedItems[p.id] ?? 0;
@@ -444,7 +449,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Text(
-                                'Quote Required',
+                                l10n.quoteRequired,
                                 style: TextStyle(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
@@ -456,7 +461,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
                         ],
                       ),
                       subtitle: Text(
-                        '${p.quoteRequired ? 'Price TBD' : '\$${displayPrice.toStringAsFixed(2)}'}'
+                        '${p.quoteRequired ? l10n.priceTbd : '\$${displayPrice.toStringAsFixed(2)}'}'
                         '${p.sku != null ? ' — ${p.sku}' : ''}',
                       ),
                       trailing: Row(
@@ -494,10 +499,10 @@ class _ProductSelectorState extends State<_ProductSelector> {
                             left: 16, right: 16, bottom: 8),
                         child: DropdownButtonFormField<String>(
                           value: selectedType,
-                          decoration: const InputDecoration(
-                            labelText: 'Product Type',
-                            border: OutlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
+                          decoration: InputDecoration(
+                            labelText: l10n.productTypeLabel,
+                            border: const OutlineInputBorder(),
+                            contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             isDense: true,
                           ),
@@ -562,6 +567,7 @@ class _ReviewStepState extends State<_ReviewStep> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final state = widget.state;
     final theme = Theme.of(context);
     final shippingMethods =
@@ -573,7 +579,7 @@ class _ReviewStepState extends State<_ReviewStep> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Order Summary
-        Text('Order Summary', style: theme.textTheme.titleMedium),
+        Text(l10n.orderSummary, style: theme.textTheme.titleMedium),
         const SizedBox(height: 8),
         Card(
           child: Padding(
@@ -584,7 +590,7 @@ class _ReviewStepState extends State<_ReviewStep> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Origin:', style: theme.textTheme.bodyMedium),
+                    Text(l10n.originColon, style: theme.textTheme.bodyMedium),
                     Text(
                       state.language?.name.toUpperCase() ?? '',
                       style: theme.textTheme.bodyMedium
@@ -607,9 +613,9 @@ class _ReviewStepState extends State<_ReviewStep> {
                   final isCn = product.language == ProductLanguage.chinese;
                   final typeLabel = typeKey != null
                       ? ' (${switch (typeKey) {
-                          'box' => isCn ? 'Loose Box' : 'Box',
-                          'no_shrink' => 'No Shrink',
-                          'case' => isCn ? 'Sealed Case' : 'Case',
+                          'box' => isCn ? l10n.productTypeLooseBox : l10n.productTypeBox,
+                          'no_shrink' => l10n.productTypeNoShrink,
+                          'case' => isCn ? l10n.productTypeSealedCase : l10n.productTypeCase,
                           _ => typeKey,
                         }})'
                       : '';
@@ -635,7 +641,7 @@ class _ReviewStepState extends State<_ReviewStep> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Subtotal:',
+                    Text(l10n.subtotalColon,
                         style: theme.textTheme.bodyMedium
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     Text(
@@ -651,6 +657,7 @@ class _ReviewStepState extends State<_ReviewStep> {
         ),
         const SizedBox(height: 12),
         Builder(builder: (context) {
+          final l10n = AppLocalizations.of(context);
           final sem = SemanticColors.of(context);
           return Container(
             padding: const EdgeInsets.all(12),
@@ -665,8 +672,7 @@ class _ReviewStepState extends State<_ReviewStep> {
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Prices shown are estimates and may change. '
-                    'Final pricing will be confirmed on your invoice.',
+                    l10n.priceEstimateNotice,
                     style: theme.textTheme.bodySmall
                         ?.copyWith(color: sem.infoText),
                   ),
@@ -684,19 +690,19 @@ class _ReviewStepState extends State<_ReviewStep> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Discord Name (required)
-              Text('Contact Info', style: theme.textTheme.titleMedium),
+              Text(l10n.contactInfo, style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               TextFormField(
                 controller: _discordController,
-                decoration: const InputDecoration(
-                  labelText: 'Discord Name *',
-                  border: OutlineInputBorder(),
+                decoration: InputDecoration(
+                  labelText: l10n.discordNameRequired,
+                  border: const OutlineInputBorder(),
                   contentPadding:
-                      EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 ),
                 validator: (value) =>
                     (value == null || value.trim().isEmpty)
-                        ? 'Discord name is required'
+                        ? l10n.discordNameValidation
                         : null,
                 onChanged: (val) {
                   context
@@ -707,19 +713,19 @@ class _ReviewStepState extends State<_ReviewStep> {
               const SizedBox(height: 16),
 
               // Payment Method (required)
-              Text('Payment Method *', style: theme.textTheme.titleMedium),
+              Text(l10n.paymentMethodRequired, style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
               if (state.language == ProductLanguage.japanese) ...[
                 // JPN: Wise only, auto-selected
                 Card(
                   child: ListTile(
                     leading: const Icon(Icons.payment),
-                    title: const Text('Wise'),
+                    title: Text(l10n.paymentWise),
                     subtitle: state.wiseEmail != null &&
                             state.wiseEmail!.isNotEmpty
-                        ? Text('Wise email: ${state.wiseEmail}')
+                        ? Text(l10n.wiseEmailInfo(state.wiseEmail!))
                         : Text(
-                            'Set your Wise email in Profile',
+                            l10n.setWiseEmail,
                             style:
                                 TextStyle(color: theme.colorScheme.error),
                           ),
@@ -734,10 +740,10 @@ class _ReviewStepState extends State<_ReviewStep> {
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
-                  hint: const Text('Select payment method'),
+                  hint: Text(l10n.selectPaymentMethod),
                   validator: (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Payment method is required'
+                          ? l10n.paymentMethodValidation
                           : null,
                   items: paymentMethods
                       .map(
@@ -754,7 +760,7 @@ class _ReviewStepState extends State<_ReviewStep> {
 
               // Shipping Method (required for JPN and CN)
               if (shippingMethods.isNotEmpty) ...[
-                Text('Shipping Method *',
+                Text(l10n.shippingMethodRequired,
                     style: theme.textTheme.titleMedium),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
@@ -764,10 +770,10 @@ class _ReviewStepState extends State<_ReviewStep> {
                     contentPadding:
                         EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                   ),
-                  hint: const Text('Select shipping method'),
+                  hint: Text(l10n.selectShippingMethod),
                   validator: (value) =>
                       (value == null || value.isEmpty)
-                          ? 'Shipping method is required'
+                          ? l10n.shippingMethodValidation
                           : null,
                   items: shippingMethods
                       .map(
@@ -811,21 +817,17 @@ class _PaymentInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (language == null) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     final (title, instructions) = switch (language!) {
       ProductLanguage.japanese => (
-          'Payment via Wise',
-          'After your order is invoiced, send payment via Wise to the email provided in your invoice.',
+          l10n.paymentViaWise,
+          l10n.paymentViaWiseInstructions,
         ),
       ProductLanguage.chinese || ProductLanguage.korean => (
-          'Payment Options',
-          'After your order is invoiced, you can pay via:\n'
-              '  Venmo: @cromatcg\n'
-              '  PayPal: @Croma01\n'
-              '  ACH: Croma Collectibles\n'
-              '    Acct: 400116376098\n'
-              '    Routing: 124303243',
+          l10n.paymentOptions,
+          l10n.paymentOptionsInstructions,
         ),
     };
 

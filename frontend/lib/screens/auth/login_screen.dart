@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
@@ -28,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -49,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _showDebugLinkDialog(context, state.link!);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Magic link sent! Check your email.')),
+                    SnackBar(content: Text(l10n.magicLinkSent)),
                   );
                 }
               }
@@ -59,14 +61,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const Text(
-                    'WS-Seeker',
-                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  Text(
+                    l10n.appTitle,
+                    style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'A Croma TCG web app',
+                    l10n.appSubtitle,
                     style: TextStyle(
                       fontSize: 16,
                       color: SemanticColors.of(context).textTertiary,
@@ -77,10 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 32),
                   TextField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email Address',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
+                    decoration: InputDecoration(
+                      labelText: l10n.emailAddressLabel,
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.email),
                     ),
                     keyboardType: TextInputType.emailAddress,
                   ),
@@ -106,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Send Magic Link'),
+                        : Text(l10n.sendMagicLink),
                   ),
                   // TODO: Remove debug mode switch when ready for production
                   const SizedBox(height: 24),
@@ -114,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Debug mode (skip email)',
+                        l10n.debugMode,
                         style: TextStyle(
                           fontSize: 13,
                           color: SemanticColors.of(context).textTertiary,
@@ -138,10 +140,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   // TODO: Remove this method when ready for production
   void _showDebugLinkDialog(BuildContext context, String link) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Debug: Magic Link'),
+        title: Text(l10n.debugMagicLink),
         content: SelectableText(
           link,
           style: TextStyle(fontSize: 14, color: Theme.of(ctx).colorScheme.primary),
@@ -149,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Close'),
+            child: Text(l10n.actionClose),
           ),
           FilledButton(
             onPressed: () {
@@ -158,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
               final uri = Uri.parse(link);
               context.read<AuthBloc>().add(AuthDeepLinkChecked(uri));
             },
-            child: const Text('Open Link'),
+            child: Text(l10n.openLink),
           ),
         ],
       ),

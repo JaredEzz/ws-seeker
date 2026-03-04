@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
@@ -31,14 +32,15 @@ class AllChatsContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chats'),
+        title: Text(l10n.chats),
         actions: [
           const ThemeToggleButton(),
           IconButton(
             icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
+            tooltip: l10n.actionRefresh,
             onPressed: () {
               context.read<AllChatsBloc>().add(const AllChatsFetchRequested());
             },
@@ -51,7 +53,7 @@ class AllChatsContent extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (state is AllChatsFailure) {
-            return Center(child: Text('Error: ${state.message}'));
+            return Center(child: Text(l10n.errorWithMessage(state.message)));
           }
           if (state is AllChatsLoaded) {
             if (state.conversations.isEmpty) {
@@ -63,11 +65,11 @@ class AllChatsContent extends StatelessWidget {
                         size: 64,
                         color: SemanticColors.of(context).textSecondary),
                     const SizedBox(height: 16),
-                    Text('No conversations yet',
+                    Text(l10n.noConversationsYet,
                         style: Theme.of(context).textTheme.titleMedium),
                     const SizedBox(height: 8),
                     Text(
-                      'Comments on orders will appear here',
+                      l10n.commentsOnOrdersAppearHere,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                             color: SemanticColors.of(context).textSecondary,
                           ),
@@ -118,6 +120,7 @@ class _ConversationCardState extends State<_ConversationCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final order = widget.conversation.order;
     final comments = widget.conversation.comments;
     final theme = Theme.of(context);
@@ -156,7 +159,7 @@ class _ConversationCardState extends State<_ConversationCard> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Order $displayId',
+                          l10n.orderDisplayId(displayId),
                           style: theme.textTheme.titleSmall?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -164,7 +167,7 @@ class _ConversationCardState extends State<_ConversationCard> {
                         const SizedBox(height: 2),
                         Text(
                           '${order.language.name.toUpperCase()} '
-                          '- ${Tokens.statusLabel(order.status)} '
+                          '- ${localizedStatusLabel(order.status, l10n)} '
                           '- ${comments.length} message${comments.length == 1 ? '' : 's'}',
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: SemanticColors.of(context).textSecondary,
@@ -175,7 +178,7 @@ class _ConversationCardState extends State<_ConversationCard> {
                   ),
                   TextButton(
                     onPressed: () => context.push('/orders/${order.id}'),
-                    child: const Text('View Order'),
+                    child: Text(l10n.viewOrder),
                   ),
                   Icon(
                     _expanded
@@ -194,7 +197,7 @@ class _ConversationCardState extends State<_ConversationCard> {
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Text(
-                  'No messages yet',
+                  l10n.noMessagesYet,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: SemanticColors.of(context).textSecondary,
                     fontStyle: FontStyle.italic,
@@ -213,7 +216,7 @@ class _ConversationCardState extends State<_ConversationCard> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4),
                         child: Text(
-                          '${comments.length - _collapsedPreviewCount} more message${comments.length - _collapsedPreviewCount == 1 ? '' : 's'}...',
+                          l10n.moreMessages(comments.length - _collapsedPreviewCount),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.w500,
@@ -245,12 +248,13 @@ class _CompactCommentRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final sem = SemanticColors.of(context);
     final hasImage = comment.imageUrl != null;
     final text = comment.content.isNotEmpty
         ? comment.content
-        : (hasImage ? '[Image]' : '');
+        : (hasImage ? l10n.imageAlt : '');
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -281,7 +285,7 @@ class _CompactCommentRow extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Text(
-            _formatTime(comment.createdAt),
+            _formatTime(l10n, comment.createdAt),
             style: theme.textTheme.labelSmall?.copyWith(
               color: sem.textTertiary,
             ),
@@ -291,13 +295,13 @@ class _CompactCommentRow extends StatelessWidget {
     );
   }
 
-  String _formatTime(DateTime dt) {
+  String _formatTime(AppLocalizations l10n, DateTime dt) {
     final now = DateTime.now();
     final diff = now.difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inHours < 1) return '${diff.inMinutes}m';
-    if (diff.inDays < 1) return '${diff.inHours}h';
-    if (diff.inDays < 7) return '${diff.inDays}d';
+    if (diff.inMinutes < 1) return l10n.justNow;
+    if (diff.inHours < 1) return l10n.minutesAgo(diff.inMinutes);
+    if (diff.inDays < 1) return l10n.hoursAgo(diff.inHours);
+    if (diff.inDays < 7) return l10n.daysAgo(diff.inDays);
     return '${dt.month}/${dt.day}';
   }
 }
@@ -399,8 +403,9 @@ class _ExpandedConversationContentState
       _clearPendingImage();
     } catch (e) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload image: $e')),
+        SnackBar(content: Text(l10n.failedToUploadImage(e.toString()))),
       );
     } finally {
       if (mounted) setState(() => _isSending = false);
@@ -409,6 +414,7 @@ class _ExpandedConversationContentState
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -427,7 +433,7 @@ class _ExpandedConversationContentState
             if (state is CommentsFailure) {
               return Padding(
                 padding: const EdgeInsets.all(12),
-                child: Text('Error: ${state.message}'),
+                child: Text(l10n.errorWithMessage(state.message)),
               );
             }
             return const SizedBox.shrink();
@@ -475,17 +481,17 @@ class _ExpandedConversationContentState
             children: [
               IconButton(
                 icon: const Icon(Icons.image_outlined),
-                tooltip: 'Attach image',
+                tooltip: l10n.attachImage,
                 onPressed: _isSending ? null : _pickImage,
               ),
               const SizedBox(width: 4),
               Expanded(
                 child: TextField(
                   controller: _controller,
-                  decoration: const InputDecoration(
-                    hintText: 'Add a comment...',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(
+                  decoration: InputDecoration(
+                    hintText: l10n.addAComment,
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,
                     ),
@@ -522,10 +528,11 @@ class _FullCommentList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (comments.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Center(child: Text('No comments yet')),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Center(child: Text(l10n.noCommentsYet)),
       );
     }
 
@@ -550,6 +557,7 @@ class _CommentBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bubbleBg = SemanticColors.userColor(comment.userId, Theme.of(context).brightness);
     // On custom-colored bubbles, always use explicit text colors for contrast
@@ -577,7 +585,7 @@ class _CommentBubble extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                _formatTime(comment.createdAt),
+                _formatTime(l10n, comment.createdAt),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: mutedColor,
                     ),
@@ -659,13 +667,13 @@ class _CommentBubble extends StatelessWidget {
     );
   }
 
-  String _formatTime(DateTime dt) {
+  String _formatTime(AppLocalizations l10n, DateTime dt) {
     final now = DateTime.now();
     final diff = now.difference(dt);
-    if (diff.inMinutes < 1) return 'Just now';
-    if (diff.inHours < 1) return '${diff.inMinutes}m ago';
-    if (diff.inDays < 1) return '${diff.inHours}h ago';
-    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    if (diff.inMinutes < 1) return l10n.justNow;
+    if (diff.inHours < 1) return l10n.minutesAgo(diff.inMinutes);
+    if (diff.inDays < 1) return l10n.hoursAgo(diff.inHours);
+    if (diff.inDays < 7) return l10n.daysAgo(diff.inDays);
     return '${dt.month}/${dt.day}/${dt.year}';
   }
 }

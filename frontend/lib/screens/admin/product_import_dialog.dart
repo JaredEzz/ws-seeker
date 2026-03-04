@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:csv/csv.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
@@ -22,6 +23,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Dialog(
       child: Container(
         constraints: const BoxConstraints(maxWidth: 700, maxHeight: 600),
@@ -33,9 +35,9 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
               children: [
                 const Icon(Icons.upload_file, size: 28),
                 const SizedBox(width: 12),
-                const Text(
-                  'Import Products',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                Text(
+                  l10n.importProducts,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 IconButton(
@@ -66,6 +68,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
   }
 
   Widget _buildInstructions() {
+    final l10n = AppLocalizations.of(context);
     final sem = SemanticColors.of(context);
     return Container(
       padding: const EdgeInsets.all(Tokens.space16),
@@ -81,7 +84,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
               Icon(Icons.info_outline, color: sem.infoIcon),
               const SizedBox(width: Tokens.space8),
               Text(
-                'CSV Format Requirements',
+                l10n.csvFormatRequirements,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: sem.infoText,
@@ -89,15 +92,10 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
               ),
             ],
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
-            'Your CSV file should have the following columns:\n'
-            '\u2022 name (required)\n'
-            '\u2022 language (required: japanese, chinese, or korean)\n'
-            '\u2022 price (required: numeric)\n'
-            '\u2022 sku (optional: used for updates)\n'
-            '\u2022 description (optional)',
-            style: TextStyle(fontSize: 13),
+            l10n.csvInstructions,
+            style: const TextStyle(fontSize: 13),
           ),
         ],
       ),
@@ -105,10 +103,11 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
   }
 
   Widget _buildFilePickerButton() {
+    final l10n = AppLocalizations.of(context);
     return ElevatedButton.icon(
       onPressed: _isProcessing ? null : _pickFile,
       icon: const Icon(Icons.file_open),
-      label: Text(_fileName ?? 'Select CSV File'),
+      label: Text(_fileName ?? l10n.selectCsvFile),
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.all(20),
       ),
@@ -116,12 +115,13 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
   }
 
   Widget _buildPreview() {
+    final l10n = AppLocalizations.of(context);
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Preview: ${_parsedProducts!.length} products',
+            l10n.previewProducts(_parsedProducts!.length),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 8),
@@ -139,7 +139,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
                     dense: true,
                     title: Text(product.name),
                     subtitle: Text(
-                      '${product.language} | \$${product.price.toStringAsFixed(2)} | SKU: ${product.sku ?? "N/A"}',
+                      '${product.language} | \$${product.price.toStringAsFixed(2)} | SKU: ${product.sku ?? l10n.notApplicable}',
                       style: const TextStyle(fontSize: 12),
                     ),
                   );
@@ -153,6 +153,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
   }
 
   Widget _buildActionButtons() {
+    final l10n = AppLocalizations.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -166,7 +167,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
                     _importResult = null;
                   });
                 },
-          child: const Text('Cancel'),
+          child: Text(l10n.actionCancel),
         ),
         const SizedBox(width: 8),
         ElevatedButton.icon(
@@ -178,13 +179,14 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.cloud_upload),
-          label: const Text('Upload to Database'),
+          label: Text(l10n.uploadToDatabase),
         ),
       ],
     );
   }
 
   Widget _buildResultSummary() {
+    final l10n = AppLocalizations.of(context);
     final result = _importResult!;
     final created = result['created'] as int;
     final updated = result['updated'] as int;
@@ -212,7 +214,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
               ),
               const SizedBox(width: Tokens.space8),
               Text(
-                'Import Complete',
+                l10n.importComplete,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: failed > 0 ? sem.warningText : sem.successText,
@@ -221,18 +223,18 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
             ],
           ),
           const SizedBox(height: 8),
-          Text('Created: $created'),
-          Text('Updated: $updated'),
-          if (failed > 0) Text('Failed: $failed'),
+          Text(l10n.importCreated(created)),
+          Text(l10n.importUpdated(updated)),
+          if (failed > 0) Text(l10n.importFailed(failed)),
           if (errors.isNotEmpty) ...[
             const SizedBox(height: 8),
-            const Text('Errors:',
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(l10n.importErrors,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             ...errors
                 .take(5)
                 .map((e) => Text('\u2022 $e', style: const TextStyle(fontSize: 12))),
             if (errors.length > 5)
-              Text('... and ${errors.length - 5} more'),
+              Text(l10n.importMoreErrors(errors.length - 5)),
           ],
         ],
       ),
@@ -240,6 +242,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
   }
 
   Future<void> _pickFile() async {
+    final l10n = AppLocalizations.of(context);
     try {
       final result = await FilePicker.platform.pickFiles(
         type: FileType.custom,
@@ -251,7 +254,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
 
       final file = result.files.first;
       if (file.bytes == null) {
-        _showError('Failed to read file');
+        _showError(l10n.failedToReadFile);
         return;
       }
 
@@ -264,8 +267,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
       final rows = const CsvToListConverter().convert(csvString);
 
       if (rows.isEmpty || rows.length < 2) {
-        _showError(
-            'CSV file must contain a header row and at least one data row');
+        _showError(l10n.csvMinimumRows);
         setState(() {
           _isProcessing = false;
           _fileName = null;
@@ -285,7 +287,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
           (h) => h == 'imageurl' || h == 'image_url' || h == 'image');
 
       if (nameIdx == -1 || langIdx == -1 || priceIdx == -1) {
-        _showError('CSV must have columns: name, language, price');
+        _showError(l10n.csvRequiredColumns);
         setState(() {
           _isProcessing = false;
           _fileName = null;
@@ -324,7 +326,7 @@ class _ProductImportDialogState extends State<ProductImportDialog> {
         _isProcessing = false;
       });
     } catch (e) {
-      _showError('Error reading file: $e');
+      _showError(l10n.errorReadingFile(e.toString()));
       setState(() {
         _isProcessing = false;
         _fileName = null;

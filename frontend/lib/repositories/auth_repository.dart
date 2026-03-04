@@ -136,6 +136,7 @@ class FirebaseAuthRepository implements AuthRepository {
         wiseEmail: data['wiseEmail'] as String?,
         venmoHandle: data['venmoHandle'] as String?,
         paypalEmail: data['paypalEmail'] as String?,
+        preferredLocale: data['preferredLocale'] as String?,
         createdAt: user.metadata.creationTime ?? DateTime.now(),
         updatedAt: data['updatedAt'] != null
             ? DateTime.tryParse(data['updatedAt'] as String? ?? '')
@@ -178,6 +179,7 @@ class FirebaseAuthRepository implements AuthRepository {
     String? wiseEmail;
     String? venmoHandle;
     String? paypalEmail;
+    String? preferredLocale;
     DateTime? updatedAt;
 
     try {
@@ -196,6 +198,7 @@ class FirebaseAuthRepository implements AuthRepository {
         wiseEmail = data['wiseEmail'] as String?;
         venmoHandle = data['venmoHandle'] as String?;
         paypalEmail = data['paypalEmail'] as String?;
+        preferredLocale = data['preferredLocale'] as String?;
         final ts = data['updatedAt'];
         if (ts is Timestamp) updatedAt = ts.toDate();
       }
@@ -214,6 +217,7 @@ class FirebaseAuthRepository implements AuthRepository {
       wiseEmail: wiseEmail,
       venmoHandle: venmoHandle,
       paypalEmail: paypalEmail,
+      preferredLocale: preferredLocale,
       createdAt: user.metadata.creationTime ?? DateTime.now(),
       updatedAt: updatedAt,
     );

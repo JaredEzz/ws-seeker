@@ -2,6 +2,7 @@ import 'dart:js_interop';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:web/web.dart' as web;
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../repositories/invoice_repository.dart';
@@ -55,8 +56,9 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
       await _invoiceRepository.updateInvoiceStatus(invoiceId, status);
       _loadInvoices();
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Invoice status updated to $status')),
+          SnackBar(content: Text(l10n.invoiceStatusUpdated(status))),
         );
       }
     } catch (e) {
@@ -74,8 +76,9 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
       await _invoiceRepository.updateInvoice(invoiceId, updates);
       _loadInvoices();
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invoice updated')),
+          SnackBar(content: Text(l10n.invoiceUpdated)),
         );
       }
     } catch (e) {
@@ -107,8 +110,9 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
       web.URL.revokeObjectURL(url);
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to download PDF: $e')),
+          SnackBar(content: Text(l10n.failedToDownloadPdf(e.toString()))),
         );
       }
     }
@@ -116,11 +120,12 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return AdminShell(
       selectedIndex: 2,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Invoices'),
+          title: Text(l10n.invoices),
           actions: [
             const ThemeToggleButton(),
             IconButton(
@@ -139,15 +144,15 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
                 children: [
                   DropdownButton<String?>(
                     value: _statusFilter,
-                    hint: const Text('All Statuses'),
+                    hint: Text(l10n.allStatuses),
                     underline: const SizedBox.shrink(),
-                    items: const [
+                    items: [
                       DropdownMenuItem(
-                          value: null, child: Text('All Statuses')),
-                      DropdownMenuItem(value: 'draft', child: Text('Draft')),
-                      DropdownMenuItem(value: 'sent', child: Text('Sent')),
-                      DropdownMenuItem(value: 'paid', child: Text('Paid')),
-                      DropdownMenuItem(value: 'void', child: Text('Void')),
+                          value: null, child: Text(l10n.allStatuses)),
+                      DropdownMenuItem(value: 'draft', child: Text(l10n.invoiceStatusDraft)),
+                      DropdownMenuItem(value: 'sent', child: Text(l10n.invoiceStatusSent)),
+                      DropdownMenuItem(value: 'paid', child: Text(l10n.invoiceStatusPaid)),
+                      DropdownMenuItem(value: 'void', child: Text(l10n.invoiceStatusVoid)),
                     ],
                     onChanged: (val) {
                       setState(() => _statusFilter = val);
@@ -155,7 +160,7 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
                     },
                   ),
                   const SizedBox(width: 16),
-                  Text('${_invoices.length} invoices',
+                  Text(l10n.invoiceCount(_invoices.length),
                       style: Theme.of(context).textTheme.bodySmall),
                 ],
               ),
@@ -168,7 +173,7 @@ class _InvoiceManagementScreenState extends State<InvoiceManagementScreen> {
                   : _error != null
                       ? Center(child: Text('Error: $_error'))
                       : _invoices.isEmpty
-                          ? const Center(child: Text('No invoices found'))
+                          ? Center(child: Text(l10n.noInvoicesFound))
                           : _InvoiceList(
                               invoices: _invoices,
                               onUpdateStatus: _updateStatus,
@@ -354,8 +359,9 @@ class _InvoiceCardState extends State<_InvoiceCard> {
 
   Future<void> _saveEdit() async {
     if (_editableItems.isEmpty) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invoice must have at least one line item')),
+        SnackBar(content: Text(l10n.invoiceMinLineItems)),
       );
       return;
     }
@@ -389,6 +395,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final invoice = widget.invoice;
     final displayNumber =
@@ -426,36 +433,36 @@ class _InvoiceCardState extends State<_InvoiceCard> {
                   ),
                   child: Column(
                     children: [
-                      Text('CROMA WHOLESALE',
+                      Text(l10n.cromaWholesale,
                           style: theme.textTheme.titleLarge
                               ?.copyWith(fontWeight: FontWeight.bold)),
-                      const Text('527 W State Street, Unit 102'),
-                      const Text('Pleasant Grove, UT 84062'),
+                      Text(l10n.cromaAddress1),
+                      Text(l10n.cromaAddress2),
                       const SizedBox(height: 8),
                       if (invoice.displayInvoiceNumber != null)
-                        Text('Invoice #: ${invoice.displayInvoiceNumber}'),
+                        Text(l10n.invoiceNumber(invoice.displayInvoiceNumber!)),
                       if (invoice.dueDate != null)
-                        Text('Due Date: ${_formatDate(invoice.dueDate!)}'),
+                        Text(l10n.dueDateLabel(_formatDate(invoice.dueDate!))),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
 
                 // Line items
-                if (_editing) _buildEditableLineItems() else _buildReadOnlyLineItems(theme),
+                if (_editing) _buildEditableLineItems(l10n) else _buildReadOnlyLineItems(theme, l10n),
 
                 const SizedBox(height: 16),
 
                 // Totals
-                if (_editing) _buildEditableTotals(theme) else _buildReadOnlyTotals(invoice),
+                if (_editing) _buildEditableTotals(theme, l10n) else _buildReadOnlyTotals(invoice, l10n),
 
                 const SizedBox(height: 16),
 
                 // Actions
                 if (_editing)
-                  _buildEditActions()
+                  _buildEditActions(l10n)
                 else
-                  _buildReadOnlyActions(invoice),
+                  _buildReadOnlyActions(invoice, l10n),
               ],
             ),
           ),
@@ -467,7 +474,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
   // ---------------------------------------------------------------------------
   // Read-only line items table
   // ---------------------------------------------------------------------------
-  Widget _buildReadOnlyLineItems(ThemeData theme) {
+  Widget _buildReadOnlyLineItems(ThemeData theme, AppLocalizations l10n) {
     return Table(
       columnWidths: const {
         0: FlexColumnWidth(3),
@@ -481,20 +488,20 @@ class _InvoiceCardState extends State<_InvoiceCard> {
             border:
                 Border(bottom: BorderSide(color: theme.dividerColor)),
           ),
-          children: const [
+          children: [
             Padding(
-              padding: EdgeInsets.only(bottom: 8),
-              child: Text('Description',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(l10n.lineDescription,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
-            Text('Qty',
-                style: TextStyle(fontWeight: FontWeight.bold),
+            Text(l10n.lineQty,
+                style: const TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.right),
-            Text('Unit Price',
-                style: TextStyle(fontWeight: FontWeight.bold),
+            Text(l10n.lineUnitPrice,
+                style: const TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.right),
-            Text('Total',
-                style: TextStyle(fontWeight: FontWeight.bold),
+            Text(l10n.columnTotal,
+                style: const TextStyle(fontWeight: FontWeight.bold),
                 textAlign: TextAlign.right),
           ],
         ),
@@ -518,36 +525,36 @@ class _InvoiceCardState extends State<_InvoiceCard> {
   // ---------------------------------------------------------------------------
   // Editable line items
   // ---------------------------------------------------------------------------
-  Widget _buildEditableLineItems() {
+  Widget _buildEditableLineItems(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Header
-        const Row(
+        Row(
           children: [
             Expanded(
                 flex: 3,
-                child: Text('Description',
-                    style: TextStyle(fontWeight: FontWeight.bold))),
-            SizedBox(width: 8),
+                child: Text(l10n.lineDescription,
+                    style: const TextStyle(fontWeight: FontWeight.bold))),
+            const SizedBox(width: 8),
             SizedBox(
                 width: 70,
-                child: Text('Qty',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(l10n.lineQty,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center)),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             SizedBox(
                 width: 90,
-                child: Text('Unit Price',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(l10n.lineUnitPrice,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center)),
-            SizedBox(width: 8),
+            const SizedBox(width: 8),
             SizedBox(
                 width: 80,
-                child: Text('Total',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(l10n.columnTotal,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                     textAlign: TextAlign.right)),
-            SizedBox(width: 40), // delete button space
+            const SizedBox(width: 40), // delete button space
           ],
         ),
         const Divider(),
@@ -633,7 +640,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
                     onPressed: () => _removeLineItem(index),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
-                    tooltip: 'Remove line item',
+                    tooltip: l10n.removeLineItem,
                   ),
                 ),
               ],
@@ -644,7 +651,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
         TextButton.icon(
           onPressed: _addLineItem,
           icon: const Icon(Icons.add, size: 18),
-          label: const Text('Add Line Item'),
+          label: Text(l10n.addLineItem),
         ),
       ],
     );
@@ -653,23 +660,23 @@ class _InvoiceCardState extends State<_InvoiceCard> {
   // ---------------------------------------------------------------------------
   // Read-only totals (Task #8: tariff shown separately)
   // ---------------------------------------------------------------------------
-  Widget _buildReadOnlyTotals(Invoice invoice) {
+  Widget _buildReadOnlyTotals(Invoice invoice, AppLocalizations l10n) {
     return Column(
       children: [
-        _TotalRow(label: 'SUBTOTAL', amount: invoice.subtotal),
+        _TotalRow(label: l10n.invoiceSubtotal, amount: invoice.subtotal),
         if (invoice.markup > 0)
-          _TotalRow(label: 'Markup (13%)', amount: invoice.markup),
+          _TotalRow(label: l10n.invoiceMarkup, amount: invoice.markup),
         if (invoice.tariff > 0)
-          _TotalRow(label: 'Tariff', amount: invoice.tariff),
+          _TotalRow(label: l10n.invoiceTariff, amount: invoice.tariff),
         if (invoice.airShippingCost != null && invoice.airShippingCost! > 0)
-          _TotalRow(label: 'Air Shipping', amount: invoice.airShippingCost!),
+          _TotalRow(label: l10n.invoiceAirShipping, amount: invoice.airShippingCost!),
         if (invoice.oceanShippingCost != null &&
             invoice.oceanShippingCost! > 0)
           _TotalRow(
-              label: 'Ocean Shipping', amount: invoice.oceanShippingCost!),
+              label: l10n.invoiceOceanShipping, amount: invoice.oceanShippingCost!),
         const Divider(),
         _TotalRow(
-            label: 'BALANCE TOTAL', amount: invoice.total, bold: true),
+            label: l10n.invoiceBalanceTotal, amount: invoice.total, bold: true),
       ],
     );
   }
@@ -677,22 +684,22 @@ class _InvoiceCardState extends State<_InvoiceCard> {
   // ---------------------------------------------------------------------------
   // Editable totals
   // ---------------------------------------------------------------------------
-  Widget _buildEditableTotals(ThemeData theme) {
+  Widget _buildEditableTotals(ThemeData theme, AppLocalizations l10n) {
     return Column(
       children: [
         // Subtotal (auto-calculated, read-only)
-        _TotalRow(label: 'SUBTOTAL', amount: _calculatedSubtotal),
+        _TotalRow(label: l10n.invoiceSubtotal, amount: _calculatedSubtotal),
         const SizedBox(height: 8),
-        _editableTotalField('Markup', _markupController),
+        _editableTotalField(l10n.invoiceMarkupLabel, _markupController),
         const SizedBox(height: 8),
-        _editableTotalField('Tariff', _tariffController),
+        _editableTotalField(l10n.invoiceTariff, _tariffController),
         const SizedBox(height: 8),
-        _editableTotalField('Air Shipping', _airShippingController),
+        _editableTotalField(l10n.invoiceAirShipping, _airShippingController),
         const SizedBox(height: 8),
-        _editableTotalField('Ocean Shipping', _oceanShippingController),
+        _editableTotalField(l10n.invoiceOceanShipping, _oceanShippingController),
         const Divider(),
         _TotalRow(
-            label: 'BALANCE TOTAL', amount: _calculatedTotal, bold: true),
+            label: l10n.invoiceBalanceTotal, amount: _calculatedTotal, bold: true),
       ],
     );
   }
@@ -729,7 +736,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
   // ---------------------------------------------------------------------------
   // Read-only action buttons
   // ---------------------------------------------------------------------------
-  Widget _buildReadOnlyActions(Invoice invoice) {
+  Widget _buildReadOnlyActions(Invoice invoice, AppLocalizations l10n) {
     return Wrap(
       spacing: 8,
       runSpacing: 8,
@@ -738,31 +745,31 @@ class _InvoiceCardState extends State<_InvoiceCard> {
           OutlinedButton.icon(
             onPressed: _enterEditMode,
             icon: const Icon(Icons.edit, size: 18),
-            label: const Text('Edit'),
+            label: Text(l10n.actionEdit),
           ),
         OutlinedButton.icon(
           onPressed: () => widget.onDownloadPdf(invoice),
           icon: const Icon(Icons.picture_as_pdf, size: 18),
-          label: const Text('Download PDF'),
+          label: Text(l10n.downloadPdf),
         ),
         if (invoice.status == InvoiceStatus.draft)
           FilledButton.icon(
             onPressed: () => widget.onUpdateStatus(invoice.id, 'sent'),
             icon: const Icon(Icons.send, size: 18),
-            label: const Text('Mark as Sent'),
+            label: Text(l10n.markAsSent),
           ),
         if (invoice.status == InvoiceStatus.sent)
           FilledButton.icon(
             onPressed: () => widget.onUpdateStatus(invoice.id, 'paid'),
             icon: const Icon(Icons.check_circle, size: 18),
-            label: const Text('Mark as Paid'),
+            label: Text(l10n.markAsPaid),
           ),
         if (invoice.status != InvoiceStatus.voided &&
             invoice.status != InvoiceStatus.paid)
           OutlinedButton.icon(
             onPressed: () => widget.onUpdateStatus(invoice.id, 'void'),
             icon: const Icon(Icons.cancel, size: 18),
-            label: const Text('Void'),
+            label: Text(l10n.invoiceStatusVoid),
           ),
       ],
     );
@@ -771,13 +778,13 @@ class _InvoiceCardState extends State<_InvoiceCard> {
   // ---------------------------------------------------------------------------
   // Edit-mode action buttons
   // ---------------------------------------------------------------------------
-  Widget _buildEditActions() {
+  Widget _buildEditActions(AppLocalizations l10n) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         OutlinedButton(
           onPressed: _saving ? null : _cancelEdit,
-          child: const Text('Cancel'),
+          child: Text(l10n.actionCancel),
         ),
         const SizedBox(width: 8),
         FilledButton.icon(
@@ -788,7 +795,7 @@ class _InvoiceCardState extends State<_InvoiceCard> {
                   height: 18,
                   child: CircularProgressIndicator(strokeWidth: 2))
               : const Icon(Icons.save, size: 18),
-          label: const Text('Save'),
+          label: Text(l10n.actionSave),
         ),
       ],
     );
@@ -838,12 +845,13 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final (label, color) = switch (status) {
-      InvoiceStatus.draft => ('Draft', isDark ? Colors.grey.shade300 : Colors.grey.shade700),
-      InvoiceStatus.sent => ('Sent', isDark ? Colors.blue.shade300 : Colors.blue.shade700),
-      InvoiceStatus.paid => ('Paid', isDark ? Colors.green.shade300 : Colors.green.shade700),
-      InvoiceStatus.voided => ('Void', isDark ? Colors.red.shade300 : Colors.red.shade700),
+      InvoiceStatus.draft => (l10n.invoiceStatusDraft, isDark ? Colors.grey.shade300 : Colors.grey.shade700),
+      InvoiceStatus.sent => (l10n.invoiceStatusSent, isDark ? Colors.blue.shade300 : Colors.blue.shade700),
+      InvoiceStatus.paid => (l10n.invoiceStatusPaid, isDark ? Colors.green.shade300 : Colors.green.shade700),
+      InvoiceStatus.voided => (l10n.invoiceStatusVoid, isDark ? Colors.red.shade300 : Colors.red.shade700),
     };
 
     return Container(

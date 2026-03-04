@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../app/design_tokens.dart';
 import '../../blocs/auth/auth_bloc.dart';
@@ -101,7 +102,7 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to upload image: $e')),
+        SnackBar(content: Text(AppLocalizations.of(context).failedToUploadImage(e.toString()))),
       );
     } finally {
       if (mounted) setState(() => _isSending = false);
@@ -116,7 +117,7 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Comments', style: Theme.of(context).textTheme.titleMedium),
+            Text(AppLocalizations.of(context).comments, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             BlocBuilder<CommentsBloc, CommentsState>(
               builder: (context, state) {
@@ -182,17 +183,17 @@ class _CommentSectionContentState extends State<_CommentSectionContent> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.image_outlined),
-                  tooltip: 'Attach image',
+                  tooltip: AppLocalizations.of(context).attachImage,
                   onPressed: _isSending ? null : _pickImage,
                 ),
                 const SizedBox(width: 4),
                 Expanded(
                   child: TextField(
                     controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Add a comment...',
-                      border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(
+                    decoration: InputDecoration(
+                      hintText: AppLocalizations.of(context).addAComment,
+                      border: const OutlineInputBorder(),
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 8,
                       ),
@@ -231,9 +232,9 @@ class _CommentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (comments.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Center(child: Text('No comments yet')),
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        child: Center(child: Text(AppLocalizations.of(context).noCommentsYet)),
       );
     }
 

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/auth/auth_event.dart';
 import '../../blocs/auth/auth_state.dart';
+import '../../blocs/locale/locale_cubit.dart';
 import '../../repositories/user_repository.dart';
 import '../../widgets/common/theme_toggle_button.dart';
 
@@ -115,19 +117,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ? null
                     : _paypalEmailController.text.trim(),
                 savedAddress: address,
+                preferredLocale: context.read<LocaleCubit>().state.languageCode,
               );
 
       if (mounted) {
         // Update the AuthBloc so the new profile persists across screens
         context.read<AuthBloc>().add(AuthUserChanged(updatedUser));
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile saved')),
+          SnackBar(content: Text(AppLocalizations.of(context).profileSaved)),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text(AppLocalizations.of(context).errorWithMessage(e.toString()))),
         );
       }
     }
@@ -136,14 +139,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final authState = context.watch<AuthBloc>().state;
     final user =
         authState is AuthAuthenticated ? authState.user : null;
     final theme = Theme.of(context);
+    final currentLocale = context.watch<LocaleCubit>().state;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Profile'),
+        title: Text(l10n.myProfile),
         actions: const [ThemeToggleButton()],
       ),
       body: SingleChildScrollView(
@@ -160,11 +165,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Account', style: theme.textTheme.titleMedium),
+                      Text(l10n.sectionAccount, style: theme.textTheme.titleMedium),
                       const SizedBox(height: 12),
-                      Text('Email: ${user?.email ?? ""}'),
-                      Text(
-                          'Role: ${user?.role.name ?? "wholesaler"}'),
+                      Text(l10n.emailLabel(user?.email ?? '')),
+                      Text(l10n.roleLabel(user?.role.name ?? 'wholesaler')),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+
+              // Language preference
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.languagePreference, style: theme.textTheme.titleMedium),
+                      const SizedBox(height: 12),
+                      SegmentedButton<String>(
+                        segments: [
+                          ButtonSegment(value: 'en', label: Text(l10n.languageEnglish)),
+                          ButtonSegment(value: 'ja', label: Text(l10n.languageJapaneseOption)),
+                        ],
+                        selected: {currentLocale.languageCode},
+                        onSelectionChanged: (selection) {
+                          context.read<LocaleCubit>().setLocale(Locale(selection.first));
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -178,12 +207,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Contact Info',
+                      Text(l10n.sectionContactInfo,
                           style: theme.textTheme.titleMedium),
                       const SizedBox(height: 12),
-                      _field(_discordNameController, 'Discord Name'),
+                      _field(_discordNameController, l10n.discordName),
                       const SizedBox(height: 12),
-                      _field(_phoneController, 'Phone'),
+                      _field(_phoneController, l10n.phone),
                     ],
                   ),
                 ),
@@ -197,44 +226,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Payment Info',
+                      Text(l10n.sectionPaymentInfo,
                           style: theme.textTheme.titleMedium),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
                         value: _preferredPaymentMethod,
-                        decoration: const InputDecoration(
-                          labelText: 'Preferred Payment Method',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
+                        decoration: InputDecoration(
+                          labelText: l10n.preferredPaymentMethod,
+                          border: const OutlineInputBorder(),
+                          contentPadding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 12),
                         ),
-                        items: const [
+                        items: [
                           DropdownMenuItem(
-                              value: 'Venmo', child: Text('Venmo')),
+                              value: 'Venmo', child: Text(l10n.venmo)),
                           DropdownMenuItem(
-                              value: 'PayPal', child: Text('PayPal')),
+                              value: 'PayPal', child: Text(l10n.payPal)),
                           DropdownMenuItem(
-                              value: 'ACH', child: Text('ACH')),
+                              value: 'ACH', child: Text(l10n.ach)),
                           DropdownMenuItem(
-                              value: 'Wise', child: Text('Wise')),
+                              value: 'Wise', child: Text(l10n.wise)),
                         ],
                         onChanged: (val) =>
                             setState(() => _preferredPaymentMethod = val),
                       ),
                       if (_preferredPaymentMethod == 'Wise') ...[
                         const SizedBox(height: 12),
-                        _field(_wiseEmailController, 'Wise Email',
-                            hint: 'Email registered with Wise'),
+                        _field(_wiseEmailController, l10n.wiseEmailLabel,
+                            hint: l10n.wiseEmailHint),
                       ],
                       if (_preferredPaymentMethod == 'Venmo') ...[
                         const SizedBox(height: 12),
-                        _field(_venmoHandleController, 'Venmo Handle',
-                            hint: '@username'),
+                        _field(_venmoHandleController, l10n.venmoHandleLabel,
+                            hint: l10n.venmoHandleHint),
                       ],
                       if (_preferredPaymentMethod == 'PayPal') ...[
                         const SizedBox(height: 12),
-                        _field(_paypalEmailController, 'PayPal Email',
-                            hint: 'Email registered with PayPal'),
+                        _field(_paypalEmailController, l10n.paypalEmailLabel,
+                            hint: l10n.paypalEmailHint),
                       ],
                     ],
                   ),
@@ -249,27 +278,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Saved Shipping Address',
+                      Text(l10n.savedShippingAddress,
                           style: theme.textTheme.titleMedium),
                       const SizedBox(height: 4),
-                      Text('This will pre-fill your order forms.',
+                      Text(l10n.addressPrefillNote,
                           style: theme.textTheme.bodySmall),
                       const SizedBox(height: 12),
-                      _field(_fullNameController, 'Full Name'),
+                      _field(_fullNameController, l10n.fullName),
                       const SizedBox(height: 12),
-                      _field(_addressLine1Controller, 'Address Line 1'),
+                      _field(_addressLine1Controller, l10n.addressLine1),
                       const SizedBox(height: 12),
                       _field(_addressLine2Controller,
-                          'Address Line 2 (optional)'),
+                          l10n.addressLine2Optional),
                       const SizedBox(height: 12),
                       Row(
                         children: [
                           Expanded(
-                              child: _field(_cityController, 'City')),
+                              child: _field(_cityController, l10n.city)),
                           const SizedBox(width: 12),
                           Expanded(
                               child:
-                                  _field(_stateController, 'State')),
+                                  _field(_stateController, l10n.state)),
                         ],
                       ),
                       const SizedBox(height: 12),
@@ -277,11 +306,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           Expanded(
                               child: _field(
-                                  _postalCodeController, 'Postal Code')),
+                                  _postalCodeController, l10n.postalCode)),
                           const SizedBox(width: 12),
                           Expanded(
                               child:
-                                  _field(_countryController, 'Country')),
+                                  _field(_countryController, l10n.country)),
                         ],
                       ),
                     ],
@@ -302,7 +331,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: CircularProgressIndicator(
                               strokeWidth: 2),
                         )
-                      : const Text('Save Profile'),
+                      : Text(l10n.saveProfile),
                 ),
               ),
               const SizedBox(height: 32),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 import '../../blocs/auth/auth_bloc.dart';
@@ -16,60 +17,72 @@ class AdminShell extends StatelessWidget {
     required this.child,
   });
 
-  static const _allDestinations = [
+  static List<_AdminDestination> _allDestinations(AppLocalizations l10n) => [
     _AdminDestination(
       icon: Icons.receipt_long_outlined,
       selectedIcon: Icons.receipt_long,
-      label: 'Orders',
+      label: l10n.navOrders,
       path: '/admin/orders',
     ),
     _AdminDestination(
       icon: Icons.inventory_2_outlined,
       selectedIcon: Icons.inventory_2,
-      label: 'Products',
+      label: l10n.navProducts,
       path: '/admin/products',
     ),
     _AdminDestination(
       icon: Icons.description_outlined,
       selectedIcon: Icons.description,
-      label: 'Invoices',
+      label: l10n.navInvoices,
       path: '/admin/invoices',
     ),
     _AdminDestination(
       icon: Icons.people_outlined,
       selectedIcon: Icons.people,
-      label: 'Customers',
+      label: l10n.navCustomers,
       path: '/admin/customers',
     ),
     _AdminDestination(
       icon: Icons.chat_outlined,
       selectedIcon: Icons.chat,
-      label: 'Chats',
+      label: l10n.navChats,
       path: '/admin/chats',
     ),
     _AdminDestination(
       icon: Icons.history_outlined,
       selectedIcon: Icons.history,
-      label: 'Audit Logs',
+      label: l10n.navAuditLogs,
       path: '/admin/audit-logs',
+    ),
+    _AdminDestination(
+      icon: Icons.person_outlined,
+      selectedIcon: Icons.person,
+      label: l10n.navProfile,
+      path: '/profile',
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
     final authState = context.watch<AuthBloc>().state;
     final isSupplier = authState is AuthAuthenticated &&
         authState.user.role == UserRole.supplier;
 
+    final allDest = _allDestinations(l10n);
+
     // Suppliers see Orders + Chats only (no Products, Invoices, or Audit Logs)
     final destinations = isSupplier
-        ? _allDestinations
-            .where((d) => d.label == 'Orders' || d.label == 'Chats')
+        ? allDest
+            .where((d) =>
+                d.path == '/admin/orders' ||
+                d.path == '/admin/chats' ||
+                d.path == '/profile')
             .toList()
-        : _allDestinations;
+        : allDest;
 
-    final label = isSupplier ? 'Supplier' : 'Admin';
+    final label = isSupplier ? l10n.labelSupplier : l10n.labelAdmin;
 
     void onDestinationSelected(int index) {
       if (index < destinations.length && index != selectedIndex) {
@@ -106,7 +119,7 @@ class AdminShell extends StatelessWidget {
                         const SizedBox(height: 8),
                         IconButton(
                           icon: const Icon(Icons.arrow_back),
-                          tooltip: 'Back to Dashboard',
+                          tooltip: l10n.backToDashboard,
                           onPressed: () => context.go('/dashboard'),
                         ),
                       ],

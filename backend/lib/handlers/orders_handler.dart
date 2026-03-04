@@ -288,6 +288,12 @@ class OrdersHandler {
         details: auditDetails,
       );
 
+      // Send payment proof notification (fire-and-forget)
+      if (updateRequest.proofOfPaymentUrl != null &&
+          updateRequest.proofOfPaymentUrl!.isNotEmpty) {
+        _sendPaymentProofNotificationEmail(order);
+      }
+
       return Response.ok(
           jsonEncode({'message': 'Order updated'}),
           headers: {'Content-Type': 'application/json'});
@@ -407,6 +413,17 @@ class OrdersHandler {
         details: {'commentId': comment['id']},
       );
 
+      // Send comment notification email (fire-and-forget)
+      final commenterRole =
+          request.context[AuthContext.userRole] as UserRole? ??
+              UserRole.wholesaler;
+      _sendCommentNotificationEmail(
+        orderId: orderId,
+        commenterRole: commenterRole,
+        commenterName: userEmail ?? 'Unknown',
+        content: content,
+      );
+
       return Response(201,
           body: jsonEncode({'comment': comment}),
           headers: {'Content-Type': 'application/json'});
@@ -483,6 +500,98 @@ class OrdersHandler {
     }
   }
 
+  /// Send comment notification email (fire-and-forget)
+  void _sendCommentNotificationEmail({
+    required String orderId,
+    required UserRole commenterRole,
+    required String commenterName,
+    required String content,
+  }) async {
+    final emailSvc = _emailService;
+    final userSvc = _userService;
+    if (emailSvc == null || userSvc == null) return;
+    try {
+      final order = await _orderService.getOrderById(orderId);
+      if (order == null) return;
+
+      final displayNumber =
+          order['displayOrderNumber'] as String? ?? orderId;
+      final preview =
+          content.length > 200 ? '${content.substring(0, 200)}...' : content;
+      final isJapanese = order['language'] == 'japanese';
+
+      List<String> recipientEmails;
+      if (commenterRole == UserRole.wholesaler) {
+        // Customer commented → notify admins
+        recipientEmails =
+            await userSvc.getAdminEmails(includeSuppliers: isJapanese);
+        // Also add account manager if set
+        final amId = order['accountManagerId'] as String?;
+        if (amId != null) {
+          final am = await userSvc.getUser(amId);
+          final amEmail = am?['email'] as String?;
+          if (amEmail != null) recipientEmails.add(amEmail);
+        }
+        recipientEmails = recipientEmails.toSet().toList();
+      } else {
+        // Admin/supplier commented → notify customer
+        final customerId = order['userId'] as String;
+        final customer = await userSvc.getUser(customerId);
+        final email = customer?['email'] as String?;
+        recipientEmails = email != null ? [email] : [];
+      }
+
+      for (final email in recipientEmails) {
+        await emailSvc.sendCommentNotification(
+          toEmail: email,
+          orderId: orderId,
+          displayOrderNumber: displayNumber,
+          commenterName: commenterName,
+          commentPreview: preview,
+        );
+      }
+    } catch (e) {
+      print('Failed to send comment notification: $e');
+    }
+  }
+
+  /// Send payment proof uploaded notification (fire-and-forget)
+  void _sendPaymentProofNotificationEmail(Map<String, dynamic> order) async {
+    final emailSvc = _emailService;
+    final userSvc = _userService;
+    if (emailSvc == null || userSvc == null) return;
+    try {
+      final orderId = order['id'] as String;
+      final displayNumber =
+          order['displayOrderNumber'] as String? ?? orderId;
+      final customerId = order['userId'] as String;
+      final customer = await userSvc.getUser(customerId);
+      final customerName = customer?['email'] as String? ?? 'Customer';
+      final isJapanese = order['language'] == 'japanese';
+
+      var recipientEmails =
+          await userSvc.getAdminEmails(includeSuppliers: isJapanese);
+      final amId = order['accountManagerId'] as String?;
+      if (amId != null) {
+        final am = await userSvc.getUser(amId);
+        final amEmail = am?['email'] as String?;
+        if (amEmail != null) recipientEmails.add(amEmail);
+      }
+      recipientEmails = recipientEmails.toSet().toList();
+
+      for (final email in recipientEmails) {
+        await emailSvc.sendPaymentProofUploaded(
+          toEmail: email,
+          orderId: orderId,
+          displayOrderNumber: displayNumber,
+          customerName: customerName,
+        );
+      }
+    } catch (e) {
+      print('Failed to send payment proof notification: $e');
+    }
+  }
+
   /// Send status change emails (fire-and-forget)
   void _sendStatusChangeEmail(
     Map<String, dynamic> order,
@@ -508,6 +617,16 @@ class OrdersHandler {
           'Customer';
 
       switch (newStatus) {
+        case OrderStatus.awaitingQuote:
+          await emailSvc.sendStatusChangeNotification(
+            toEmail: email,
+            orderId: orderId,
+            displayOrderNumber: displayNumber,
+            customerName: customerName,
+            heading: 'Order Under Review',
+            message:
+                'Your order <strong>$displayNumber</strong> is being reviewed. We\'ll send you a quote soon.',
+          );
         case OrderStatus.invoiced:
           await emailSvc.sendInvoiceNotification(
             toEmail: email,
@@ -516,6 +635,16 @@ class OrdersHandler {
             customerName: customerName,
             totalAmount: (order['totalAmount'] as num).toDouble(),
             invoiceNumber: order['invoiceId'] as String?,
+          );
+        case OrderStatus.paymentPending:
+          await emailSvc.sendStatusChangeNotification(
+            toEmail: email,
+            orderId: orderId,
+            displayOrderNumber: displayNumber,
+            customerName: customerName,
+            heading: 'Payment Pending',
+            message:
+                'Your invoice for order <strong>$displayNumber</strong> is ready for payment. Please submit payment at your earliest convenience.',
           );
         case OrderStatus.paymentReceived:
           await emailSvc.sendPaymentReceived(
@@ -532,8 +661,28 @@ class OrdersHandler {
             trackingNumber: update.trackingNumber ?? order['trackingNumber'] as String?,
             trackingCarrier: update.trackingCarrier ?? order['trackingCarrier'] as String?,
           );
+        case OrderStatus.delivered:
+          await emailSvc.sendStatusChangeNotification(
+            toEmail: email,
+            orderId: orderId,
+            displayOrderNumber: displayNumber,
+            customerName: customerName,
+            heading: 'Order Delivered',
+            message:
+                'Your order <strong>$displayNumber</strong> has been delivered. Thank you for your business!',
+          );
+        case OrderStatus.cancelled:
+          await emailSvc.sendStatusChangeNotification(
+            toEmail: email,
+            orderId: orderId,
+            displayOrderNumber: displayNumber,
+            customerName: customerName,
+            heading: 'Order Cancelled',
+            message:
+                'Your order <strong>$displayNumber</strong> has been cancelled. Please contact us if you have questions.',
+          );
         default:
-          break; // No email for other status changes
+          break; // No email for other status changes (e.g., submitted)
       }
     } catch (e) {
       print('Failed to send status change email: $e');

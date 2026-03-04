@@ -38,6 +38,7 @@ class UserService {
       'venmoHandle',
       'paypalEmail',
       'savedAddress',
+      'preferredLocale',
     ];
 
     for (final field in allowedFields) {
@@ -69,6 +70,23 @@ class UserService {
       data['id'] = doc.id;
       return data;
     }).toList();
+  }
+
+  /// Get emails of all admin-level users (superUser + supplier).
+  /// Used for comment and payment proof notifications.
+  Future<List<String>> getAdminEmails({bool includeSuppliers = false}) async {
+    final superUsers = await listUsers(roleFilter: UserRole.superUser);
+    final emails = superUsers
+        .map((u) => u['email'] as String?)
+        .whereType<String>()
+        .toList();
+    if (includeSuppliers) {
+      final suppliers = await listUsers(roleFilter: UserRole.supplier);
+      emails.addAll(
+        suppliers.map((u) => u['email'] as String?).whereType<String>(),
+      );
+    }
+    return emails.toSet().toList(); // deduplicate
   }
 
   /// Assign (or clear) an account manager for a user.

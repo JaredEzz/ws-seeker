@@ -158,6 +158,77 @@ class EmailService {
     );
   }
 
+  /// Send comment notification
+  Future<void> sendCommentNotification({
+    required String toEmail,
+    required String orderId,
+    required String displayOrderNumber,
+    required String commenterName,
+    required String commentPreview,
+  }) async {
+    await _sendEmail(
+      to: toEmail,
+      subject: 'New Comment on Order $displayOrderNumber',
+      html: _buildTemplate(
+        heading: 'New Comment',
+        body: '''
+        <p><strong>$commenterName</strong> left a comment on order <strong>$displayOrderNumber</strong>:</p>
+        <div style="background-color:#f4f4f5;border-left:4px solid #18181b;padding:12px 16px;margin:16px 0;border-radius:0 8px 8px 0;">
+          <p style="margin:0;color:#3f3f46;font-style:italic;">$commentPreview</p>
+        </div>
+        ''',
+        ctaText: 'View Order',
+        ctaUrl: '$_appUrl/orders/$orderId',
+      ),
+    );
+  }
+
+  /// Send payment proof uploaded notification to admins
+  Future<void> sendPaymentProofUploaded({
+    required String toEmail,
+    required String orderId,
+    required String displayOrderNumber,
+    required String customerName,
+  }) async {
+    await _sendEmail(
+      to: toEmail,
+      subject: 'Payment Proof Uploaded — $displayOrderNumber',
+      html: _buildTemplate(
+        heading: 'Payment Proof Uploaded',
+        body: '''
+        <p><strong>$customerName</strong> has uploaded proof of payment for order <strong>$displayOrderNumber</strong>.</p>
+        <p>Please review the payment proof and update the order status accordingly.</p>
+        ''',
+        ctaText: 'Review Order',
+        ctaUrl: '$_appUrl/orders/$orderId',
+      ),
+    );
+  }
+
+  /// Send generic status change notification to customer
+  Future<void> sendStatusChangeNotification({
+    required String toEmail,
+    required String orderId,
+    required String displayOrderNumber,
+    required String customerName,
+    required String heading,
+    required String message,
+  }) async {
+    await _sendEmail(
+      to: toEmail,
+      subject: 'Order Update — $displayOrderNumber',
+      html: _buildTemplate(
+        heading: heading,
+        body: '''
+        <p>Hi $customerName,</p>
+        <p>$message</p>
+        ''',
+        ctaText: 'View Order',
+        ctaUrl: '$_appUrl/orders/$orderId',
+      ),
+    );
+  }
+
   Future<void> _sendEmail({
     required String to,
     required String subject,

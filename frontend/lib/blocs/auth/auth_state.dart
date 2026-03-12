@@ -22,9 +22,7 @@ final class AuthUnauthenticated extends AuthState {
 }
 
 final class AuthMagicLinkSent extends AuthState {
-  // TODO: Remove link field when ready for production
-  final String? link;
-  const AuthMagicLinkSent({this.link});
+  const AuthMagicLinkSent();
 }
 
 final class AuthFailure extends AuthState {

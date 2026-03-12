@@ -19,6 +19,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthGoogleLoginRequested>(_onGoogleLoginRequested);
     on<AuthLogoutRequested>(_onLogoutRequested);
     on<AuthUserChanged>(_onUserChanged);
+    on<AuthImpersonateRequested>(_onImpersonateRequested);
 
     // Listen to auth state changes (handles redirect result automatically)
     _userSubscription = _authRepository.userChanges.listen((user) {
@@ -105,12 +106,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(const AuthLoading());
     try {
-      // TODO: Remove skipEmail when ready for production
-      final link = await _authRepository.loginWithMagicLink(
-        event.email,
-        skipEmail: event.skipEmail,
-      );
-      emit(AuthMagicLinkSent(link: link));
+      await _authRepository.loginWithMagicLink(event.email);
+      emit(const AuthMagicLinkSent());
     } catch (e) {
       emit(AuthFailure(message: e.toString()));
     }
@@ -148,5 +145,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     await _authRepository.logout();
     emit(const AuthUnauthenticated());
+  }
+
+  Future<void> _onImpersonateRequested(
+    AuthImpersonateRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+    try {
+      final user = await _authRepository.impersonateUser(event.targetUserId);
+      emit(AuthAuthenticated(user: user));
+    } catch (e) {
+      emit(AuthFailure(message: e.toString()));
+    }
   }
 }

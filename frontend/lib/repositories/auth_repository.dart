@@ -8,13 +8,13 @@ import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
 abstract interface class AuthRepository {
   Future<AppUser?> getCurrentUser();
-  // TODO: Remove skipEmail parameter when ready for production
-  Future<String?> loginWithMagicLink(String email, {bool skipEmail = false});
+  Future<void> loginWithMagicLink(String email);
   Future<AppUser> verifyMagicLink(String email, String token);
   Future<String?> retrievePendingEmail();
   bool isSignInWithEmailLink(String link);
   Future<void> loginWithGoogle();
   Future<void> logout();
+  Future<AppUser> impersonateUser(String targetUserId);
   Stream<AppUser?> get userChanges;
 }
 
@@ -36,33 +36,20 @@ class FirebaseAuthRepository implements AuthRepository {
     return _fetchUserProfile(user);
   }
 
-  // TODO: Remove skipEmail parameter when ready for production
   @override
-  Future<String?> loginWithMagicLink(String email, {bool skipEmail = false}) async {
-    try {
-      final response = await http.post(
-        Uri.parse('${AppConstants.apiBaseUrl}${ApiRoutes.magicLink}'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          if (skipEmail) 'skipEmail': true,
-        }),
-      );
+  Future<void> loginWithMagicLink(String email) async {
+    final response = await http.post(
+      Uri.parse('${AppConstants.apiBaseUrl}${ApiRoutes.magicLink}'),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({'email': email}),
+    );
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to send magic link: ${response.body}');
-      }
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_emailKey, email);
-
-      // TODO: Remove link return when ready for production
-      final data = jsonDecode(response.body) as Map<String, dynamic>;
-      return data['link'] as String?;
-    } catch (e) {
-      print('Failed to send magic link: $e');
-      rethrow;
+    if (response.statusCode != 200) {
+      throw Exception('Failed to send magic link: ${response.body}');
     }
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_emailKey, email);
   }
 
   @override
@@ -167,6 +154,60 @@ class FirebaseAuthRepository implements AuthRepository {
     });
   }
 
+  @override
+  Future<AppUser> impersonateUser(String targetUserId) async {
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser == null) throw Exception('Not authenticated');
+
+    final idToken = await currentUser.getIdToken();
+    final response = await http.post(
+      Uri.parse('${AppConstants.apiBaseUrl}${ApiRoutes.users}/$targetUserId/impersonate'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $idToken',
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to impersonate: ${response.body}');
+    }
+
+    final data = jsonDecode(response.body) as Map<String, dynamic>;
+    final customToken = data['token'] as String;
+
+    // Sign in as the target user
+    final userCredential = await _firebaseAuth.signInWithCustomToken(customToken);
+    final user = userCredential.user;
+    if (user == null) throw Exception('Impersonation sign-in failed');
+
+    final role = _parseRole(data['role'] as String?, user.email);
+    _lastVerifiedRole = role;
+    ShippingAddress? savedAddress;
+    if (data['savedAddress'] != null) {
+      savedAddress = ShippingAddress.fromJson(
+        Map<String, dynamic>.from(data['savedAddress'] as Map),
+      );
+    }
+
+    return AppUser(
+      id: user.uid,
+      email: user.email ?? '',
+      role: role,
+      savedAddress: savedAddress,
+      discordName: data['discordName'] as String?,
+      phone: data['phone'] as String?,
+      preferredPaymentMethod: data['preferredPaymentMethod'] as String?,
+      wiseEmail: data['wiseEmail'] as String?,
+      venmoHandle: data['venmoHandle'] as String?,
+      paypalEmail: data['paypalEmail'] as String?,
+      preferredLocale: data['preferredLocale'] as String?,
+      createdAt: user.metadata.creationTime ?? DateTime.now(),
+      updatedAt: data['updatedAt'] != null
+          ? DateTime.tryParse(data['updatedAt'] as String? ?? '')
+          : null,
+    );
+  }
+
   /// Fetch user profile from Firestore for returning users (app restart).
   /// Falls back to cached verified role if available, otherwise default
   /// wholesaler role, when Firestore read fails.
@@ -246,9 +287,8 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<String?> loginWithMagicLink(String email, {bool skipEmail = false}) async {
+  Future<void> loginWithMagicLink(String email) async {
     await Future.delayed(const Duration(seconds: 1));
-    return null;
   }
 
   @override
@@ -287,6 +327,11 @@ class MockAuthRepository implements AuthRepository {
   Future<void> logout() async {
     _currentUser = null;
     _userController.add(null);
+  }
+
+  @override
+  Future<AppUser> impersonateUser(String targetUserId) async {
+    throw UnimplementedError('Impersonation not supported in mock');
   }
 
   @override

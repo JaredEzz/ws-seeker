@@ -17,10 +17,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
 
-  // TODO: Remove _debugMode and all related code when ready for production.
-  // Set to false to send real emails via Resend.
-  bool _debugMode = true;
-
   @override
   void dispose() {
     _emailController.dispose();
@@ -46,14 +42,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   SnackBar(content: Text(state.message)),
                 );
               } else if (state is AuthMagicLinkSent) {
-                // TODO: Remove debug link dialog when ready for production
-                if (state.link != null) {
-                  _showDebugLinkDialog(context, state.link!);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.magicLinkSent)),
-                  );
-                }
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.magicLinkSent)),
+                );
               }
             },
             builder: (context, state) {
@@ -94,8 +85,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             context.read<AuthBloc>().add(
                                   AuthMagicLinkRequested(
                                     email: _emailController.text,
-                                    // TODO: Remove skipEmail when ready for production
-                                    skipEmail: _debugMode,
                                   ),
                                 );
                           },
@@ -110,60 +99,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           )
                         : Text(l10n.sendMagicLink),
                   ),
-                  // TODO: Remove debug mode switch when ready for production
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        l10n.debugMode,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: SemanticColors.of(context).textTertiary,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Switch(
-                        value: _debugMode,
-                        onChanged: (v) => setState(() => _debugMode = v),
-                      ),
-                    ],
-                  ),
                 ],
               );
             },
           ),
         ),
-      ),
-    );
-  }
-
-  // TODO: Remove this method when ready for production
-  void _showDebugLinkDialog(BuildContext context, String link) {
-    final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.debugMagicLink),
-        content: SelectableText(
-          link,
-          style: TextStyle(fontSize: 14, color: Theme.of(ctx).colorScheme.primary),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(l10n.actionClose),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              // Navigate to the callback URL directly
-              final uri = Uri.parse(link);
-              context.read<AuthBloc>().add(AuthDeepLinkChecked(uri));
-            },
-            child: Text(l10n.openLink),
-          ),
-        ],
       ),
     );
   }

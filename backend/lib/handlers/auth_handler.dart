@@ -24,15 +24,10 @@ class AuthHandler {
           return Response.badRequest(body: jsonEncode({'error': 'Email is required'}));
         }
 
-        // TODO: Remove skipEmail support when ready for production
-        final skipEmail = payload['skipEmail'] == true;
-        final link = await _authService.sendMagicLink(email, skipEmail: skipEmail);
+        await _authService.sendMagicLink(email);
 
         return Response.ok(
-          jsonEncode({
-            'message': skipEmail ? 'Magic link generated' : 'Magic link sent',
-            if (link != null) 'link': link,
-          }),
+          jsonEncode({'message': 'Magic link sent'}),
           headers: {'Content-Type': 'application/json'},
         );
       } catch (e) {

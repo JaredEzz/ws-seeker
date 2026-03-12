@@ -3,6 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:ws_seeker_shared/ws_seeker_shared.dart';
 
+import 'package:go_router/go_router.dart';
+
+import '../../blocs/auth/auth_bloc.dart';
+import '../../blocs/auth/auth_event.dart';
+import '../../blocs/auth/auth_state.dart';
 import '../../blocs/customers/customers_bloc.dart';
 import '../../repositories/user_repository.dart';
 import '../../widgets/navigation/admin_shell.dart';
@@ -167,6 +172,7 @@ class _CustomerManagementContentState
                         DataColumn(label: Text(l10n.phone)),
                         DataColumn(label: Text(l10n.accountManager)),
                         DataColumn(label: Text(l10n.columnCreated)),
+                        const DataColumn(label: Text('Actions')),
                       ],
                       rows: filtered.map((customer) {
                         return DataRow(
@@ -183,6 +189,9 @@ class _CustomerManagementContentState
                             DataCell(Text(
                               '${customer.createdAt.month}/${customer.createdAt.day}/${customer.createdAt.year}',
                             )),
+                            DataCell(
+                              _LoginAsButton(customer: customer),
+                            ),
                           ],
                         );
                       }).toList(),
@@ -191,6 +200,58 @@ class _CustomerManagementContentState
                 ),
         ),
       ],
+    );
+  }
+}
+
+class _LoginAsButton extends StatelessWidget {
+  final AppUser customer;
+
+  const _LoginAsButton({required this.customer});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (prev, curr) =>
+          curr is AuthAuthenticated && prev is! AuthAuthenticated,
+      listener: (context, state) {
+        // After impersonation succeeds, navigate to dashboard
+        if (state is AuthAuthenticated) {
+          context.go('/dashboard');
+        }
+      },
+      child: TextButton.icon(
+        icon: const Icon(Icons.login, size: 16),
+        label: const Text('Login as'),
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Impersonate User'),
+              content: Text(
+                'You will be logged in as ${customer.email}. '
+                'To return to your own account, log out and log back in.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(),
+                  child: const Text('Cancel'),
+                ),
+                FilledButton(
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    context.read<AuthBloc>().add(
+                          AuthImpersonateRequested(
+                              targetUserId: customer.id),
+                        );
+                  },
+                  child: const Text('Continue'),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

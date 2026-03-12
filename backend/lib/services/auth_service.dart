@@ -35,8 +35,7 @@ class AuthService {
         _shopifyService = shopifyService,
         _userService = userService;
 
-  // TODO: Remove skipEmail parameter when ready for production
-  Future<String?> sendMagicLink(String email, {bool skipEmail = false}) async {
+  Future<void> sendMagicLink(String email) async {
     final token = const Uuid().v4();
     final expiresAt = DateTime.now().add(const Duration(minutes: 15));
 
@@ -49,19 +48,12 @@ class AuthService {
 
     final link = '$_baseUrl/auth/callback?token=$token&email=$email';
 
-    // TODO: Remove skipEmail branch when ready for production
-    if (skipEmail) {
-      return link;
-    }
-
     // Send email via Resend
     await _sendEmail(
       to: email,
       subject: 'Sign in to WS-Seeker',
       html: _buildHtmlTemplate(link),
     );
-
-    return null;
   }
 
   Future<Map<String, dynamic>> verifyMagicLink(String token, String email) async {
@@ -100,7 +92,7 @@ class AuthService {
 
     // Generate Firebase Custom Token
     // (bypass dart_firebase_admin's createCustomToken — its JWT signature is broken)
-    final customToken = _createCustomToken(userRecord.uid);
+    final customToken = createCustomToken(userRecord.uid);
 
     final result = <String, dynamic>{'token': customToken};
 
@@ -165,7 +157,7 @@ class AuthService {
     return result;
   }
 
-  String _createCustomToken(String uid) {
+  String createCustomToken(String uid) {
     final saJson = Platform.environment['FIREBASE_SERVICE_ACCOUNT_JSON'];
     if (saJson == null || saJson.isEmpty) {
       throw Exception('FIREBASE_SERVICE_ACCOUNT_JSON env var is not set');

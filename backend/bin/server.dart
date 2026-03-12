@@ -109,6 +109,7 @@ void main() async {
   final usersHandler = UsersHandler(
     userService: userService,
     auditService: auditService,
+    authService: authService,
   );
   final exchangeRateService = ExchangeRateService();
   final exchangeRateHandler = ExchangeRateHandler(service: exchangeRateService);

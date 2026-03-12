@@ -16,10 +16,12 @@ final class CustomersLoading extends CustomersState {
 
 final class CustomersLoaded extends CustomersState {
   final List<AppUser> customers;
+  final List<AppUser> allUsers;
   final List<AppUser> managers;
 
   const CustomersLoaded({
     required this.customers,
+    required this.allUsers,
     required this.managers,
   });
 }

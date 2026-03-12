@@ -36,7 +36,7 @@ class CustomersBloc extends Bloc<CustomersEvent, CustomersState> {
               u.role == UserRole.superUser || u.role == UserRole.supplier)
           .toList();
 
-      emit(CustomersLoaded(customers: customers, managers: managers));
+      emit(CustomersLoaded(customers: customers, allUsers: allUsers, managers: managers));
     } catch (e) {
       emit(CustomersFailure(e.toString()));
     }

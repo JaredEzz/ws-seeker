@@ -41,6 +41,7 @@ class _CustomerManagementContentState
     extends State<_CustomerManagementContent> {
   final _searchController = TextEditingController();
   String _searchQuery = '';
+  bool _showAllUsers = false;
 
   @override
   void dispose() {
@@ -104,8 +105,8 @@ class _CustomerManagementContentState
               Center(child: Text('Error: $message')),
             ShopifySyncComplete() =>
               const Center(child: CircularProgressIndicator()),
-            CustomersLoaded(:final customers, :final managers) =>
-              _buildContent(context, customers, managers),
+            CustomersLoaded(:final customers, :final allUsers, :final managers) =>
+              _buildContent(context, _showAllUsers ? allUsers : customers, managers),
           },
         );
       },
@@ -153,9 +154,21 @@ class _CustomerManagementContentState
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            l10n.customerCount(filtered.length),
-            style: Theme.of(context).textTheme.bodySmall,
+          child: Row(
+            children: [
+              Text(
+                l10n.customerCount(filtered.length),
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const Spacer(),
+              Text('Show all users',
+                  style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(width: 4),
+              Switch(
+                value: _showAllUsers,
+                onChanged: (v) => setState(() => _showAllUsers = v),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 8),
@@ -168,6 +181,8 @@ class _CustomerManagementContentState
                     child: DataTable(
                       columns: [
                         DataColumn(label: Text(l10n.columnEmail)),
+                        if (_showAllUsers)
+                          const DataColumn(label: Text('Role')),
                         DataColumn(label: Text(l10n.columnDiscord)),
                         DataColumn(label: Text(l10n.phone)),
                         DataColumn(label: Text(l10n.accountManager)),
@@ -178,6 +193,8 @@ class _CustomerManagementContentState
                         return DataRow(
                           cells: [
                             DataCell(Text(customer.email)),
+                            if (_showAllUsers)
+                              DataCell(Text(customer.role.name)),
                             DataCell(Text(customer.discordName ?? '-')),
                             DataCell(Text(customer.phone ?? '-')),
                             DataCell(

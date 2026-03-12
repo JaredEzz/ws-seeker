@@ -1167,4 +1167,33 @@ class AppLocalizationsJa extends AppLocalizations {
   String uploadingFile(String filename) {
     return '$filenameをアップロード中...';
   }
+
+  @override
+  String get editOrder => '注文を編集';
+
+  @override
+  String get trackingNumberLabel => '追跡番号';
+
+  @override
+  String get trackingCarrierLabel => '配送業者';
+
+  @override
+  String get adminNotesLabel => '管理者メモ';
+
+  @override
+  String get saving => '保存中...';
+
+  @override
+  String get orderUpdated => '注文が更新されました';
+
+  @override
+  String failedToUpdateOrder(String error) {
+    return '更新に失敗しました: $error';
+  }
+
+  @override
+  String get editOrderFields => '詳細を編集';
+
+  @override
+  String get cancelEdit => 'キャンセル';
 }

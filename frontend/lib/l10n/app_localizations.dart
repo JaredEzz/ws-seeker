@@ -2221,6 +2221,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Uploading {filename}...'**
   String uploadingFile(String filename);
+
+  /// No description provided for @editOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Order'**
+  String get editOrder;
+
+  /// No description provided for @trackingNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking Number'**
+  String get trackingNumberLabel;
+
+  /// No description provided for @trackingCarrierLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Carrier'**
+  String get trackingCarrierLabel;
+
+  /// No description provided for @adminNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Admin Notes'**
+  String get adminNotesLabel;
+
+  /// No description provided for @saving.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get saving;
+
+  /// No description provided for @orderUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Order updated'**
+  String get orderUpdated;
+
+  /// No description provided for @failedToUpdateOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update: {error}'**
+  String failedToUpdateOrder(String error);
+
+  /// No description provided for @editOrderFields.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Details'**
+  String get editOrderFields;
+
+  /// No description provided for @cancelEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelEdit;
 }
 
 class _AppLocalizationsDelegate

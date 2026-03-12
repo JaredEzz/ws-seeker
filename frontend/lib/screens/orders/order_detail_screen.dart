@@ -186,13 +186,9 @@ class _OrderDetailScreenState extends State<OrderDetailScreen> {
             const SizedBox(height: 16),
             _InvoiceCard(order: order, isAdmin: isAdmin, onChanged: _loadOrder),
           ],
-          if (isAdmin && order.adminNotes != null) ...[
+          if (isAdmin) ...[
             const SizedBox(height: 16),
-            _InfoCard(
-              titleKey: _InfoCardTitleKey.adminNotes,
-              icon: Icons.note,
-              value: order.adminNotes!,
-            ),
+            _AdminEditCard(order: order, onSaved: _loadOrder),
           ],
           const SizedBox(height: 16),
           CommentSection(orderId: order.id),
@@ -577,6 +573,271 @@ class _TrackingCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AdminEditCard extends StatefulWidget {
+  final Order order;
+  final VoidCallback onSaved;
+
+  const _AdminEditCard({required this.order, required this.onSaved});
+
+  @override
+  State<_AdminEditCard> createState() => _AdminEditCardState();
+}
+
+class _AdminEditCardState extends State<_AdminEditCard> {
+  bool _editing = false;
+  bool _saving = false;
+  late TextEditingController _trackingNumberController;
+  late TextEditingController _trackingCarrierController;
+  late TextEditingController _adminNotesController;
+  late OrderStatus _selectedStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _initControllers();
+  }
+
+  void _initControllers() {
+    _trackingNumberController =
+        TextEditingController(text: widget.order.trackingNumber ?? '');
+    _trackingCarrierController =
+        TextEditingController(text: widget.order.trackingCarrier ?? '');
+    _adminNotesController =
+        TextEditingController(text: widget.order.adminNotes ?? '');
+    _selectedStatus = widget.order.status;
+  }
+
+  @override
+  void didUpdateWidget(covariant _AdminEditCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.order.id != widget.order.id) {
+      _disposeControllers();
+      _initControllers();
+    }
+  }
+
+  void _disposeControllers() {
+    _trackingNumberController.dispose();
+    _trackingCarrierController.dispose();
+    _adminNotesController.dispose();
+  }
+
+  @override
+  void dispose() {
+    _disposeControllers();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    setState(() => _saving = true);
+    try {
+      final trackingNum = _trackingNumberController.text.trim();
+      final trackingCar = _trackingCarrierController.text.trim();
+      final notes = _adminNotesController.text.trim();
+
+      await context.read<OrderRepository>().updateOrder(
+            widget.order.id,
+            UpdateOrderRequest(
+              status: _selectedStatus != widget.order.status
+                  ? _selectedStatus
+                  : null,
+              trackingNumber:
+                  trackingNum != (widget.order.trackingNumber ?? '')
+                      ? trackingNum
+                      : null,
+              trackingCarrier:
+                  trackingCar != (widget.order.trackingCarrier ?? '')
+                      ? trackingCar
+                      : null,
+              adminNotes: notes != (widget.order.adminNotes ?? '')
+                  ? notes
+                  : null,
+            ),
+          );
+
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.orderUpdated)),
+        );
+        setState(() => _editing = false);
+        widget.onSaved();
+      }
+    } catch (e) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.failedToUpdateOrder(e.toString()))),
+        );
+      }
+    }
+    if (mounted) setState(() => _saving = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final theme = Theme.of(context);
+
+    if (!_editing) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(l10n.editOrderFields,
+                        style: theme.textTheme.titleMedium),
+                  ),
+                  FilledButton.icon(
+                    onPressed: () => setState(() => _editing = true),
+                    icon: const Icon(Icons.edit, size: 18),
+                    label: Text(l10n.editOrder),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              _readOnlyRow(l10n.columnStatus,
+                  localizedStatusLabel(widget.order.status, l10n)),
+              _readOnlyRow(l10n.trackingCarrierLabel,
+                  widget.order.trackingCarrier ?? '-'),
+              _readOnlyRow(l10n.trackingNumberLabel,
+                  widget.order.trackingNumber ?? '-'),
+              _readOnlyRow(
+                  l10n.adminNotesLabel, widget.order.adminNotes ?? '-'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.editOrderFields, style: theme.textTheme.titleMedium),
+            const SizedBox(height: 16),
+            DropdownButtonFormField<OrderStatus>(
+              value: _selectedStatus,
+              decoration: InputDecoration(
+                labelText: l10n.columnStatus,
+                border: const OutlineInputBorder(),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              ),
+              items: OrderStatus.values
+                  .map((s) => DropdownMenuItem(
+                        value: s,
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 8,
+                              height: 8,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Tokens.statusColor(s),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(localizedStatusLabel(s, l10n)),
+                          ],
+                        ),
+                      ))
+                  .toList(),
+              onChanged: (val) {
+                if (val != null) setState(() => _selectedStatus = val);
+              },
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _trackingCarrierController,
+              decoration: InputDecoration(
+                labelText: l10n.trackingCarrierLabel,
+                border: const OutlineInputBorder(),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _trackingNumberController,
+              decoration: InputDecoration(
+                labelText: l10n.trackingNumberLabel,
+                border: const OutlineInputBorder(),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _adminNotesController,
+              decoration: InputDecoration(
+                labelText: l10n.adminNotesLabel,
+                border: const OutlineInputBorder(),
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              ),
+              maxLines: 3,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                FilledButton(
+                  onPressed: _saving ? null : _save,
+                  child: _saving
+                      ? SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: theme.colorScheme.onPrimary,
+                          ),
+                        )
+                      : Text(l10n.saveChanges),
+                ),
+                const SizedBox(width: 8),
+                OutlinedButton(
+                  onPressed: _saving
+                      ? null
+                      : () {
+                          _disposeControllers();
+                          _initControllers();
+                          setState(() => _editing = false);
+                        },
+                  child: Text(l10n.cancelEdit),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _readOnlyRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(label,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          ),
+          Expanded(child: Text(value)),
+        ],
       ),
     );
   }

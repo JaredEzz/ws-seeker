@@ -8,15 +8,36 @@ import '../../blocs/auth/auth_state.dart';
 import '../../blocs/locale/locale_cubit.dart';
 import '../../repositories/user_repository.dart';
 import '../../widgets/common/theme_toggle_button.dart';
+import '../../widgets/navigation/admin_shell.dart';
 
-class ProfileScreen extends StatefulWidget {
+class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+    final isAdmin = authState is AuthAuthenticated &&
+        (authState.user.role == UserRole.superUser ||
+            authState.user.role == UserRole.supplier);
+
+    if (isAdmin) {
+      return const AdminShell(
+        selectedIndex: 6,
+        child: _ProfileContent(),
+      );
+    }
+    return const _ProfileContent();
+  }
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileContent extends StatefulWidget {
+  const _ProfileContent();
+
+  @override
+  State<_ProfileContent> createState() => _ProfileContentState();
+}
+
+class _ProfileContentState extends State<_ProfileContent> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _discordNameController;
   late TextEditingController _phoneController;

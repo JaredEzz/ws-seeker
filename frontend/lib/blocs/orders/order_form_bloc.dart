@@ -171,7 +171,6 @@ class OrderFormState {
     return switch (language) {
       ProductLanguage.japanese => [
         'FedEx International Priority',
-        'FedEx International Economy',
         'FedEx Air Connect',
       ],
       ProductLanguage.chinese => ['Air', 'Ocean', 'Mix'],

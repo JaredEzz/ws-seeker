@@ -49,6 +49,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   bool _addressInitialized = false;
   final _reviewFormKey = GlobalKey<FormState>();
   final _addressFormKey = GlobalKey<FormState>();
+  final _bottomAnchorKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -136,6 +137,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                 content: Column(
                   children: [
                     _ProductSelector(state: state),
+                    SizedBox(key: _bottomAnchorKey, height: 1),
                   ],
                 ),
                 isActive: _currentStep >= 1,
@@ -162,15 +164,11 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   }
 
   void _scrollToBottom() {
-    // Use a post-frame callback to ensure layout is complete before scrolling.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Find the nearest Scrollable ancestor (the Stepper's internal scroll view)
-      // and scroll to the bottom.
-      final scrollable = Scrollable.maybeOf(context);
-      final position = scrollable?.position;
-      if (position != null) {
-        position.animateTo(
-          position.maxScrollExtent,
+      final anchorContext = _bottomAnchorKey.currentContext;
+      if (anchorContext != null) {
+        Scrollable.ensureVisible(
+          anchorContext,
           duration: const Duration(milliseconds: 400),
           curve: Curves.easeOut,
         );
@@ -428,6 +426,22 @@ class _ProductSelectorState extends State<_ProductSelector> {
                 child: Column(
                   children: [
                     ListTile(
+                      leading: p.imageUrl != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: Image.network(
+                                p.imageUrl!,
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => const SizedBox(
+                                  width: 40,
+                                  height: 40,
+                                  child: Icon(Icons.broken_image, size: 20),
+                                ),
+                              ),
+                            )
+                          : null,
                       title: Row(
                         children: [
                           Flexible(child: Text(p.name)),

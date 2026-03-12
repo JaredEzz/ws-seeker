@@ -421,5 +421,17 @@
   "@fieldIsRequired": { "placeholders": { "label": { "type": "String" } } },
 
   "uploadingFile": "Uploading {filename}...",
-  "@uploadingFile": { "placeholders": { "filename": { "type": "String" } } }
+  "@uploadingFile": { "placeholders": { "filename": { "type": "String" } } },
+
+  "editOrder": "Edit Order",
+  "trackingNumberLabel": "Tracking Number",
+  "trackingCarrierLabel": "Carrier",
+  "adminNotesLabel": "Admin Notes",
+  "saveChanges": "Save Changes",
+  "saving": "Saving...",
+  "orderUpdated": "Order updated",
+  "failedToUpdateOrder": "Failed to update: {error}",
+  "@failedToUpdateOrder": { "placeholders": { "error": { "type": "String" } } },
+  "editOrderFields": "Edit Details",
+  "cancelEdit": "Cancel"
 }

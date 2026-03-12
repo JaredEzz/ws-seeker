@@ -1174,4 +1174,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String uploadingFile(String filename) {
     return 'Uploading $filename...';
   }
+
+  @override
+  String get editOrder => 'Edit Order';
+
+  @override
+  String get trackingNumberLabel => 'Tracking Number';
+
+  @override
+  String get trackingCarrierLabel => 'Carrier';
+
+  @override
+  String get adminNotesLabel => 'Admin Notes';
+
+  @override
+  String get saving => 'Saving...';
+
+  @override
+  String get orderUpdated => 'Order updated';
+
+  @override
+  String failedToUpdateOrder(String error) {
+    return 'Failed to update: $error';
+  }
+
+  @override
+  String get editOrderFields => 'Edit Details';
+
+  @override
+  String get cancelEdit => 'Cancel';
 }

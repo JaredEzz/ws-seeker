@@ -374,5 +374,16 @@
   "shippingAddressRequired": "配送先住所 *",
   "fieldIsRequired": "{label}は必須です",
 
-  "uploadingFile": "{filename}をアップロード中..."
+  "uploadingFile": "{filename}をアップロード中...",
+
+  "editOrder": "注文を編集",
+  "trackingNumberLabel": "追跡番号",
+  "trackingCarrierLabel": "配送業者",
+  "adminNotesLabel": "管理者メモ",
+  "saveChanges": "変更を保存",
+  "saving": "保存中...",
+  "orderUpdated": "注文が更新されました",
+  "failedToUpdateOrder": "更新に失敗しました: {error}",
+  "editOrderFields": "詳細を編集",
+  "cancelEdit": "キャンセル"
 }

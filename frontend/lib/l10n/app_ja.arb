@@ -301,6 +301,7 @@
   "selectShippingMethod": "配送方法を選択",
   "shippingMethodValidation": "配送方法は必須です",
   "productTypeLabel": "商品タイプ",
+  "productTypeRequired": "商品タイプを選択してください（ボックス、シュリンクなし、ケース）",
   "placeOrderButton": "注文する",
   "productTypeLooseBox": "バラ売りボックス",
   "productTypeSealedCase": "シールドケース",

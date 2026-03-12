@@ -50,6 +50,7 @@ class _OrderFormContentState extends State<_OrderFormContent> {
   final _reviewFormKey = GlobalKey<FormState>();
   final _addressFormKey = GlobalKey<FormState>();
   final _bottomAnchorKey = GlobalKey();
+  bool _showTypeErrors = false;
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +137,10 @@ class _OrderFormContentState extends State<_OrderFormContent> {
                 title: Text(l10n.stepSelectProducts),
                 content: Column(
                   children: [
-                    _ProductSelector(state: state),
+                    _ProductSelector(
+                      state: state,
+                      showTypeErrors: _showTypeErrors,
+                    ),
                     SizedBox(key: _bottomAnchorKey, height: 1),
                   ],
                 ),
@@ -191,24 +195,30 @@ class _OrderFormContentState extends State<_OrderFormContent> {
         );
         return;
       }
-      // Validate JPN product types are selected
-      if (state.language == ProductLanguage.japanese) {
-        for (final entry
-            in state.selectedItems.entries.where((e) => e.value > 0)) {
-          final product = state.availableProducts
-              .where((p) => p.id == entry.key)
-              .firstOrNull;
-          if (product != null &&
-              OrderFormState.availableTypesFor(product).isNotEmpty &&
-              !state.selectedProductTypes.containsKey(entry.key)) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                  content: Text(l10n.pleaseSelectProductType(product.name))),
-            );
-            return;
-          }
-        }
+      // Validate product types are selected (JPN/CN)
+      final missingTypes = state.selectedItems.entries
+          .where((e) => e.value > 0)
+          .where((e) {
+        final product = state.availableProducts
+            .where((p) => p.id == e.key)
+            .firstOrNull;
+        return product != null &&
+            OrderFormState.availableTypesFor(product).isNotEmpty &&
+            !state.selectedProductTypes.containsKey(e.key);
+      }).toList();
+
+      if (missingTypes.isNotEmpty) {
+        setState(() => _showTypeErrors = true);
+        final firstProduct = state.availableProducts
+            .where((p) => p.id == missingTypes.first.key)
+            .first;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(l10n.pleaseSelectProductType(firstProduct.name))),
+        );
+        return;
       }
+      setState(() => _showTypeErrors = false);
     }
 
     if (_currentStep < 2) {
@@ -274,7 +284,8 @@ class _LanguageSelector extends StatelessWidget {
 
 class _ProductSelector extends StatefulWidget {
   final OrderFormState state;
-  const _ProductSelector({required this.state});
+  final bool showTypeErrors;
+  const _ProductSelector({required this.state, this.showTypeErrors = false});
 
   @override
   State<_ProductSelector> createState() => _ProductSelectorState();
@@ -507,7 +518,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
                       ),
                     ),
                     // Product type selector (JPN: Box/No Shrink/Case, CN: Loose Box/Sealed Case)
-                    if (availableTypes.isNotEmpty && qty > 0)
+                    if (availableTypes.isNotEmpty && qty > 0) ...[
                       Padding(
                         padding: const EdgeInsets.only(
                             left: 16, right: 16, bottom: 8),
@@ -519,6 +530,10 @@ class _ProductSelectorState extends State<_ProductSelector> {
                             contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 8),
                             isDense: true,
+                            errorText: widget.showTypeErrors &&
+                                    selectedType == null
+                                ? l10n.productTypeRequired
+                                : null,
                           ),
                           items: availableTypes
                               .map((t) => DropdownMenuItem(
@@ -533,6 +548,7 @@ class _ProductSelectorState extends State<_ProductSelector> {
                           },
                         ),
                       ),
+                    ],
                   ],
                 ),
               ),

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:ws_seeker_frontend/l10n/app_localizations.dart';
 import 'package:web/web.dart' as web;
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -935,6 +936,14 @@ class _InvoiceCardState extends State<_InvoiceCard> {
                   Expanded(
                     child: Text(l10n.invoiceHashId(widget.order.invoiceId!)),
                   ),
+                  if (widget.isAdmin) ...[
+                    OutlinedButton.icon(
+                      onPressed: () => context.go('/admin/invoices'),
+                      icon: const Icon(Icons.edit, size: 18),
+                      label: const Text('Edit Invoice'),
+                    ),
+                    const SizedBox(width: 8),
+                  ],
                   OutlinedButton.icon(
                     onPressed: _downloadingPdf ? null : _downloadPdf,
                     icon: _downloadingPdf

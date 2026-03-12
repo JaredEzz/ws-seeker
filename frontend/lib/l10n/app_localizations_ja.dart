@@ -943,6 +943,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get productTypeLabel => '商品タイプ';
 
   @override
+  String get productTypeRequired => '商品タイプを選択してください（ボックス、シュリンクなし、ケース）';
+
+  @override
   String get placeOrderButton => '注文する';
 
   @override

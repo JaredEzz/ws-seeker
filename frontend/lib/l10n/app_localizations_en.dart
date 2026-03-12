@@ -949,6 +949,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productTypeLabel => 'Product Type';
 
   @override
+  String get productTypeRequired =>
+      'Please select a product type (Box, No Shrink, or Case)';
+
+  @override
   String get placeOrderButton => 'Place Order';
 
   @override

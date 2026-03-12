@@ -1814,6 +1814,12 @@ abstract class AppLocalizations {
   /// **'Product Type'**
   String get productTypeLabel;
 
+  /// No description provided for @productTypeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a product type (Box, No Shrink, or Case)'**
+  String get productTypeRequired;
+
   /// No description provided for @placeOrderButton.
   ///
   /// In en, this message translates to:

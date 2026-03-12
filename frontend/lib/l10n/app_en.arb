@@ -338,6 +338,7 @@
   "selectShippingMethod": "Select shipping method",
   "shippingMethodValidation": "Shipping method is required",
   "productTypeLabel": "Product Type",
+  "productTypeRequired": "Please select a product type (Box, No Shrink, or Case)",
   "placeOrderButton": "Place Order",
   "productTypeLooseBox": "Loose Box",
   "productTypeSealedCase": "Sealed Case",
